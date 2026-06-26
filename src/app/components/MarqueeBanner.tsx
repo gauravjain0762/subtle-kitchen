@@ -25,16 +25,16 @@ export default function MarqueeBanner() {
         Trusted by teams at
       </p>
 
-      {/* Row 1 — scrolls left */}
-      <div style={{ overflow: "hidden", marginBottom: "16px" }}>
+      {/* Single row — scrolls left */}
+      <div style={{ overflow: "hidden" }}>
         <div style={{
           display: "flex",
           width: "max-content",
-          animation: "marqueeLeft 20s linear infinite",
+          animation: "marqueeLeft 25s linear infinite",
         }}>
           {[...logos, ...logos, ...logos, ...logos].map((name, i) => (
             <span key={i} style={{
-              padding: "0 40px",
+              padding: "0 48px",
               fontSize: "18px",
               fontWeight: "600",
               color: "rgba(255,255,255,0.5)",
@@ -42,30 +42,7 @@ export default function MarqueeBanner() {
               fontFamily: "Inter, sans-serif",
             }}>
               {name}
-              <span style={{ marginLeft: "40px", color: "rgba(255,243,154,0.4)" }}>•</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Row 2 — scrolls right */}
-      <div style={{ overflow: "hidden" }}>
-        <div style={{
-          display: "flex",
-          width: "max-content",
-          animation: "marqueeRight 28s linear infinite",
-        }}>
-          {[...logos, ...logos, ...logos, ...logos].map((name, i) => (
-            <span key={i} style={{
-              padding: "0 40px",
-              fontSize: "15px",
-              fontWeight: "500",
-              color: "rgba(255,255,255,0.3)",
-              whiteSpace: "nowrap",
-              fontFamily: "Inter, sans-serif",
-            }}>
-              {name}
-              <span style={{ marginLeft: "40px", color: "rgba(255,243,154,0.25)" }}>•</span>
+              <span style={{ marginLeft: "48px", color: "rgba(255,243,154,0.4)" }}>•</span>
             </span>
           ))}
         </div>

@@ -21,7 +21,7 @@ const HERO_DISHES = [
 const HEADLINE_LINES = [
   ["Lunch", "your", "team"],
   ["actually", "looks"],
-  ["forward", "to."],
+  ["forward", "to..."],
 ];
 
 const MENU_HEADING = "This week’s menu";
@@ -52,7 +52,7 @@ const PERKS = [
 const HOW_STEPS = [
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="#0a0a0a" stroke="none"/></svg>,
-    title: "Enter your code",
+    title: "Enter your Company code",
     desc: "Simply use your office's unique code to unlock your custom menu.",
   },
   {
@@ -76,6 +76,7 @@ export default function Home() {
   useScrollAnimation();
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
+  const [tSlide, setTSlide] = useState(0);
   const heroRef = useRef(null);
   const cursorRef = useRef(null);
   const imgRef = useRef(null);
@@ -139,6 +140,17 @@ export default function Home() {
     const t = setInterval(() => setSlide(s => (s + 1) % HERO_DISHES.length), 3500);
     return () => clearInterval(t);
   }, []);
+
+  const TESTIMONIALS = [
+    { quote: "The quality of the food is incredible for a delivery service. It's become the highlight of our team's work day.", name: "Sarah M.", role: "Operations Lead at AeroScale", img: "https://i.pravatar.cc/40?img=47" },
+    { quote: "Subtle Kitchen solved our office lunch problem overnight. No more cold deliveries or missing items. It's flawless.", name: "James T.", role: "Founder at FlowState", img: "https://i.pravatar.cc/40?img=12" },
+    { quote: "The dashboard makes managing our weekly subsidy so easy. Our employees are healthier and happier.", name: "Priya K.", role: "HR Director at Veridian", img: "https://i.pravatar.cc/40?img=32" },
+  ];
+
+  useEffect(() => {
+    const t = setInterval(() => setTSlide(s => (s + 1) % TESTIMONIALS.length), 4500);
+    return () => clearInterval(t);
+  }, [TESTIMONIALS.length]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -237,7 +249,6 @@ export default function Home() {
 
   return (
     <div className={styles.root}>
-      <div ref={cursorRef} className={styles.cursor} />
       <div ref={scrollProgressRef} className={styles.scrollProgress} />
 
       {/* ── Navbar ── */}
@@ -249,7 +260,7 @@ export default function Home() {
           </Link>
           <ul className={styles.navLinks}>
             {NAV_LINKS.map((link) => (
-              <li key={link.label}><a href={link.href} className={styles.navLink} data-scramble>{link.label}</a></li>
+              <li key={link.label}><a href={link.href} className={styles.navLink}>{link.label}</a></li>
             ))}
           </ul>
           <div className={styles.navActions}>
@@ -401,7 +412,7 @@ export default function Home() {
               ))}
             </h2>
             <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day. Crafted by professional chefs for the modern worker.</p>
-            <a href="#" className={styles.menuBtn}>See full menu</a>
+            <a href="#" className={styles.menuBtn}>See full menu →</a>
           </div>
           <div className={styles.menuRight}>
             {MENU_ITEMS.map((item, i) => (
@@ -514,42 +525,48 @@ export default function Home() {
 
       {/* ── Testimonials ── */}
       <section className={styles.testimonials}>
-        <div className={styles.testimonialsGrid}>
-          {[
-            { quote: "The quality of the food is incredible for a delivery service. It's become the highlight of our team's work day.", name: "Sarah M.", role: "Operations Lead at AeroScale", img: "https://i.pravatar.cc/40?img=47" },
-            { quote: "Subtle Kitchen solved our office lunch problem overnight. No more cold deliveries or missing items. It's flawless.", name: "James T.", role: "Founder at FlowState", img: "https://i.pravatar.cc/40?img=12" },
-            { quote: "The dashboard makes managing our weekly subsidy so easy. Our employees are healthier and happier.", name: "Priya K.", role: "HR Director at Veridian", img: "https://i.pravatar.cc/40?img=32" },
-          ].map((t, i) => (
-            <div key={i} className={styles.testimonialCard} data-cursor="true" data-animate="fade-up" data-stagger-delay={i}
-              onMouseMove={(e) => {
-                const r = e.currentTarget.getBoundingClientRect();
-                const x = (e.clientX - r.left) / r.width - 0.5;
-                const y = (e.clientY - r.top) / r.height - 0.5;
-                e.currentTarget.style.transition = "transform 0.15s ease";
-                e.currentTarget.style.transform = "perspective(800px) rotateX(" + (-y * 7) + "deg) rotateY(" + (x * 7) + "deg) scale(1.02)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transition = "transform 0.4s ease-out";
-                e.currentTarget.style.transform = "perspective(800px) rotateX(0) rotateY(0) scale(1)";
-              }}
-            >
-              <div className={styles.stars}>
-                {"★★★★★".split("").map((s, si) => (
-                  <span key={si} className={styles.star} style={{ animationDelay: (0.15 * i + si * 0.08) + "s" }}>{s}</span>
-                ))}
-              </div>
-              <p className={styles.testimonialQuote}>{t.quote}</p>
-              <div className={styles.testimonialDivider} />
-              <div className={styles.testimonialAuthor}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.img} alt={t.name} className={styles.avatar} />
-                <div>
-                  <p className={styles.authorName}>{t.name}</p>
-                  <p className={styles.authorRole}>{t.role}</p>
+        <div className={styles.testimonialSlider} data-animate="fade-up">
+          <div className={styles.testimonialViewport}>
+          <div className={styles.testimonialTrack} style={{ transform: "translateX(-" + (tSlide * 100) + "%)" }}>
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className={styles.testimonialCard}
+                onMouseMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - r.left) / r.width - 0.5;
+                  const y = (e.clientY - r.top) / r.height - 0.5;
+                  e.currentTarget.style.transition = "transform 0.15s ease";
+                  e.currentTarget.style.transform = "perspective(800px) rotateX(" + (-y * 7) + "deg) rotateY(" + (x * 7) + "deg)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transition = "transform 0.4s ease-out";
+                  e.currentTarget.style.transform = "perspective(800px) rotateX(0) rotateY(0)";
+                }}
+              >
+                <div className={styles.stars}>
+                  {"★★★★★".split("").map((s, si) => (
+                    <span key={si} className={styles.star} style={{ animationDelay: (si * 0.08) + "s" }}>{s}</span>
+                  ))}
+                </div>
+                <p className={styles.testimonialQuote}>{t.quote}</p>
+                <div className={styles.testimonialDivider} />
+                <div className={styles.testimonialAuthor}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.img} alt={t.name} className={styles.avatar} />
+                  <div>
+                    <p className={styles.authorName}>{t.name}</p>
+                    <p className={styles.authorRole}>{t.role}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          </div>{/* testimonialViewport */}
+
+          <div className={styles.tDots}>
+            {TESTIMONIALS.map((_, i) => (
+              <button key={i} className={`${styles.tDot} ${i === tSlide ? styles.tDotActive : ""}`} onClick={() => setTSlide(i)} aria-label={"Testimonial " + (i + 1)} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -600,7 +617,7 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <p className={styles.footerCopy}>© 2025 Subtle Kitchen. All rights reserved.</p>
+          <p className={styles.footerCopy}>© 2026 Subtle Kitchen. All rights reserved.</p>
         </div>
       </footer>
     </div>
