@@ -530,7 +530,7 @@
 /* ── How It Works ── */
 .how {
   background: var(--cream);
-  padding: 120px 40px;
+  padding: 60px 40px 120px;
 }
 .howInner {
   max-width: 1280px;
@@ -1179,7 +1179,7 @@
 .star {
   font-size: 16px;
   letter-spacing: 0;
-  color: rgba(255,255,255,0.15);
+  color: #F5C518;
   animation: starFill 300ms ease both;
 }
 

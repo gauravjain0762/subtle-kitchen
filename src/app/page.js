@@ -21,7 +21,7 @@ const HERO_DISHES = [
 const HEADLINE_LINES = [
   ["Lunch", "your", "team"],
   ["actually", "looks"],
-  ["forward", "to..."],
+  ["forward", "to", "..."],
 ];
 
 const MENU_HEADING = "This week’s menu";
@@ -286,7 +286,7 @@ export default function Home() {
               return (
                 <span key={li} className={styles.headlineLine}>
                   {line.map((word, wi) => (
-                    <span key={wi} className={styles.word} style={{ animationDelay: (0.3 + (offset + wi) * 0.18) + "s", marginRight: wi < line.length - 1 ? "0.26em" : 0 }}>
+                    <span key={wi} className={styles.word} style={{ animationDelay: (0.3 + (offset + wi) * 0.18) + "s", marginRight: word === "..." ? 0 : (line[wi + 1] === "..." ? "0.08em" : wi < line.length - 1 ? "0.26em" : 0), fontSize: word === "..." ? "0.5em" : undefined, verticalAlign: "baseline" }}>
                       {word}
                     </span>
                   ))}

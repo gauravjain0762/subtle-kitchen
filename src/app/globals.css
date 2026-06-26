@@ -50,7 +50,7 @@ a {
 [data-animate="slide-left"]  { translate: 40px 0; }
 [data-animate].is-visible    { opacity: 1; translate: 0 0; scale: 1; }
 
-.testimonialCard .star { color: #fff39a; animation: none; }
+.testimonialCard .star { color: #F5C518; animation: none; }
 .menuChar { opacity: 0; animation: none; }
 .menuLeft.is-visible .menuChar { animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) both; }
 
