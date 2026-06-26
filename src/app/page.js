@@ -3,10 +3,26 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
+import MarqueeBanner from "./components/MarqueeBanner";
 
-const NAV_LINKS = ["How it works", "Menu", "For businesses", "Pricing"];
-const BRANDS = ["AeroScale", "FlowState", "Veridian", "NexusOne", "Quartz", "AeroScale", "FlowState", "Veridian", "NexusOne", "Quartz"];
-const HEADLINE_WORDS = ["Lunch", "your", "team", "actually", "looks", "forward", "to."];
+const NAV_LINKS = [
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Menu",         href: "#menu" },
+  { label: "For businesses", href: "#for-businesses" },
+  { label: "Pricing",     href: "#menu" },
+];
+const HERO_DISHES = [
+  { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=85", name: "Chicken Katsu Curry",    desc: "Crispy panko chicken, house curry sauce, jasmine rice, pickled radish.", kcal: "620 KCAL" },
+  { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=85", name: "Sesame Ahi Poke Bowl",    desc: "Sushi-grade tuna, edamame, cucumber, pickled ginger, sesame dressing.", kcal: "480 KCAL" },
+  { img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=85", name: "Miso Salmon & Quinoa", desc: "Atlantic salmon, white miso glaze, tri-colour quinoa, steamed greens.",   kcal: "560 KCAL" },
+  { img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=85", name: "Herby Falafel Wrap",    desc: "Crispy falafel, tahini, roasted peppers, fresh herbs, flatbread.",       kcal: "520 KCAL" },
+];
+
+const HEADLINE_LINES = [
+  ["Lunch", "your", "team"],
+  ["actually", "looks"],
+  ["forward", "to."],
+];
 
 const MENU_HEADING = "This week’s menu";
 
@@ -59,15 +75,24 @@ const HOW_STEPS = [
 export default function Home() {
   useScrollAnimation();
   const [scrolled, setScrolled] = useState(false);
+  const [slide, setSlide] = useState(0);
   const heroRef = useRef(null);
   const cursorRef = useRef(null);
   const imgRef = useRef(null);
   const cardParallaxRef = useRef(null);
   const ctaRef = useRef(null);
   const eatBetterRef = useRef(null);
+  const scrollProgressRef = useRef(null);
+  const statNumRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+      if (scrollProgressRef.current) {
+        const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        scrollProgressRef.current.style.width = pct + "%";
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -111,6 +136,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const t = setInterval(() => setSlide(s => (s + 1) % HERO_DISHES.length), 3500);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => {
       if (!eatBetterRef.current || !ctaRef.current) return;
       const rect = ctaRef.current.getBoundingClientRect();
@@ -120,9 +150,95 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ── 2. Number counter on stat card ──
+  useEffect(() => {
+    const el = statNumRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      const target = 2847;
+      let start = null;
+      const step = (ts) => {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / 2000, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      io.disconnect();
+    }, { threshold: 0.8 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // ── 3. Magnetic buttons ──
+  useEffect(() => {
+    const btns = Array.from(document.querySelectorAll("[data-magnetic]"));
+    const cleanup = btns.map(btn => {
+      const onEnter = () => { btn.style.transition = "transform 0.15s ease"; };
+      const onMove  = (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width  / 2) * 0.22;
+        const y = (e.clientY - r.top  - r.height / 2) * 0.22;
+        btn.style.transform = "translate(" + x + "px," + y + "px)";
+      };
+      const onLeave = () => {
+        btn.style.transition = "transform 0.5s cubic-bezier(0.23,1,0.32,1)";
+        btn.style.transform = "";
+      };
+      btn.addEventListener("mouseenter", onEnter);
+      btn.addEventListener("mousemove",  onMove);
+      btn.addEventListener("mouseleave", onLeave);
+      return () => { btn.removeEventListener("mouseenter", onEnter); btn.removeEventListener("mousemove", onMove); btn.removeEventListener("mouseleave", onLeave); };
+    });
+    return () => cleanup.forEach(fn => fn());
+  }, []);
+
+  // ── 4. Text scramble on nav links ──
+  useEffect(() => {
+    const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const links = Array.from(document.querySelectorAll("[data-scramble]"));
+    const cleanup = links.map(link => {
+      const original = link.textContent;
+      let raf = null;
+      const scramble = () => {
+        let i = 0;
+        const tick = () => {
+          link.textContent = original.split("").map((ch, idx) => {
+            if (ch === " ") return " ";
+            if (idx < i) return original[idx];
+            return CHARS[Math.floor(Math.random() * CHARS.length)];
+          }).join("");
+          i += 0.5;
+          if (i <= original.length) raf = requestAnimationFrame(tick);
+          else link.textContent = original;
+        };
+        raf = requestAnimationFrame(tick);
+      };
+      const reset = () => { cancelAnimationFrame(raf); link.textContent = original; };
+      link.addEventListener("mouseenter", scramble);
+      link.addEventListener("mouseleave", reset);
+      return () => { link.removeEventListener("mouseenter", scramble); link.removeEventListener("mouseleave", reset); };
+    });
+    return () => cleanup.forEach(fn => fn());
+  }, []);
+
+  // ── 5. Section background colour transition ──
+  useEffect(() => {
+    const map = { "how-it-works": "#fdf8ec", "menu": "#fff39a", "for-businesses": "#fdf8ec" };
+    document.body.style.transition = "background-color 0.9s ease";
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting && map[e.target.id]) document.body.style.backgroundColor = map[e.target.id]; });
+    }, { threshold: 0.35 });
+    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
+    return () => { io.disconnect(); document.body.style.backgroundColor = ""; document.body.style.transition = ""; };
+  }, []);
+
   return (
     <div className={styles.root}>
       <div ref={cursorRef} className={styles.cursor} />
+      <div ref={scrollProgressRef} className={styles.scrollProgress} />
 
       {/* ── Navbar ── */}
       <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
@@ -133,7 +249,7 @@ export default function Home() {
           </Link>
           <ul className={styles.navLinks}>
             {NAV_LINKS.map((link) => (
-              <li key={link}><a href="#" className={styles.navLink}>{link}</a></li>
+              <li key={link.label}><a href={link.href} className={styles.navLink} data-scramble>{link.label}</a></li>
             ))}
           </ul>
           <div className={styles.navActions}>
@@ -154,15 +270,18 @@ export default function Home() {
           </div>
 
           <h1 className={styles.headline}>
-            {HEADLINE_WORDS.map((word, i) => (
-              <span
-                key={i}
-                className={styles.word}
-                style={{ animationDelay: (0.3 + i * 0.18) + "s", marginRight: i < HEADLINE_WORDS.length - 1 ? "0.26em" : 0 }}
-              >
-                {word}
-              </span>
-            ))}
+            {HEADLINE_LINES.map((line, li) => {
+              const offset = HEADLINE_LINES.slice(0, li).reduce((a, l) => a + l.length, 0);
+              return (
+                <span key={li} className={styles.headlineLine}>
+                  {line.map((word, wi) => (
+                    <span key={wi} className={styles.word} style={{ animationDelay: (0.3 + (offset + wi) * 0.18) + "s", marginRight: wi < line.length - 1 ? "0.26em" : 0 }}>
+                      {word}
+                    </span>
+                  ))}
+                </span>
+              );
+            })}
           </h1>
 
           <p className={styles.subtext}>
@@ -172,8 +291,8 @@ export default function Home() {
           </p>
 
           <div className={styles.ctas}>
-            <a href="#" className={styles.ctaPrimary}>Get your company code</a>
-            <a href="#" className={styles.ctaSecondary}>See this week&apos;s menu →</a>
+            <a href="#" className={styles.ctaPrimary} data-magnetic>Get your company code</a>
+            <a href="#" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu →</a>
           </div>
 
           <div className={styles.divider} />
@@ -191,14 +310,22 @@ export default function Home() {
 
         <div className={styles.heroRight}>
           <div className={styles.heroImgWrap}>
-            <div className={styles.heroImgClip}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                ref={imgRef}
-                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=85"
-                alt="Chicken Katsu Curry"
-                className={styles.heroImg}
-              />
+            <div className={styles.heroImgClip} ref={imgRef}>
+              {HERO_DISHES.map((dish, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={i}
+                  src={dish.img}
+                  alt={dish.name}
+                  className={`${styles.heroImg} ${i === slide ? styles.heroImgActive : ""}`}
+                />
+              ))}
+            </div>
+
+            <div className={styles.slideDots}>
+              {HERO_DISHES.map((_, i) => (
+                <button key={i} className={`${styles.slideDot} ${i === slide ? styles.slideDotActive : ""}`} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`} />
+              ))}
             </div>
 
             <div ref={cardParallaxRef} className={styles.menuCardWrap}>
@@ -209,41 +336,24 @@ export default function Home() {
                     <span className={styles.dot} /> AVAILABLE
                   </span>
                 </div>
-                <h3 className={styles.menuCardTitle}>Chicken Katsu Curry</h3>
-                <p className={styles.menuCardDesc}>
-                  Crispy panko chicken, house curry sauce, jasmine rice, pickled radish.
-                </p>
+                <h3 className={styles.menuCardTitle}>{HERO_DISHES[slide].name}</h3>
+                <p className={styles.menuCardDesc}>{HERO_DISHES[slide].desc}</p>
                 <div className={styles.menuCardDivider} />
                 <div className={styles.menuCardFooter}>
-                  <span className={styles.kcal}>620 KCAL</span>
+                  <span className={styles.kcal}>{HERO_DISHES[slide].kcal}</span>
                   <span className={styles.infoIcon}>ⓘ</span>
                 </div>
-                <div className={styles.progressBar} />
+                <div className={styles.progressBar} key={slide} />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Trusted By ── */}
-      <section className={styles.trusted}>
-        <p className={styles.trustedLabel}>TRUSTED BY TEAMS AT</p>
-        <div className={styles.marqueeOuter}>
-          <div className={styles.marqueeWrap}>
-            <div className={styles.marqueeTrack}>
-              {BRANDS.map((b, i) => <span key={i} className={styles.brand}>{b}</span>)}
-            </div>
-          </div>
-          <div className={styles.marqueeWrap}>
-            <div className={`${styles.marqueeTrack} ${styles.marqueeReverse}`}>
-              {[...BRANDS].reverse().map((b, i) => <span key={i} className={`${styles.brand} ${styles.brandSm}`}>{b}</span>)}
-            </div>
-          </div>
-        </div>
-      </section>
+      <MarqueeBanner />
 
       {/* ── How It Works ── */}
-      <section className={styles.how}>
+      <section id="how-it-works" className={styles.how}>
         <div className={styles.howInner}>
           <p className={styles.howLabel} data-animate="fade-in">SIMPLE BY DESIGN</p>
           <h2 className={styles.howHeading} data-animate="fade-up" data-stagger-delay="1">Order tomorrow&apos;s lunch in under 30 seconds.</h2>
@@ -280,7 +390,7 @@ export default function Home() {
       <div className={styles.sectionDivider} />
 
       {/* ── This Week's Menu ── */}
-      <section className={styles.menu}>
+      <section id="menu" className={styles.menu}>
         <div className={styles.menuInner}>
           <div className={styles.menuLeft} data-animate="slide-right">
             <h2 className={styles.menuHeading}>
@@ -323,7 +433,7 @@ export default function Home() {
       </section>
 
       {/* ── For Businesses ── */}
-      <section className={styles.biz}>
+      <section id="for-businesses" className={styles.biz}>
         <div className={styles.bizInner}>
           <p className={styles.bizLabel} data-animate="fade-in">EMPOWER YOUR TEAM</p>
           <h2 className={styles.bizHeading} data-animate="fade-up" data-stagger-delay="1">Set up your office in minutes.</h2>
@@ -340,7 +450,7 @@ export default function Home() {
             </div>
             <div className={`${styles.bizCard} ${styles.bizCardDark}`} data-cursor="true" data-animate="scale-in" data-stagger-delay="1">
               <div className={styles.bizIcon}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff39a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                   <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
                 </svg>
@@ -378,7 +488,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <a href="#" className={styles.subscribeBtn}>Start your subscription →</a>
+            <a href="#" className={styles.subscribeBtn}>Start your subscription</a>
           </div>
 
           <div className={styles.subscribeImgWrap} data-animate="slide-left">
@@ -388,7 +498,7 @@ export default function Home() {
             <div className={styles.statCard}>
               <span className={styles.statIcon}>↻</span>
               <div>
-                <p className={styles.statNum}>2,847</p>
+                <p className={styles.statNum} ref={statNumRef}>2,847</p>
                 <p className={styles.statLabel}>repeat orders this week</p>
               </div>
             </div>
@@ -410,7 +520,19 @@ export default function Home() {
             { quote: "Subtle Kitchen solved our office lunch problem overnight. No more cold deliveries or missing items. It's flawless.", name: "James T.", role: "Founder at FlowState", img: "https://i.pravatar.cc/40?img=12" },
             { quote: "The dashboard makes managing our weekly subsidy so easy. Our employees are healthier and happier.", name: "Priya K.", role: "HR Director at Veridian", img: "https://i.pravatar.cc/40?img=32" },
           ].map((t, i) => (
-            <div key={i} className={`${styles.testimonialCard} ${i === 1 ? styles.testimonialCardMid : ""}`} data-cursor="true" data-animate="fade-up" data-stagger-delay={i}>
+            <div key={i} className={styles.testimonialCard} data-cursor="true" data-animate="fade-up" data-stagger-delay={i}
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                e.currentTarget.style.transition = "transform 0.15s ease";
+                e.currentTarget.style.transform = "perspective(800px) rotateX(" + (-y * 7) + "deg) rotateY(" + (x * 7) + "deg) scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transition = "transform 0.4s ease-out";
+                e.currentTarget.style.transform = "perspective(800px) rotateX(0) rotateY(0) scale(1)";
+              }}
+            >
               <div className={styles.stars}>
                 {"★★★★★".split("").map((s, si) => (
                   <span key={si} className={styles.star} style={{ animationDelay: (0.15 * i + si * 0.08) + "s" }}>{s}</span>

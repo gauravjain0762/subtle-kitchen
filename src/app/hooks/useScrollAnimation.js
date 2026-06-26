@@ -19,7 +19,11 @@ export function useScrollAnimation() {
       { threshold: 0.15 }
     );
 
-    els.forEach((el) => io.observe(el));
+    els.forEach((el) => {
+      // Never observe inside the marquee ribbon — is-visible would override translateX
+      if (el.closest("[class*='ribbon']") || el.closest("[class*='marquee']") || el.closest("[class*='trusted']")) return;
+      io.observe(el);
+    });
     return () => io.disconnect();
   }, []);
 }
