@@ -1,142 +1,674 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
+/* ── Root ── */
+.root {
+  min-height: 100vh;
+  background: #fff39a;
+  font-family: 'Inter', sans-serif;
+}
 
-  --text-primary: #000;
-  --text-secondary: #666;
+/* ── Navbar ── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff39a;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+  animation: fadeDown 0.6s ease both;
+}
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+.navScrolled {
+  box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+}
 
+.navInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 64px;
   display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  gap: 48px;
 }
 
-.main {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
-}
-
-.intro {
+.logo {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
 }
+.logo:hover { opacity: 0.75; }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
-}
-
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
-
-.intro a {
+.logoMark {
+  font-size: 9px;
   font-weight: 500;
-  color: var(--text-primary);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: #0a0a0a;
+  opacity: 0.55;
+}
+
+.logoMain {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 36px;
+  flex: 1;
+  justify-content: center;
+}
+
+.navLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a0a0a;
+  position: relative;
+  padding-bottom: 2px;
+  transition: opacity 0.2s;
+}
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: #0a0a0a;
+  transition: width 0.25s ease;
+}
+.navLink:hover::after { width: 100%; }
+.navLink:hover { opacity: 0.7; }
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.signIn {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a0a0a;
+  transition: opacity 0.2s;
+}
+.signIn:hover { opacity: 0.6; }
+
+.getStarted {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff39a;
+  background: #0a0a0a;
+  padding: 10px 22px;
+  border-radius: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.getStarted:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 32px 60px;
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.heroLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0a0a0a;
+  color: #fff39a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 8px 16px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-bottom: 28px;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+
+.badgeLeaf { font-size: 13px; }
+
+.headline {
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #0a0a0a;
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s 0.35s ease both;
+}
+
+.subtext {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(10,10,10,0.72);
+  margin-bottom: 36px;
+  animation: fadeUp 0.7s 0.45s ease both;
+}
+
+.accent {
+  color: #0a0a0a;
+  font-weight: 600;
+  opacity: 1;
 }
 
 .ctas {
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
+  align-items: center;
   gap: 16px;
-  font-size: 14px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.7s 0.55s ease both;
 }
 
-.ctas a {
+.ctaPrimary {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff39a;
+  background: #0a0a0a;
+  padding: 14px 28px;
+  border-radius: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ctaPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+
+.ctaSecondary {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0a0a0a;
+  border: 2px solid #0a0a0a;
+  padding: 12px 24px;
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.ctaSecondary:hover {
+  background: #0a0a0a;
+  color: #fff39a;
+  transform: translateY(-2px);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(0,0,0,0.15);
+  margin-bottom: 24px;
+  animation: fadeIn 0.7s 0.65s ease both;
+}
+
+.perks {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s 0.7s ease both;
+}
+
+.perk {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.perkCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #0a0a0a;
+  color: #fff39a;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+/* ── Hero Right ── */
+.heroRight {
+  flex: 1;
   display: flex;
   justify-content: center;
+  animation: slideInRight 0.9s 0.3s ease both;
+}
+
+.heroImgWrap {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+}
+
+.heroImg {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  animation: scaleIn 1s 0.4s ease both;
+}
+
+.menuCard {
+  position: absolute;
+  bottom: -20px;
+  left: -32px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  width: 220px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  animation: fadeUp 0.8s 0.8s ease both, cardFloat 4s 2s ease-in-out infinite;
+}
+
+.menuCardTop {
+  display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.menuCardBadge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #0a0a0a;
+  background: #fff39a;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.menuCardAvailable {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0a0a0a;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.menuCardTitle {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+  margin-bottom: 6px;
+}
+
+.menuCardDesc {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #6b6b6b;
+  margin-bottom: 12px;
+}
+
+.menuCardDivider {
+  height: 1px;
+  background: #e5e5e5;
+  margin-bottom: 10px;
+}
+
+.menuCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kcal {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #0a0a0a;
+}
+
+.infoIcon {
+  font-size: 14px;
+  color: #aaa;
   cursor: pointer;
+  transition: color 0.2s;
+}
+.infoIcon:hover { color: #0a0a0a; }
+
+.sectionDivider {
+  width: 100%;
+  height: 1.5px;
+  background: #0a0a0a;
+}
+
+/* ── How It Works ── */
+.how {
+  background: #fff39a;
+  padding: 100px 32px 80px;
+}
+
+.howInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.howLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #0a0a0a;
+  opacity: 0.55;
+  margin-bottom: 20px;
+}
+
+.howHeading {
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #0a0a0a;
+  margin-bottom: 56px;
+  line-height: 1.1;
+}
+
+.howGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.howCard {
+  border: 1.5px solid rgba(0,0,0,0.25);
+  border-radius: 10px;
+  padding: 32px 24px 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: fadeUp 0.6s ease both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.howCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+
+.howIcon {
+  width: 52px;
+  height: 52px;
+  background: #0a0a0a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.howCardTitle {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+  margin-bottom: 10px;
+}
+
+.howCardDesc {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(10,10,10,0.6);
+}
+
+@media (max-width: 768px) {
+  .howGrid { grid-template-columns: repeat(2, 1fr); }
+  .hero { flex-direction: column; padding-top: 80px; }
+  .heroRight { width: 100%; }
+  .menuCard { left: 0; }
+}
+
+@media (max-width: 480px) {
+  .howGrid { grid-template-columns: 1fr; }
+  .navLinks { display: none; }
+}
+
+/* ── This Week's Menu ── */
+.menu {
+  background: #fff39a;
+  padding: 100px 32px;
+}
+
+.menuInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 80px;
+}
+
+.menuLeft {
+  flex: 0 0 280px;
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+
+.menuHeading {
+  font-size: clamp(30px, 3.5vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #0a0a0a;
+}
+
+.menuSubtext {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(10,10,10,0.6);
+}
+
+.menuBtn {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0a0a0a;
+  border: 1.5px solid #0a0a0a;
+  padding: 12px 24px;
+  border-radius: 6px;
   width: fit-content;
-  font-weight: 500;
+  margin-top: 8px;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.menuBtn:hover {
+  background: #0a0a0a;
+  color: #fff39a;
+  transform: translateY(-1px);
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.menuRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.menuRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 16px;
+  border-bottom: 1.5px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  animation: fadeUp 0.6s ease both;
+  transition: background 0.2s ease;
+  border-radius: 4px;
+}
+.menuRow:first-child { border-top: 1.5px solid rgba(0,0,0,0.12); }
+.menuRow:hover { background: rgba(0,0,0,0.04); }
+
+.dayBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 56px;
+  border: 1.5px solid rgba(0,0,0,0.3);
+  border-radius: 6px;
+  flex-shrink: 0;
+  gap: 1px;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.dayBadgeActive {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
+.dayName {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(10,10,10,0.5);
+}
+.dayBadgeActive .dayName { color: rgba(248,227,150,0.7); }
 
-  .intro {
-    gap: 16px;
-  }
+.dayNum {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+  line-height: 1;
+}
+.dayBadgeActive .dayNum { color: #fff39a; }
 
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+.menuThumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
+.menuInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
+
+.menuItemName {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0a0a0a;
+}
+
+.menuTags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0a0a0a;
+  border: 1.5px solid rgba(0,0,0,0.25);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.tagTrending {
+  background: #0a0a0a;
+  color: #fff39a;
+  border-color: #0a0a0a;
+}
+
+.menuArrow {
+  font-size: 22px;
+  font-weight: 300;
+  color: rgba(10,10,10,0.4);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.menuRow:hover .menuArrow {
+  transform: translateX(3px);
+  color: #0a0a0a;
+}
+
+/* ── Trusted By ── */
+.trusted {
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.trustedInner {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 28px 0;
+}
+
+.trustedLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(248,227,150,0.5);
+  white-space: nowrap;
+  padding-left: 48px;
+  flex-shrink: 0;
+}
+
+.marqueeWrap {
+  overflow: hidden;
+  flex: 1;
+}
+
+.marqueeTrack {
+  display: flex;
+  gap: 64px;
+  animation: marquee 18s linear infinite;
+  width: max-content;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff39a;
+  white-space: nowrap;
+  cursor: default;
+  transition: opacity 0.2s;
+}
+.brand:hover { opacity: 0.6; }
