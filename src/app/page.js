@@ -265,7 +265,7 @@ export default function Home() {
           </ul>
           <div className={styles.navActions}>
             <a href="#" className={styles.signIn}>Sign in</a>
-            <a href="#" className={styles.getStarted}>Get started</a>
+            <Link href="/get-started" className={styles.getStarted}>Get started</Link>
           </div>
         </div>
       </nav>
@@ -302,7 +302,7 @@ export default function Home() {
           </p>
 
           <div className={styles.ctas}>
-            <a href="#" className={styles.ctaPrimary} data-magnetic>Get your company code</a>
+            <Link href="/get-started" className={styles.ctaPrimary} data-magnetic>Get your company code</Link>
             <a href="#" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu →</a>
           </div>
 

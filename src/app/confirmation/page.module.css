@@ -1,0 +1,241 @@
+.root {
+  min-height: 100vh;
+  background: var(--yellow);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 60px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.rootVisible { opacity: 1; }
+
+/* ── Floating dots ── */
+.dot {
+  position: absolute;
+  background: rgba(0,0,0,0.15);
+  border-radius: 50%;
+  animation: dotPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes dotPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ── Inner ── */
+.inner {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ── Check icon ── */
+.iconWrap {
+  position: relative;
+  width: 88px; height: 88px;
+  display: flex; align-items: center; justify-content: center;
+  animation: iconIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+@keyframes iconIn {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+.iconRingOuter {
+  position: absolute; inset: -10px;
+  border: 2px solid rgba(0,0,0,0.08);
+  border-radius: 50%;
+  animation: ringExpand 0.8s 0.4s ease both;
+}
+.iconRingInner {
+  position: absolute; inset: -4px;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 50%;
+  animation: ringExpand 0.7s 0.3s ease both;
+}
+@keyframes ringExpand {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.iconCircle {
+  width: 88px; height: 88px;
+  background: var(--black);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.checkSvg {
+  width: 38px; height: 38px;
+  color: var(--yellow);
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: drawCheck 0.5s 0.6s ease forwards;
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Heading ── */
+.headingWrap {
+  text-align: center;
+  animation: fadeUp 0.6s 0.5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.heading {
+  font-size: 26px; font-weight: 900;
+  letter-spacing: -0.03em; color: var(--black);
+  margin-bottom: 6px;
+}
+.emoji {
+  display: inline-block;
+  animation: emojiPop 0.5s 1s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes emojiPop {
+  from { transform: scale(0) rotate(-20deg); }
+  to   { transform: scale(1) rotate(0); }
+}
+.subtext { font-size: 14px; color: rgba(10,10,10,0.6); }
+.subtext strong { color: var(--black); font-weight: 700; }
+
+/* ── Cards ── */
+.card {
+  width: 100%;
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  display: flex; flex-direction: column; gap: 14px;
+  animation: cardIn 0.6s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cardLabel {
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 0.14em; color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Order items */
+.orderItems { display: flex; flex-direction: column; gap: 12px; }
+.orderItem {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  animation: itemIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+.orderItem:last-child { border-bottom: none; padding-bottom: 0; }
+@keyframes itemIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.dayBadge {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 44px; height: 48px;
+  background: var(--black); border-radius: 10px; flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+.card:hover .dayBadge { transform: scale(1.06); }
+.dayName { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,243,154,0.6); }
+.dayDate { font-size: 16px; font-weight: 800; color: var(--yellow); line-height: 1; }
+.mealImg {
+  width: 46px; height: 46px; border-radius: 9px;
+  object-fit: cover; flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.07);
+  transition: transform 0.3s ease;
+}
+.card:hover .mealImg { transform: scale(1.06); }
+.mealInfo { flex: 1; min-width: 0; }
+.mealName { font-size: 14px; font-weight: 700; color: var(--black); display: block; margin-bottom: 3px; }
+.mealMeta { display: flex; gap: 4px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; }
+.tag { color: var(--text-muted); }
+.mealPrice { font-size: 14px; font-weight: 800; color: var(--black); flex-shrink: 0; }
+
+/* Total */
+.totalRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 12px;
+  border-top: 1.5px dashed rgba(0,0,0,0.1);
+}
+.totalLabel { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+.totalAmt { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: var(--black); transition: all 0.1s ease; }
+
+/* Repeat box */
+.repeatBox {
+  background: var(--cream);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.repeatTop { display: flex; align-items: center; gap: 8px; }
+.repeatTitle { font-size: 12px; font-weight: 700; color: var(--black); }
+.repeatNext { font-size: 11px; color: var(--text-muted); padding-left: 22px; }
+.repeatNext strong { color: var(--black); }
+.manageLink {
+  font-size: 11px; font-weight: 700; color: var(--black);
+  text-decoration: none; padding-left: 22px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  width: fit-content;
+  transition: opacity 0.2s;
+}
+.manageLink:hover { opacity: 0.6; }
+
+/* Delivery card */
+.deliveryCard {
+  gap: 16px;
+  animation-delay: 0.65s;
+}
+.deliveryRow { display: flex; align-items: flex-start; gap: 12px; }
+.deliveryIcon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.deliveryTitle { font-size: 12px; font-weight: 700; color: var(--black); margin-bottom: 2px; }
+.deliveryDetail { font-size: 12px; color: var(--text-muted); }
+
+/* Actions */
+.actions {
+  width: 100%; display: flex; flex-direction: column; gap: 10px;
+  animation: fadeUp 0.5s 0.75s ease both;
+}
+.btnPrimary {
+  display: block; width: 100%; padding: 15px;
+  text-align: center; text-decoration: none;
+  font-size: 15px; font-weight: 700;
+  color: var(--yellow); background: var(--black);
+  border: none; border-radius: 100px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.btnPrimary:hover { background: #1a1a1a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+.btnOutline {
+  display: block; width: 100%; padding: 14px;
+  text-align: center; text-decoration: none;
+  font-size: 15px; font-weight: 600;
+  color: var(--black); background: transparent;
+  border: 1.5px solid rgba(0,0,0,0.2); border-radius: 100px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+}
+.btnOutline:hover { border-color: var(--black); background: rgba(0,0,0,0.04); transform: translateY(-1px); }
+
+/* Footer */
+.footNotes {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  animation: fadeUp 0.5s 0.85s ease both;
+}
+.footNote { font-size: 11px; color: var(--text-muted); text-align: center; }
+.emailLink { color: var(--black); font-weight: 600; text-decoration: none; border-bottom: 1px dotted rgba(0,0,0,0.3); }
+.emailLink:hover { border-color: var(--black); }
