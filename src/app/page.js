@@ -162,6 +162,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+
   // ── 2. Number counter on stat card ──
   useEffect(() => {
     const el = statNumRef.current;
@@ -264,7 +265,7 @@ export default function Home() {
             ))}
           </ul>
           <div className={styles.navActions}>
-            <a href="#" className={styles.signIn}>Sign in</a>
+            <Link href="/login" className={styles.signIn}>Sign in</Link>
             <Link href="/get-started" className={styles.getStarted}>Get started</Link>
           </div>
         </div>
@@ -303,7 +304,7 @@ export default function Home() {
 
           <div className={styles.ctas}>
             <Link href="/get-started" className={styles.ctaPrimary} data-magnetic>Get your company code</Link>
-            <a href="#" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu →</a>
+            <Link href="/menu" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu →</Link>
           </div>
 
           <div className={styles.divider} />
@@ -412,7 +413,7 @@ export default function Home() {
               ))}
             </h2>
             <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day. Crafted by professional chefs for the modern worker.</p>
-            <a href="#" className={styles.menuBtn}>See full menu →</a>
+            <Link href="/menu" className={styles.menuBtn}>See full menu →</Link>
           </div>
           <div className={styles.menuRight}>
             {MENU_ITEMS.map((item, i) => (
@@ -480,7 +481,7 @@ export default function Home() {
               <p className={styles.bizCardDesc}>Choose between full company subsidy, partial employee contribution, or direct payment.</p>
             </div>
           </div>
-          <a href="#" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a company code →</a>
+          <Link href="/get-started" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a company code →</Link>
         </div>
       </section>
 
@@ -499,7 +500,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <a href="#" className={styles.subscribeBtn}>Start your subscription</a>
+            <Link href="/get-started" className={styles.subscribeBtn}>Start your subscription</Link>
           </div>
 
           <div className={styles.subscribeImgWrap} data-animate="slide-left">
@@ -575,12 +576,12 @@ export default function Home() {
         <div ref={eatBetterRef} className={styles.eatBetter} aria-hidden="true">EAT BETTER</div>
         <h2 className={styles.finalCtaHeading} data-animate="fade-up">Ready to upgrade your office lunch?</h2>
         <div className={styles.finalCtaBtns} data-animate="fade-up" data-stagger-delay="1">
-          <a href="#" className={styles.finalCtaPrimary}>
+          <Link href="/get-started" className={styles.finalCtaPrimary}>
             Get a company code
             <svg className={styles.ctaArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
             </svg>
-          </a>
+          </Link>
           <a href="#" className={styles.finalCtaSecondary}>Contact us</a>
         </div>
       </section>
@@ -604,14 +605,14 @@ export default function Home() {
           <div className={styles.footerLinks}>
             <div className={styles.footerCol}>
               <p className={styles.footerColTitle}>PLATFORM</p>
-              <a href="#" className={styles.footerLink}>Menu</a>
-              <a href="#" className={styles.footerLink}>For businesses</a>
-              <a href="#" className={styles.footerLink}>Pricing</a>
+              <Link href="/menu" className={styles.footerLink}>Menu</Link>
+              <Link href="/get-started" className={styles.footerLink}>For businesses</Link>
+              <Link href="/get-started" className={styles.footerLink}>Pricing</Link>
             </div>
             <div className={styles.footerCol}>
               <p className={styles.footerColTitle}>COMPANY</p>
               <a href="#" className={styles.footerLink}>About us</a>
-              <a href="#" className={styles.footerLink}>Contact</a>
+              <Link href="/login" className={styles.footerLink}>Contact</Link>
               <a href="#" className={styles.footerLink}>Privacy Policy</a>
             </div>
           </div>
