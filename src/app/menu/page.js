@@ -288,23 +288,25 @@ export default function MenuPage() {
     <div className={styles.root}>
       {/* ── Navbar ── */}
       <nav className={styles.nav}>
-        <Link href="/" className={styles.logoLink}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
-        </Link>
-        <div className={styles.navCenter}>
-          {["How it works", "Menu", "For businesses", "Pricing"].map(l => (
-            <Link key={l} href="/" className={styles.navLink}>{l}</Link>
-          ))}
-        </div>
-        <div className={styles.navRight}>
-          <span className={styles.companyBadge}>Company: {COMPANY}</span>
-          <div className={styles.cartBtn}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            {orderItems.length > 0 && <span className={styles.cartCount}>{orderItems.length}</span>}
+        <div className={styles.navInner}>
+          <Link href="/" className={styles.logoLink}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
+          </Link>
+          <ul className={styles.navCenter}>
+            {["How it works", "Menu", "For businesses", "Pricing"].map(l => (
+              <li key={l}><Link href="/" className={styles.navLink}>{l}</Link></li>
+            ))}
+          </ul>
+          <div className={styles.navRight}>
+            <span className={styles.companyBadge}>Company: {COMPANY}</span>
+            <div className={styles.cartBtn}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              {orderItems.length > 0 && <span className={styles.cartCount}>{orderItems.length}</span>}
+            </div>
           </div>
         </div>
       </nav>
@@ -540,17 +542,6 @@ export default function MenuPage() {
                 Review order
               </button>
 
-              <div className={styles.weeklyRow} onClick={() => setWeekly(w => !w)}>
-                <div className={styles.weeklyRowLeft}>
-                  <div>
-                    <div className={styles.weeklyRowTitle}>Subscribe weekly</div>
-                    <div className={styles.weeklyRowSub}>Repeat every week automatically</div>
-                  </div>
-                </div>
-                <div className={`${styles.toggleSwitch} ${weekly ? styles.toggleSwitchOn : ""}`}>
-                  <div className={styles.toggleKnob} />
-                </div>
-              </div>
 
             </div>
           </div>

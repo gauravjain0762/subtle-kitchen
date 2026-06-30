@@ -27,6 +27,7 @@ export default function ReviewPage() {
   const [checking, setChecking] = useState(false);
   const [promoOpen, setPromoOpen] = useState(false);
   const [promoInput, setPromoInput] = useState("");
+  const [subType, setSubType] = useState("weekly");
   const [payMethod, setPayMethod] = useState("");
 
   const subtotal = items.reduce((s, i) => s + i.price, 0);
@@ -125,27 +126,34 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        {/* Weekly subscription card */}
+        {/* Order frequency */}
         <div className={styles.weeklyCard}>
-          <div className={styles.weeklyCardTop}>
-            <div className={styles.weeklyInfo}>
-              <p className={styles.weeklyTitle}>Weekly subscription active</p>
-              <p className={styles.weeklyDesc}>These meals will repeat every week automatically.</p>
-              <p className={styles.weeklyDays}>Your delivery days: <strong>{DELIVERY_DAYS}</strong></p>
-            </div>
-            <a href="#" className={styles.weeklyChange}>Change</a>
-          </div>
+          <p className={styles.subTypeLabel}>Order frequency</p>
+          {[
+            { id: "weekly",  label: "Weekly subscription", desc: "Repeats every week automatically" },
+            { id: "oneday",  label: "One day off",          desc: "Skip one week, then resumes" },
+            { id: "onetime", label: "One time",             desc: "Single order, no repeat" },
+          ].map(opt => (
+            <label key={opt.id} className={`${styles.subTypeOption} ${subType === opt.id ? styles.subTypeOptionOn : ""}`}>
+              <input type="radio" name="subtype" value={opt.id} checked={subType === opt.id} onChange={() => setSubType(opt.id)} className={styles.subTypeRadio} />
+              <div className={styles.subTypeText}>
+                <span className={styles.subTypeTitle}>{opt.label}</span>
+                <span className={styles.subTypeDesc}>{opt.desc}</span>
+              </div>
+              <span className={`${styles.subTypeRadioCustom} ${subType === opt.id ? styles.subTypeRadioOn : ""}`} />
+            </label>
+          ))}
         </div>
 
         {/* Promo code trigger */}
-        <button className={styles.promoTrigger} onClick={() => { setPromoOpen(true); setPromoInput(""); setPromoError(""); }}>
+        <div className={styles.promoTrigger} role="button" tabIndex={0} onClick={() => { setPromoOpen(true); setPromoInput(""); setPromoError(""); }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
           {promoApplied ? <span className={styles.promoTriggerApplied}>✓ {promo} applied — 15% off!</span> : <span>Have a promo code?</span>}
           {promoApplied
             ? <button className={styles.promoRemoveBtn} onClick={e => { e.stopPropagation(); setPromoApplied(false); setPromo(""); }}>Remove</button>
             : <span className={styles.promoTriggerArrow}>›</span>
           }
-        </button>
+        </div>
 
         {/* Promo modal */}
         {promoOpen && (

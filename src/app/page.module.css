@@ -86,9 +86,9 @@
 .logo:hover { opacity: 0.75; }
 
 .logoImg {
-  height: 64px;
+  height: 88px;
   width: auto;
-  max-width: 240px;
+  max-width: 300px;
   display: block;
   object-fit: contain;
   filter: brightness(0) contrast(2);
@@ -666,37 +666,42 @@
 .menuInner {
   position: relative;
   z-index: 1;
-  max-width: 1280px;
+  max-width: 760px;
   margin: 0 auto;
   display: flex;
-  align-items: flex-start;
-  gap: 80px;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
 }
-.menuLeft {
-  flex: 0 0 300px;
-  position: sticky;
-  top: 100px;
+.menuHeader {
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  gap: 14px;
 }
 .menuHeading {
-  font-size: clamp(36px, 4vw, 56px);
+  font-size: clamp(32px, 4vw, 52px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
   color: var(--black);
 }
-.menuChar {
-  display: inline;
-  animation: fadeUp 0.4s ease both;
-  will-change: opacity, transform;
-}
 .menuSubtext {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.7;
   color: var(--text-muted);
+  text-align: center;
+}
+.menuRight {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.menuFooter {
+  display: flex;
+  justify-content: center;
 }
 .menuBtn {
   display: inline-block;
@@ -704,19 +709,12 @@
   font-weight: 600;
   color: var(--black);
   border: 1.5px solid var(--black);
-  padding: 13px 26px;
+  padding: 13px 32px;
   border-radius: 8px;
   width: fit-content;
-  margin-top: 8px;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .menuBtn:hover { background: #4a4a38; color: var(--white); border-color: #4a4a38; transform: translateY(-1px); }
-
-.menuRight {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
 
 /* Premium row */
 .menuRow {

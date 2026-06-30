@@ -404,19 +404,12 @@ export default function Home() {
       {/* ── This Week's Menu ── */}
       <section id="menu" className={styles.menu}>
         <div className={styles.menuInner}>
-          <div className={styles.menuLeft} data-animate="slide-right">
-            <h2 className={styles.menuHeading}>
-              {MENU_HEADING.split("").map((char, i) => (
-                <span key={i} className={styles.menuChar} style={{ animationDelay: (i * 20) + "ms" }}>
-                  {char === " " ? " " : char}
-                </span>
-              ))}
-            </h2>
-            <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day. Crafted by professional chefs for the modern worker.</p>
-            <Link href="/menu" className={styles.menuBtn}>See full menu</Link>
+          <div className={styles.menuHeader} data-animate="fade-up">
+            <h2 className={styles.menuHeading}>{MENU_HEADING}</h2>
+            <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day.<br />Crafted by professional chefs for the modern worker.</p>
           </div>
           <div className={styles.menuRight}>
-            {MENU_ITEMS.map((item, i) => (
+            {MENU_ITEMS.slice(0, 4).map((item, i) => (
               <div key={i} className={`${styles.menuRow} ${item.active ? styles.menuRowActive : ""}`} data-cursor="true" data-animate="fade-up" data-stagger-delay={i}>
                 <div className={styles.dayPill}>
                   {item.active ? (
@@ -437,9 +430,11 @@ export default function Home() {
                   <span className={styles.macroPill}>{item.kcal} KCAL</span>
                   <span className={styles.macroPill}>{item.protein}G PRO</span>
                 </div>
-                <span className={styles.menuArrow}></span>
               </div>
             ))}
+          </div>
+          <div className={styles.menuFooter} data-animate="fade-up">
+            <Link href="/menu" className={styles.menuBtn}>See full menu</Link>
           </div>
         </div>
       </section>

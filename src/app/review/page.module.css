@@ -16,18 +16,18 @@
 }
 @keyframes navIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
 .logoLink { display: flex; align-items: center; flex-shrink: 0; }
-.logo { height: 38px; width: auto; filter: brightness(0) contrast(2); }
+.logo { height: 88px; width: auto; max-width: 300px; object-fit: contain; filter: brightness(0) contrast(2); }
 
 .navLinks {
   display: flex; align-items: center; gap: 28px;
   flex: 1; justify-content: center;
 }
 .navLink {
-  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  font-size: 14px; font-weight: 500; color: var(--black);
   text-decoration: none; white-space: nowrap;
-  transition: color 0.15s;
+  transition: opacity 0.15s;
 }
-.navLink:hover { color: var(--black); }
+.navLink:hover { opacity: 0.55; }
 .navSpacer { width: 80px; flex-shrink: 0; }
 @media (max-width: 600px) { .navLinks { display: none; } .navSpacer { display: none; } }
 
@@ -158,30 +158,41 @@
   margin-top: 2px;
 }
 
-/* ── Weekly card ── */
+/* ── Order frequency card ── */
 .weeklyCard {
   background: var(--white);
-  border: 1.5px solid rgba(0,0,0,0.1);
-  border-left: 4px solid var(--black);
-  border-radius: 14px;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
   padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 8px;
   animation: cardIn 0.5s 0.25s cubic-bezier(0.16,1,0.3,1) both;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.weeklyCard:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-.weeklyCardTop { display: flex; align-items: flex-start; gap: 12px; }
-.weeklyInfo { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.weeklyTitle { font-size: 13px; font-weight: 700; color: var(--black); }
-.weeklyDesc { font-size: 11px; color: var(--text-muted); }
-.weeklyDays { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.weeklyDays strong { color: var(--black); font-weight: 700; }
-.weeklyChange {
-  font-size: 11px; font-weight: 700;
-  color: var(--black); text-decoration: none;
-  border-bottom: 1px solid rgba(0,0,0,0.25);
-  flex-shrink: 0; transition: opacity 0.2s;
+.subTypeLabel {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+  color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;
 }
-.weeklyChange:hover { opacity: 0.55; }
+.subTypeOption {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 12px; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--cream);
+}
+.subTypeOptionOn { border-color: var(--black); background: var(--white); }
+.subTypeRadio { display: none; }
+.subTypeText { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.subTypeTitle { font-size: 13px; font-weight: 700; color: var(--black); }
+.subTypeDesc { font-size: 11px; color: var(--text-muted); }
+.subTypeRadioCustom {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.2); flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+.subTypeRadioOn {
+  border-color: var(--black);
+  background: radial-gradient(circle, var(--black) 45%, transparent 45%);
+}
 
 /* ── Promo trigger row ── */
 .promoTrigger {

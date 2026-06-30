@@ -10,14 +10,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--white);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  background: var(--yellow);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
   animation: fadeDown 0.5s ease both;
 }
 
@@ -26,22 +20,32 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.logoLink { display: flex; align-items: center; transition: opacity 0.2s; }
-.logoLink:hover { opacity: 0.7; }
-.logo { height: 40px; width: auto; filter: brightness(0) contrast(2); }
+.navInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.logoLink { display: flex; align-items: center; flex-shrink: 0; transition: opacity 0.2s; }
+.logoLink:hover { opacity: 0.75; }
+.logo { height: 88px; width: auto; max-width: 300px; object-fit: contain; filter: brightness(0) contrast(2); }
 
 .navCenter {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 28px;
+  display: flex; align-items: center; gap: 36px;
+  flex: 1; justify-content: center; list-style: none; margin: 0; padding: 0;
 }
 .navLink {
-  font-size: 13px; font-weight: 500; color: var(--black);
+  font-size: 14px; font-weight: 500; color: var(--black);
   text-decoration: none; white-space: nowrap;
   transition: opacity 0.15s;
 }
-.navLink:hover { opacity: 0.5; }
+.navLink:hover { opacity: 0.55; }
 
-.navRight { display: flex; align-items: center; gap: 14px; }
+.navRight { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .companyBadge {
   font-size: 12px;
   font-weight: 700;
@@ -2039,6 +2043,7 @@
   .main { flex-direction: column; }
   .sidebar { width: 100%; position: static; }
   .navCenter { display: none; }
+  .navInner { padding: 0 20px; gap: 16px; }
 }
 @media (max-width: 700px) {
   .dishGrid { grid-template-columns: 1fr; }
