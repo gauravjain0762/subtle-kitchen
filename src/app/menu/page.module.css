@@ -30,16 +30,16 @@
 .logoLink:hover { opacity: 0.7; }
 .logo { height: 40px; width: auto; filter: brightness(0) contrast(2); }
 
-.navCenter { position: absolute; left: 50%; transform: translateX(-50%); }
-.weekBadge {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--black);
-  background: var(--cream);
-  border: 1px solid rgba(0,0,0,0.1);
-  padding: 6px 16px;
-  border-radius: 100px;
+.navCenter {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 28px;
 }
+.navLink {
+  font-size: 13px; font-weight: 500; color: var(--black);
+  text-decoration: none; white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.navLink:hover { opacity: 0.5; }
 
 .navRight { display: flex; align-items: center; gap: 14px; }
 .companyBadge {
@@ -468,13 +468,44 @@
   font-size: 11px;
   color: var(--text-muted);
 }
+.basketAddons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.basketAddonTag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--black);
+  background: rgba(0,0,0,0.06);
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+.basketItemRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
 .basketPrice {
   font-size: 13px;
   font-weight: 700;
   color: var(--black);
-  flex-shrink: 0;
-  margin-left: 8px;
 }
+.basketRemoveBtn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(0,0,0,0.06);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.basketRemoveBtn:hover { background: #fee2e2; color: #dc2626; }
 
 /* Totals */
 .orderTotals {
@@ -1457,15 +1488,23 @@
 .dishClosedBanner {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.62);
+  background: rgba(0,0,0,0.68);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
   color: var(--white);
   text-align: center;
-  padding: 0 16px;
+  padding: 0 20px;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.dishClosedBanner strong {
+  font-size: 13px;
+  font-weight: 800;
+  display: block;
 }
 .dishAddedBadge {
   position: absolute;
@@ -1944,11 +1983,21 @@
   padding: 18px 28px;
   border-top: 1.5px solid rgba(0,0,0,0.08);
   background: rgba(0,0,0,0.03);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
   text-align: center;
   flex-shrink: 0;
+}
+.dishDetailClosedFooter strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.dishDetailClosedFooter p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* Footer */

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
-const WEEK = "30 Jun – 4 Jul 2026";
 const COMPANY = "ACME2024";
 
 const MONTH_IDX = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
@@ -294,7 +293,9 @@ export default function MenuPage() {
           <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
         </Link>
         <div className={styles.navCenter}>
-          <span className={styles.weekBadge}>📅 Week of {WEEK}</span>
+          {["How it works", "Menu", "For businesses", "Pricing"].map(l => (
+            <Link key={l} href="/" className={styles.navLink}>{l}</Link>
+          ))}
         </div>
         <div className={styles.navRight}>
           <span className={styles.companyBadge}>Company: {COMPANY}</span>
@@ -330,11 +331,13 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {/* Day theme label — full width above flex row */}
+        {/* Day date label — full width above flex row */}
         <div className={styles.dayTheme}>
-          <span className={styles.dayThemeLabel}>{WEEKLY_MENU[selectedDay].theme}</span>
-            <span className={styles.dayThemeDate}>{WEEKLY_MENU[selectedDay].date} · {WEEKLY_MENU[selectedDay].dishes.length} dishes</span>
-          </div>
+          <span className={styles.dayThemeLabel}>
+            {WEEKLY_MENU[selectedDay].date.replace(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/, m => ({Jan:"January",Feb:"February",Mar:"March",Apr:"April",May:"May",Jun:"June",Jul:"July",Aug:"August",Sep:"September",Oct:"October",Nov:"November",Dec:"December"})[m])}
+          </span>
+          <span className={styles.dayThemeDate}>{WEEKLY_MENU[selectedDay].dishes.length} dishes</span>
+        </div>
 
       <div className={styles.main}>
         <div className={styles.menuList}>
@@ -363,7 +366,7 @@ export default function MenuPage() {
                     <div className={styles.dishTagsWrap}>
                       {dish.tags.map(t => <span key={t} className={styles.dishTag}>{t}</span>)}
                     </div>
-                    {closed && <div className={styles.dishClosedBanner}>🔒 Order closed · Must order by 10pm the night before</div>}
+                    {closed && <div className={styles.dishClosedBanner}><strong>Ordering Closed</strong><br />This meal can no longer be ordered. Please place orders by 10:00 PM the day before delivery.</div>}
                     {sel && !closed && <div className={styles.dishAddedBadge}>✓ Added</div>}
                   </div>
 
@@ -462,11 +465,7 @@ export default function MenuPage() {
           <div className={styles.sidebarCard}>
             {/* Black header */}
             <div className={styles.sidebarHeader}>
-              <div className={styles.sidebarHeaderLeft}>
-                <h2 className={styles.sidebarTitle}>Your order</h2>
-                <p className={styles.sidebarWeek}>{WEEK}</p>
-              </div>
-              <span className={styles.sidebarCompanyBadge}>{COMPANY}</span>
+              <h2 className={styles.sidebarTitle}>Your order</h2>
             </div>
 
             {/* Body */}
@@ -478,7 +477,10 @@ export default function MenuPage() {
                 </div>
               ) : (
                 <div className={styles.basketList}>
-                  {orderItems.map(({ k, d, dish, portion, qty, price }) => (
+                  {orderItems.map(({ k, d, di, dish, portion, qty, price }) => {
+                    const addonSet = getAddonSet(d, di);
+                    const addonNames = [...addonSet];
+                    return (
                     <div key={k} className={styles.basketItem}>
                       <div className={styles.basketItemLeft}>
                         <span className={styles.basketDay}>{WEEKLY_MENU[d].day}</span>
@@ -488,11 +490,30 @@ export default function MenuPage() {
                             {portion.charAt(0).toUpperCase() + portion.slice(1)}
                             {qty > 1 && ` · ×${qty}`}
                           </p>
+                          {addonNames.length > 0 && (
+                            <div className={styles.basketAddons}>
+                              {addonNames.map(name => (
+                                <span key={name} className={styles.basketAddonTag}>+ {name}</span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <span className={styles.basketPrice}>£{(price * qty).toFixed(2)}</span>
+                      <div className={styles.basketItemRight}>
+                        <span className={styles.basketPrice}>£{(price * qty).toFixed(2)}</span>
+                        <button
+                          className={styles.basketRemoveBtn}
+                          onClick={() => toggleDish(d, di)}
+                          aria-label="Remove"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
 
@@ -521,7 +542,6 @@ export default function MenuPage() {
 
               <div className={styles.weeklyRow} onClick={() => setWeekly(w => !w)}>
                 <div className={styles.weeklyRowLeft}>
-                  <div className={styles.weeklyIcon}>↻</div>
                   <div>
                     <div className={styles.weeklyRowTitle}>Subscribe weekly</div>
                     <div className={styles.weeklyRowSub}>Repeat every week automatically</div>
@@ -649,7 +669,8 @@ export default function MenuPage() {
                 {/* Footer */}
                 {WEEKLY_MENU[d].closed ? (
                   <div className={styles.dishDetailClosedFooter}>
-                    🔒 Order closed · Must order by 10pm the night before
+                    <strong>Ordering Closed</strong>
+                    <p>This meal can no longer be ordered. Please place orders by 10:00 PM the day before delivery.</p>
                   </div>
                 ) : (
                   <div className={styles.dishDetailFooter}>
@@ -693,7 +714,6 @@ export default function MenuPage() {
               {authMode === "signup" && (
                 <input className={styles.authInput} placeholder="Full name" value={authForm.name} onChange={e => setA("name", e.target.value)} />
               )}
-
               <div className={styles.emailRow}>
                 <input
                   className={`${styles.authInput} ${styles.emailInput} ${otpSent ? styles.emailInputSent : ""}`}
