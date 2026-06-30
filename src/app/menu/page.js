@@ -68,9 +68,10 @@ const MEALS = [
 ];
 
 export default function MenuPage() {
-  const [selected, setSelected] = useState({});   // { dayIndex: true }
-  const [portions, setPortions] = useState({});   // { dayIndex: "regular"|"large" }
-  const [addons, setAddons] = useState({});        // { dayIndex: Set<string> }
+  const [selected, setSelected] = useState({});    // { dayIndex: true }
+  const [portions, setPortions] = useState({});    // { dayIndex: "regular"|"large" }
+  const [quantities, setQuantities] = useState({}); // { dayIndex: number }
+  const [addons, setAddons] = useState({});         // { dayIndex: Set<string> }
   const [weekly, setWeekly] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
@@ -148,6 +149,7 @@ export default function MenuPage() {
       return next;
     });
     if (!portions[i]) setPortions(p => ({ ...p, [i]: "regular" }));
+    if (!quantities[i]) setQuantities(q => ({ ...q, [i]: 1 }));
   };
 
   const setPortion = (i, v) => setPortions(p => ({ ...p, [i]: v }));
@@ -164,9 +166,10 @@ export default function MenuPage() {
     meal: MEALS[+i],
     price: getPrice(+i),
     portion: portions[+i] || "regular",
+    qty: quantities[+i] || 1,
   }));
 
-  const subtotal = orderItems.reduce((s, x) => s + x.price, 0);
+  const subtotal = orderItems.reduce((s, x) => s + x.price * x.qty, 0);
   const total = subtotal;
 
   return (
@@ -276,6 +279,21 @@ export default function MenuPage() {
                           </div>
                         </div>
 
+                        {/* Quantity */}
+                        <div className={styles.optionGroup}>
+                          <p className={styles.optionLabel}>Quantity</p>
+                          <select
+                            className={styles.qtySelect}
+                            value={quantities[i] || 1}
+                            onClick={e => e.stopPropagation()}
+                            onChange={e => { e.stopPropagation(); setQuantities(q => ({ ...q, [i]: +e.target.value })); }}
+                          >
+                            {Array.from({ length: 50 }, (_, n) => n + 1).map(n => (
+                              <option key={n} value={n}>{n}</option>
+                            ))}
+                          </select>
+                        </div>
+
                         {/* Add-ons */}
                         <div className={styles.optionGroup}>
                           <p className={styles.optionLabel}>Add-ons</p>
@@ -314,16 +332,19 @@ export default function MenuPage() {
               </div>
             ) : (
               <div className={styles.orderList}>
-                {orderItems.map(({ i, meal, price, portion }) => (
+                {orderItems.map(({ i, meal, price, portion, qty }) => (
                   <div key={i} className={styles.orderItem}>
                     <div className={styles.orderItemLeft}>
                       <span className={styles.orderDay}>{meal.day}</span>
                       <div>
                         <p className={styles.orderItemName}>{meal.name}</p>
-                        <p className={styles.orderItemPortion}>{portion.charAt(0).toUpperCase() + portion.slice(1)} portion</p>
+                        <p className={styles.orderItemPortion}>
+                          {portion.charAt(0).toUpperCase() + portion.slice(1)} portion
+                          {qty > 1 && <span className={styles.orderItemQty}> · x{qty}</span>}
+                        </p>
                       </div>
                     </div>
-                    <span className={styles.orderItemPrice}>£{price.toFixed(2)}</span>
+                    <span className={styles.orderItemPrice}>£{(price * qty).toFixed(2)}</span>
                   </div>
                 ))}
               </div>

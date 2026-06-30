@@ -202,9 +202,9 @@
 /* Modal top bar */
 .modalTopBar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 20px 24px 0;
+  padding: 28px 28px 0;
 }
 
 .closeBtn {
@@ -223,7 +223,7 @@
 }
 .closeBtn:hover { background: #e5ddc8; transform: rotate(90deg); }
 
-.modalHeader { padding: 20px 28px 0; }
+.modalHeader { padding: 0; }
 .modalHeading {
   font-size: 24px;
   font-weight: 800;

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
-const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "India", "Germany", "France", "Singapore"];
 
 function generateCode(name) {
   const prefix = name.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4).padEnd(4, "X");
@@ -31,7 +30,7 @@ export default function GetStarted() {
   const [generatedCode, setGeneratedCode] = useState("");
 
   // Request form state
-  const [form, setForm] = useState({ company: "", address: "", city: "", state: "", zip: "", country: "United States" });
+  const [form, setForm] = useState({ company: "", address: "", city: "", county: "", postcode: "" });
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,7 +44,7 @@ export default function GetStarted() {
 
   const handleRequest = (e) => {
     e.preventDefault();
-    if (!form.company || !form.address || !form.city || !form.state || !form.zip || !form.country) {
+    if (!form.company || !form.address || !form.city || !form.county || !form.postcode) {
       setFormError("Please fill in all fields."); return;
     }
     setFormError("");
@@ -56,7 +55,7 @@ export default function GetStarted() {
     }, 1400);
   };
 
-  const closeModal = () => { setShowModal(false); setGeneratedCode(""); setForm({ company: "", address: "", city: "", state: "", zip: "", country: "United States" }); setFormError(""); setSubmitting(false); };
+  const closeModal = () => { setShowModal(false); setGeneratedCode(""); setForm({ company: "", address: "", city: "", county: "", postcode: "" }); setFormError(""); setSubmitting(false); };
 
   return (
     <div className={styles.root}>
@@ -246,31 +245,23 @@ export default function GetStarted() {
 
                   <div className={styles.field}>
                     <label className={styles.label}>Office / delivery address</label>
-                    <input className={styles.input} placeholder="123 Main Street, Suite 4" value={form.address} onChange={e => set("address", e.target.value)} />
+                    <input className={styles.input} placeholder="12 High Street" value={form.address} onChange={e => set("address", e.target.value)} />
                   </div>
 
                   <div className={styles.row}>
                     <div className={styles.field}>
                       <label className={styles.label}>City</label>
-                      <input className={styles.input} placeholder="New York" value={form.city} onChange={e => set("city", e.target.value)} />
+                      <input className={styles.input} placeholder="London" value={form.city} onChange={e => set("city", e.target.value)} />
                     </div>
                     <div className={`${styles.field} ${styles.fieldSm}`}>
-                      <label className={styles.label}>State</label>
-                      <input className={styles.input} placeholder="NY" value={form.state} onChange={e => set("state", e.target.value)} />
+                      <label className={styles.label}>Town / County</label>
+                      <input className={styles.input} placeholder="Yorkshire" value={form.county} onChange={e => set("county", e.target.value)} />
                     </div>
                   </div>
 
-                  <div className={styles.row}>
-                    <div className={`${styles.field} ${styles.fieldSm}`}>
-                      <label className={styles.label}>ZIP / Postcode</label>
-                      <input className={styles.input} placeholder="10001" value={form.zip} onChange={e => set("zip", e.target.value)} />
-                    </div>
-                    <div className={styles.field}>
-                      <label className={styles.label}>Country</label>
-                      <select className={`${styles.input} ${styles.select}`} value={form.country} onChange={e => set("country", e.target.value)}>
-                        {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                      </select>
-                    </div>
+                  <div className={styles.field}>
+                    <label className={styles.label}>Postcode</label>
+                    <input className={styles.input} placeholder="SW1A 1AA" value={form.postcode} onChange={e => set("postcode", e.target.value)} />
                   </div>
 
                   {formError && <p className={styles.error}>{formError}</p>}
@@ -289,7 +280,7 @@ export default function GetStarted() {
                   <span className={styles.codeText}>{generatedCode}</span>
                   <button className={styles.copyBtn} onClick={() => navigator.clipboard.writeText(generatedCode)}>Copy</button>
                 </div>
-                <p className={styles.codeNote}>📍 Linked to: <strong>{form.address}, {form.city}, {form.state} {form.zip}</strong></p>
+                <p className={styles.codeNote}>📍 Linked to: <strong>{form.address}, {form.city}, {form.county}, {form.postcode}</strong></p>
                 <button className={styles.btnPrimary} onClick={() => { setCode(generatedCode); closeModal(); }}>
                   Use this code now →
                 </button>

@@ -1422,6 +1422,9 @@
   .menuCard { left: 0; }
   .menuInner { flex-direction: column; gap: 40px; }
   .menuLeft { position: static; flex: none; width: 100%; }
+  .menuRight { width: 100%; min-width: 0; overflow: hidden; }
+  .menuRow { overflow: hidden; }
+  .menuInfo { min-width: 0; overflow: hidden; }
   .bizGrid { grid-template-columns: 1fr; }
   .subscribeInner { flex-direction: column; gap: 48px; }
   .subscribeImgWrap { flex: 0 0 auto; width: 100%; }
@@ -1430,6 +1433,55 @@
   .footerLinks { gap: 40px; }
 }
 @media (max-width: 480px) {
-  .howGrid { grid-template-columns: 1fr; }
+  /* Nav */
   .navLinks { display: none; }
+
+  /* Hero */
+  .hero { padding: 80px 20px 48px; gap: 32px; }
+  .headlineLine { white-space: normal; }
+  .subtext { font-size: 15px; }
+  .ctas { flex-direction: column; align-items: stretch; }
+  .ctaPrimary { text-align: center; }
+  .ctaSecondary { text-align: center; }
+  .heroImgClip { width: 100%; margin: 0; height: 260px; }
+
+  /* Perks */
+  .perks { flex-direction: column; align-items: center; gap: 6px; }
+  .perkSep { display: none; }
+
+  /* How it works */
+  .how { padding: 48px 20px 64px; }
+  .howGrid { grid-template-columns: 1fr; }
+
+  /* Menu section */
+  .menu { padding: 48px 20px; }
+  .menuRight { min-width: 0; overflow: hidden; }
+  .menuRow { gap: 10px; padding: 12px 10px; overflow: hidden; }
+  .menuThumbWrap { width: 54px; height: 54px; flex-shrink: 0; }
+  .dayPill { width: 40px; height: 40px; flex-shrink: 0; }
+  .menuInfo { min-width: 0; overflow: hidden; }
+  .menuItemName { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .menuItemDesc { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+  .macros { display: none; }
+  .menuArrow { display: none; }
+
+  /* For businesses */
+  .biz { padding: 48px 20px; }
+
+  /* Subscribe */
+  .subscribe { padding: 48px 20px; }
+  .subscribeImg { height: 260px; }
+
+  /* Testimonials */
+  .testimonials { padding: 48px 20px; }
+  .testimonialCard { padding: 28px 20px; }
+
+  /* Final CTA */
+  .finalCta { padding: 80px 20px; }
+  .eatBetter { font-size: 72px; }
+  .finalCtaPrimary { width: 100%; justify-content: center; }
+  .finalCtaSecondary { width: 100%; text-align: center; }
+
+  /* Footer */
+  .footer { padding: 48px 20px 0; }
 }
