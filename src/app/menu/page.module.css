@@ -56,19 +56,6 @@
   letter-spacing: 0.02em;
 }
 
-.cartBtn {
-  position: relative;
-  width: 40px; height: 40px;
-  background: var(--black);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--yellow);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.cartBtn:hover { transform: scale(1.08); }
 .cartCount {
   position: absolute;
   top: -6px; right: -6px;
@@ -384,10 +371,22 @@
 .sidebarHeader {
   background: var(--black);
   padding: 22px 22px 18px;
+}
+.sidebarTitleRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+}
+.sidebarCartIcon {
+  position: relative;
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--yellow);
+  flex-shrink: 0;
 }
 .sidebarHeaderLeft { display: flex; flex-direction: column; gap: 3px; }
 .sidebarTitle {
@@ -451,15 +450,28 @@
 }
 .basketItemLeft { display: flex; align-items: flex-start; gap: 10px; }
 .basketDay {
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--yellow);
   background: var(--black);
-  padding: 3px 7px;
-  border-radius: 4px;
-  margin-top: 2px;
+  border-radius: 6px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-shrink: 0;
+  min-width: 36px;
+  gap: 1px;
+}
+.basketDayNum {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--yellow);
+}
+.basketDayMon {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .basketDetails { display: flex; flex-direction: column; gap: 2px; }
 .basketName {
