@@ -527,29 +527,50 @@
 }
 .reviewBtnDisabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Weekly toggle */
-.weeklyToggle {
+/* Weekly subscription row */
+.weeklyRow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 11px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--black);
-  background: transparent;
-  border: 1.5px solid rgba(0,0,0,0.15);
-  border-radius: 100px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--cream);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s;
 }
-.weeklyToggle:hover { border-color: var(--black); background: var(--cream); }
-.weeklyToggleActive {
-  background: var(--yellow);
-  border-color: var(--black);
+.weeklyRow:hover { border-color: rgba(0,0,0,0.2); }
+.weeklyRowLeft { display: flex; align-items: center; gap: 10px; }
+.weeklyIcon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--black); color: var(--yellow);
+  font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
+.weeklyRowTitle { font-size: 12px; font-weight: 700; color: var(--black); }
+.weeklyRowSub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* Toggle switch */
+.toggleSwitch {
+  width: 40px; height: 22px; border-radius: 100px;
+  background: rgba(0,0,0,0.15);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggleSwitchOn { background: var(--black); }
+.toggleKnob {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: transform 0.2s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggleSwitchOn .toggleKnob { transform: translateX(18px); }
 
 .sidebarNote {
   font-size: 11px;
@@ -1355,7 +1376,7 @@
 .dayTheme {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
   margin-bottom: 16px;
 }
 .dayThemeLabel {
@@ -1365,8 +1386,12 @@
   color: var(--black);
 }
 .dayThemeDate {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-muted);
+  background: rgba(0,0,0,0.06);
+  padding: 3px 9px;
+  border-radius: 100px;
 }
 
 /* ── Dish Grid ── */

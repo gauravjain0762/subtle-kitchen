@@ -40,14 +40,11 @@ export default function ReviewPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
         </Link>
-        <div className={styles.navSteps}>
-          {["Office", "Order Type", "Menu", "Schedule", "Review"].map((s, i) => (
-            <div key={s} className={`${styles.step} ${i === 4 ? styles.stepActive : styles.stepDone}`}>
-              <span className={styles.stepNum}>{i < 4 ? "✓" : i + 1}</span>
-              <span className={styles.stepLabel}>{s}</span>
-              {i < 4 && <span className={styles.stepLine} />}
-            </div>
-          ))}
+        <div className={styles.navMeta}>
+          <span className={styles.navMetaWeek}>📅 Week of 30 Jun – 4 Jul 2026</span>
+          <span className={styles.navMetaDot} />
+          <span className={styles.navMetaDays}>Mon · Wed</span>
+          <span className={styles.navMetaBadge}>2 meals</span>
         </div>
         <Link href="/" className={styles.exitBtn}>✕ Exit</Link>
       </nav>

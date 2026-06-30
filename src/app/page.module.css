@@ -1417,7 +1417,7 @@
   .howGrid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .hero { flex-direction: column; padding-top: 96px; gap: 48px; }
+  .hero { flex-direction: column; padding-top: 48px; gap: 48px; }
   .heroRight { width: 100%; }
   .menuCard { left: 0; }
   .menuInner { flex-direction: column; gap: 40px; }
@@ -1437,13 +1437,14 @@
   .navLinks { display: none; }
 
   /* Hero */
-  .hero { padding: 80px 20px 48px; gap: 32px; }
+  .hero { padding: 32px 20px 40px; gap: 28px; }
   .headlineLine { white-space: normal; }
   .subtext { font-size: 15px; }
-  .ctas { flex-direction: column; align-items: stretch; }
+  .ctas { flex-direction: column; align-items: stretch; margin-bottom: 16px; }
   .ctaPrimary { text-align: center; }
   .ctaSecondary { text-align: center; }
   .heroImgClip { width: 100%; margin: 0; height: 260px; }
+  .divider { margin-bottom: 12px; }
 
   /* Perks */
   .perks { flex-direction: column; align-items: center; gap: 6px; }

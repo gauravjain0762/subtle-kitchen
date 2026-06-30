@@ -18,18 +18,28 @@
 .logoLink { display: flex; align-items: center; flex-shrink: 0; }
 .logo { height: 38px; width: auto; filter: brightness(0) contrast(2); }
 
-.navSteps { display: flex; align-items: center; flex: 1; justify-content: center; }
-.step { display: flex; align-items: center; gap: 6px; }
-.stepNum {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: #16a34a; color: var(--white);
-  font-size: 10px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.navMeta {
+  display: flex; align-items: center; gap: 10px;
+  flex: 1; justify-content: center; flex-wrap: wrap;
 }
-.stepActive .stepNum { background: var(--black); color: var(--yellow); }
-.stepLabel { font-size: 11px; font-weight: 600; color: #16a34a; white-space: nowrap; }
-.stepActive .stepLabel { color: var(--black); }
-.stepLine { width: 28px; height: 1.5px; background: rgba(0,0,0,0.1); margin: 0 6px; }
+.navMetaWeek {
+  font-size: 13px; font-weight: 600; color: var(--black);
+  white-space: nowrap;
+}
+.navMetaDot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(0,0,0,0.25); flex-shrink: 0;
+}
+.navMetaDays {
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+  white-space: nowrap;
+}
+.navMetaBadge {
+  background: var(--yellow); color: var(--black);
+  font-size: 11px; font-weight: 800;
+  padding: 2px 10px; border-radius: 100px;
+  white-space: nowrap;
+}
 .exitBtn {
   font-size: 12px; font-weight: 600; color: var(--text-muted);
   flex-shrink: 0; text-decoration: none;
@@ -37,7 +47,7 @@
   border: 1px solid rgba(0,0,0,0.1); transition: all 0.2s;
 }
 .exitBtn:hover { color: var(--black); border-color: var(--black); }
-@media (max-width: 700px) { .stepLabel { display: none; } .stepLine { width: 14px; } }
+@media (max-width: 600px) { .navMetaWeek { font-size: 11px; } .navMetaDays { display: none; } }
 
 /* ── Main ── */
 .main {
