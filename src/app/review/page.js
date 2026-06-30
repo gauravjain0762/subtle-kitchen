@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -59,7 +59,7 @@ export default function ReviewPage() {
           <h1 className={styles.heading}>Review your order</h1>
           <p className={styles.addressLine}>
             Delivering to <strong>{ADDRESS}</strong>
-            <a href="#" className={styles.changeLink}>Change →</a>
+            <a href="#" className={styles.changeLink}>Change</a>
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export default function ReviewPage() {
         {/* CTA */}
         <div className={styles.ctaWrap}>
           <button className={styles.checkoutBtn} onClick={() => router.push("/confirmation")}>
-            Proceed to checkout →
+            Proceed to checkout
           </button>
           <p className={styles.ctaNote}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -97,7 +97,7 @@ export default function ConfirmationPage() {
               <span className={styles.repeatTitle}>Repeating every week · Mon · Wed</span>
             </div>
             <p className={styles.repeatNext}>Next charge: 7 Jul · <strong>£{TOTAL.toFixed(2)}</strong></p>
-            <a href="#" className={styles.manageLink}>Manage subscription →</a>
+            <a href="#" className={styles.manageLink}>Manage subscription</a>
           </div>
         </div>
 

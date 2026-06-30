@@ -86,10 +86,18 @@
 }
 
 /* ── Main layout ── */
-.main {
+.mainWrap {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 24px 60px;
+}
+
+.menuListHeader {
+  margin-bottom: 24px;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+
+.main {
   display: flex;
   gap: 28px;
   align-items: flex-start;
@@ -97,7 +105,6 @@
 
 /* ── Menu list ── */
 .menuList { flex: 1; min-width: 0; }
-.menuListHeader { margin-bottom: 24px; animation: fadeUp 0.5s 0.1s ease both; }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -362,19 +369,52 @@
   background: var(--white);
   border: 1.5px solid rgba(0,0,0,0.08);
   border-radius: 20px;
-  padding: 24px 22px;
+  overflow: hidden;
   box-shadow: 0 8px 32px rgba(0,0,0,0.07);
   display: flex;
   flex-direction: column;
-  gap: 16px;
   animation: fadeUp 0.5s 0.3s ease both;
 }
 
-.sidebarHeading {
-  font-size: 17px;
-  font-weight: 800;
+/* Premium black header */
+.sidebarHeader {
+  background: var(--black);
+  padding: 22px 22px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sidebarHeaderLeft { display: flex; flex-direction: column; gap: 3px; }
+.sidebarTitle {
+  font-size: 18px;
+  font-weight: 900;
   letter-spacing: -0.02em;
+  color: var(--white);
+}
+.sidebarWeek {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+}
+.sidebarCompanyBadge {
+  font-size: 9px;
+  font-weight: 800;
   color: var(--black);
+  background: var(--yellow);
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.07em;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* Sidebar body */
+.sidebarBody {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Empty state */
@@ -384,15 +424,16 @@
   padding: 20px;
   text-align: center;
 }
+.emptyIcon { font-size: 28px; margin-bottom: 6px; }
 .emptyText {
   font-size: 13px;
   color: var(--text-muted);
   line-height: 1.6;
 }
 
-/* Order list */
-.orderList { display: flex; flex-direction: column; gap: 10px; }
-.orderItem {
+/* Basket list */
+.basketList { display: flex; flex-direction: column; gap: 10px; }
+.basketItem {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -404,9 +445,8 @@
   from { opacity: 0; transform: translateX(12px); }
   to   { opacity: 1; transform: translateX(0); }
 }
-
-.orderItemLeft { display: flex; align-items: flex-start; gap: 10px; }
-.orderDay {
+.basketItemLeft { display: flex; align-items: flex-start; gap: 10px; }
+.basketDay {
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -417,22 +457,18 @@
   margin-top: 2px;
   flex-shrink: 0;
 }
-.orderItemName {
+.basketDetails { display: flex; flex-direction: column; gap: 2px; }
+.basketName {
   font-size: 12px;
   font-weight: 600;
   color: var(--black);
   line-height: 1.4;
 }
-.orderItemPortion {
+.basketMeta {
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 2px;
 }
-.orderItemQty {
-  font-weight: 700;
-  color: var(--black);
-}
-.orderItemPrice {
+.basketPrice {
   font-size: 13px;
   font-weight: 700;
   color: var(--black);
@@ -1077,14 +1113,865 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
+/* ── Day Picker ── */
+.dayPicker {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  animation: fadeUp 0.4s 0.1s ease both;
+}
+.dayPicker::-webkit-scrollbar { display: none; }
+
+.dayTab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 18px;
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  min-width: 64px;
+}
+.dayTab:hover:not(.dayTabActive):not(.dayTabClosed) {
+  border-color: rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.dayTabActive {
+  background: var(--black);
+  border-color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.dayTabClosed { opacity: 0.4; cursor: not-allowed; }
+
+.dayTabDay {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.dayTabActive .dayTabDay { color: rgba(255,243,154,0.6); }
+
+.dayTabDate {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black);
+  line-height: 1;
+}
+.dayTabActive .dayTabDate { color: var(--yellow); }
+
+.dayTabDot {
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: #16a34a;
+  border-radius: 50%;
+  border: 1.5px solid var(--white);
+}
+.dayTabActive .dayTabDot { border-color: var(--black); }
+
+/* ── Single Meal Card ── */
+.mealCardNew {
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  animation: fadeUp 0.4s 0.15s ease both;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.mealCardAdded {
+  border-color: var(--black);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.mealCardImgWrap {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mealCardImg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.mealCardNew:hover .mealCardImg { transform: scale(1.04); }
+
+.mealCardImgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%);
+}
+.mealCardTagsWrap {
+  position: absolute;
+  bottom: 14px; left: 16px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mealCardTag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  background: var(--yellow);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.mealCardClosedBanner {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.01em;
+}
+
+.mealCardBody {
+  padding: 22px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.mealCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.mealCardTitleWrap { flex: 1; min-width: 0; }
+.mealCardName {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.mealCardDesc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+.mealCardPrice {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--black);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mealCardMacros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 14px 12px;
+  border: 1px solid rgba(0,0,0,0.07);
+}
+.mealCardMacro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.macroVal {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.02em;
+}
+.macroLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.mealCardActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 2px;
+}
+.addDayBtn {
+  flex: 1;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--yellow);
+  background: var(--black);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.addDayBtn:hover {
+  background: #1a1a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.addDayBtnActive {
+  background: #16a34a;
+  color: var(--white);
+}
+.addDayBtnActive:hover { background: #15803d; }
+
+.viewDetailsLink {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+.viewDetailsLink:hover { color: var(--black); }
+
+/* ── Day Theme Label ── */
+.dayTheme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dayThemeLabel {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--black);
+}
+.dayThemeDate {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Dish Grid ── */
+.dishGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  animation: fadeUp 0.4s 0.15s ease both;
+}
+
+/* ── Dish Card ── */
+.dishCard {
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.dishCard:hover {
+  border-color: rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+}
+.dishCardAdded {
+  border-color: var(--black) !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.1) !important;
+}
+
+.dishImgWrap {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+.dishImg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.dishCard:hover .dishImg { transform: scale(1.04); }
+.dishImgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 60%);
+}
+.dishTagsWrap {
+  position: absolute;
+  bottom: 10px; left: 12px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.dishTag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  background: var(--yellow);
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+.dishClosedBanner {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  text-align: center;
+  padding: 0 16px;
+}
+.dishAddedBadge {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--black);
+  background: #86efac;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.02em;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.dishBody {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dishTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.dishName {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  flex: 1;
+  min-width: 0;
+}
+.dishPrice {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--black);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dishDesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.dishMacros {
+  display: flex;
+  gap: 6px;
+}
+.dishMacro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7px 4px;
+  background: var(--cream);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.dishMacroVal {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.01em;
+}
+.dishMacroLabel {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Options toggle */
+.optionsToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--black);
+  background: var(--cream);
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+.optionsToggle:hover { border-color: var(--black); }
+.optionsToggleOpen {
+  background: var(--black);
+  color: var(--yellow);
+  border-color: var(--black);
+}
+.optionsToggleOpen svg { stroke: var(--yellow); }
+
+/* Expanded dish options */
+.dishOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fafaf8;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0,0,0,0.07);
+  animation: dishOptsIn 0.25s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes dishOptsIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* +/- Quantity controls */
+.dishActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+.qtyCtrl {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  border-radius: 100px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.qtyBtn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--black);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.qtyBtn:hover:not(:disabled) { background: var(--cream); }
+.qtyBtn:disabled { color: rgba(0,0,0,0.2); cursor: not-allowed; }
+.qtyNum {
+  min-width: 28px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--black);
+}
+.dishAddBtn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--yellow);
+  background: var(--black);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+.dishAddBtn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+.dishAddBtnActive { background: #16a34a; color: var(--white); }
+.dishAddBtnActive:hover { background: #15803d; }
+
+/* Addon price label */
+.addonPrice {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+/* Image view-details hover hint */
+.dishImgWrap { cursor: pointer; }
+.dishImgViewHint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  background: rgba(0,0,0,0);
+  transition: background 0.2s ease;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+  opacity: 0;
+}
+.dishImgWrap:hover .dishImgViewHint {
+  background: rgba(0,0,0,0.32);
+  opacity: 1;
+}
+
+/* ── Dish Detail Modal ── */
+.dishDetailOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: overlayFade 0.22s ease;
+}
+@keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+
+.dishDetailModal {
+  position: relative;
+  background: var(--white);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.06);
+  animation: dishDetailIn 0.38s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes dishDetailIn {
+  from { transform: scale(0.94) translateY(16px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Close button — top-right of whole modal */
+.dishDetailClose {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 10;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.08);
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--black);
+  font-weight: 700;
+  transition: transform 0.2s, background 0.2s;
+}
+.dishDetailClose:hover { transform: rotate(90deg); background: rgba(0,0,0,0.14); }
+
+/* Left: image */
+.dishDetailLeft {
+  width: 42%;
+  flex-shrink: 0;
+}
+.dishDetailImg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Right: content */
+.dishDetailRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.dishDetailTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 26px 56px 0 28px; /* right padding reserves space for the ✕ button */
+}
+.dishDetailName {
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  flex: 1;
+  min-width: 0;
+}
+.dishDetailPrice {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Tabs */
+.dishDetailTabs {
+  display: flex;
+  border-bottom: 1.5px solid rgba(0,0,0,0.08);
+  padding: 0 28px;
+  margin-top: 14px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.dishDetailTab {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s, border-color 0.2s;
+}
+.dishDetailTab:hover { color: var(--black); }
+.dishDetailTabActive {
+  color: var(--black);
+  border-bottom-color: var(--black);
+}
+
+/* Tab content */
+.dishDetailContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px;
+}
+.dishDetailDesc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.dishDetailTagPills { display: flex; gap: 6px; flex-wrap: wrap; }
+.dishDetailTagPill {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--black);
+  background: var(--yellow);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+/* Nutritional tab */
+.dishDetailNutrition { display: flex; flex-direction: column; }
+.nutritionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.nutritionRowLabel { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+.nutritionRowVal { font-size: 14px; font-weight: 800; color: var(--black); }
+
+/* Allergens tab */
+.dishDetailAllergenBlock {
+  background: rgba(234,179,8,0.08);
+  border: 1px solid rgba(234,179,8,0.2);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.dishDetailAllergenTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.dishDetailAllergenText {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Add-ons section */
+.dishDetailAddonsSection {
+  padding: 14px 28px;
+  border-top: 1.5px solid rgba(0,0,0,0.07);
+  background: #fafaf8;
+  flex-shrink: 0;
+}
+.dishDetailAddonsTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dishDetailAddonList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dishDetailAddonItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+.dishDetailAddonItem:hover { border-color: rgba(0,0,0,0.2); transform: translateX(2px); }
+.dishDetailAddonItemActive {
+  background: #f0fdf4;
+  border-color: #16a34a;
+}
+.dishDetailAddonCheck {
+  width: 18px; height: 18px;
+  border: 1.5px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  transition: all 0.18s ease;
+}
+.dishDetailAddonCheckActive {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: var(--white);
+}
+.dishDetailAddonName {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--black);
+}
+.dishDetailAddonPrice {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.dishDetailAddonItemActive .dishDetailAddonPrice { color: #16a34a; }
+
+/* Portion row */
+.dishDetailPortionRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 28px;
+  border-top: 1.5px solid rgba(0,0,0,0.07);
+  background: #fafaf8;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.dishDetailPortionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Closed footer */
+.dishDetailClosedFooter {
+  padding: 18px 28px;
+  border-top: 1.5px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.03);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Footer */
+.dishDetailFooter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 28px;
+  border-top: 1.5px solid rgba(0,0,0,0.08);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.dishDetailAddBtn {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--yellow);
+  background: var(--black);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.dishDetailAddBtn:hover { background: #222; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.dishDetailAddBtnActive { background: #dc2626; color: var(--white); }
+.dishDetailAddBtnActive:hover { background: #b91c1c; }
+
+@media (max-width: 700px) {
+  .dishDetailModal { flex-direction: column; max-height: 95vh; border-radius: 20px 20px 0 0; }
+  .dishDetailLeft { width: 100%; height: 220px; }
+  .dishDetailClose { top: 12px; right: 12px; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .main { flex-direction: column; }
   .sidebar { width: 100%; position: static; }
   .navCenter { display: none; }
 }
+@media (max-width: 700px) {
+  .dishGrid { grid-template-columns: 1fr; }
+}
 @media (max-width: 600px) {
   .expandedInner { padding-left: 18px; flex-direction: column; gap: 14px; }
-  .main { padding: 20px 16px 40px; }
+  .mainWrap { padding: 20px 16px 40px; }
   .nav { padding: 0 16px; }
+  .dishImgWrap { height: 140px; }
 }

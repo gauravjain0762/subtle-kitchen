@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -304,7 +304,7 @@ export default function Home() {
 
           <div className={styles.ctas}>
             <Link href="/get-started" className={styles.ctaPrimary} data-magnetic>Get your company code</Link>
-            <Link href="/menu" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu →</Link>
+            <Link href="/menu" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu</Link>
           </div>
 
           <div className={styles.divider} />
@@ -413,7 +413,7 @@ export default function Home() {
               ))}
             </h2>
             <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day. Crafted by professional chefs for the modern worker.</p>
-            <Link href="/menu" className={styles.menuBtn}>See full menu →</Link>
+            <Link href="/menu" className={styles.menuBtn}>See full menu</Link>
           </div>
           <div className={styles.menuRight}>
             {MENU_ITEMS.map((item, i) => (
@@ -437,7 +437,7 @@ export default function Home() {
                   <span className={styles.macroPill}>{item.kcal} KCAL</span>
                   <span className={styles.macroPill}>{item.protein}G PRO</span>
                 </div>
-                <span className={styles.menuArrow}>→</span>
+                <span className={styles.menuArrow}></span>
               </div>
             ))}
           </div>
@@ -481,7 +481,7 @@ export default function Home() {
               <p className={styles.bizCardDesc}>Choose between full company subsidy, partial employee contribution, or direct payment.</p>
             </div>
           </div>
-          <Link href="/get-started" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a company code →</Link>
+          <Link href="/get-started" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a company code</Link>
         </div>
       </section>
 

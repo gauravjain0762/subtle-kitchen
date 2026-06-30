@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -154,7 +154,7 @@ export default function AuthPage() {
               )}
 
               <button type="submit" className={`${styles.btnPrimary} ${loading ? styles.btnLoading : ""}`} disabled={loading}>
-                {loading ? <span className={styles.spinner} /> : mode === "login" ? "Sign in →" : mode === "signup" ? "Create account →" : "Send magic link →"}
+                {loading ? <span className={styles.spinner} /> : mode === "login" ? "Sign in" : mode === "signup" ? "Create account" : "Send magic link"}
               </button>
 
               {/* Divider */}
@@ -176,19 +176,19 @@ export default function AuthPage() {
               {mode === "login" && (
                 <p className={styles.switchMode}>
                   Don&apos;t have an account?{" "}
-                  <button type="button" className={styles.switchLink} onClick={() => switchMode("signup")}>Create one →</button>
+                  <button type="button" className={styles.switchLink} onClick={() => switchMode("signup")}>Create one</button>
                 </p>
               )}
               {mode === "signup" && (
                 <p className={styles.switchMode}>
                   Already have an account?{" "}
-                  <button type="button" className={styles.switchLink} onClick={() => switchMode("login")}>Sign in →</button>
+                  <button type="button" className={styles.switchLink} onClick={() => switchMode("login")}>Sign in</button>
                 </p>
               )}
               {mode === "magic" && (
                 <p className={styles.switchMode}>
                   Want to use a password?{" "}
-                  <button type="button" className={styles.switchLink} onClick={() => switchMode("login")}>Sign in →</button>
+                  <button type="button" className={styles.switchLink} onClick={() => switchMode("login")}>Sign in</button>
                 </p>
               )}
 

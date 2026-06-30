@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -121,7 +121,7 @@ export default function GetStarted() {
 
           {/* Actions */}
           <button className={styles.btnPrimary} style={{ borderRadius: "100px" }} onClick={() => setView("order-type")}>
-            Yes, that&apos;s my office →
+            Yes, that&apos;s my office
           </button>
           <button className={styles.btnGhost} onClick={() => setView("code")}>
             That&apos;s not right — try a different code
@@ -158,7 +158,7 @@ export default function GetStarted() {
                 ))}
               </ul>
               <button className={styles.selectBtn} onClick={() => { setOrderType("oneoff"); router.push("/menu"); }}>
-                Select <span>→</span>
+                Select <span></span>
               </button>
             </div>
 
@@ -183,7 +183,7 @@ export default function GetStarted() {
                 ))}
               </ul>
               <button className={`${styles.selectBtn} ${styles.selectBtnDark}`} onClick={() => { setOrderType("weekly"); router.push("/menu"); }}>
-                Select <span>→</span>
+                Select <span></span>
               </button>
             </div>
           </div>
@@ -212,12 +212,12 @@ export default function GetStarted() {
         />
         {error && <p className={styles.error}>{error}</p>}
 
-        <button className={styles.btnPrimary} onClick={handleContinue}>Continue →</button>
+        <button className={styles.btnPrimary} onClick={handleContinue}>Continue</button>
 
         <div className={styles.orDivider}><span>OR</span></div>
 
         <p className={styles.dontHave}>Don&apos;t have a company code?</p>
-        <button className={styles.btnOutline} onClick={() => setShowModal(true)}>Request a company code →</button>
+        <button className={styles.btnOutline} onClick={() => setShowModal(true)}>Request a company code</button>
 
         <p className={styles.secNote}>🔒 Codes are assigned to approved businesses only.</p>
       </div>}
@@ -267,7 +267,7 @@ export default function GetStarted() {
                   {formError && <p className={styles.error}>{formError}</p>}
 
                   <button type="submit" className={`${styles.btnPrimary} ${submitting ? styles.btnLoading : ""}`} disabled={submitting}>
-                    {submitting ? <span className={styles.spinner} /> : "Generate my company code →"}
+                    {submitting ? <span className={styles.spinner} /> : "Generate my company code"}
                   </button>
                 </form>
               </>
@@ -282,7 +282,7 @@ export default function GetStarted() {
                 </div>
                 <p className={styles.codeNote}>📍 Linked to: <strong>{form.address}, {form.city}, {form.county}, {form.postcode}</strong></p>
                 <button className={styles.btnPrimary} onClick={() => { setCode(generatedCode); closeModal(); }}>
-                  Use this code now →
+                  Use this code now
                 </button>
               </div>
             )}
