@@ -15,7 +15,7 @@ const MOCK_COMPANY = {
   address: "12 Business Park, Canary Wharf",
   city: "London",
   postcode: "E14 5AB",
-  delivery: "Free delivery · Weekdays 12pm–2pm",
+  delivery: "Free delivery · Weekdays 12 pm – 2 pm",
 };
 
 export default function GetStartedModal({ onClose }) {
@@ -49,7 +49,7 @@ export default function GetStartedModal({ onClose }) {
           <div className={styles.step}>
             <h2 className={styles.heading}>Enter your company code</h2>
             <p className={styles.subtext}>
-              Your code links <span className={styles.accent}>directly</span> to your office delivery address.
+              Your code links directly to your office delivery address.
             </p>
             <input
               type="text"

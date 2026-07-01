@@ -295,8 +295,8 @@ export default function MenuPage() {
             <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
           </Link>
           <ul className={styles.navCenter}>
-            {["How it works", "Menu", "For businesses", "Pricing"].map(l => (
-              <li key={l}><Link href="/" className={styles.navLink}>{l}</Link></li>
+            {[["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]].map(([l, href]) => (
+              <li key={l}><Link href={href} className={styles.navLink}>{l}</Link></li>
             ))}
           </ul>
           <div className={styles.navRight}>

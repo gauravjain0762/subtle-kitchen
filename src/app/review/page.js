@@ -55,8 +55,8 @@ export default function ReviewPage() {
           <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
         </Link>
         <div className={styles.navLinks}>
-          {["How it works", "Menu", "For businesses", "Pricing"].map(l => (
-            <Link key={l} href="/" className={styles.navLink}>{l}</Link>
+          {[["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]].map(([l, href]) => (
+            <Link key={l} href={href} className={styles.navLink}>{l}</Link>
           ))}
         </div>
         <div className={styles.navSpacer} />

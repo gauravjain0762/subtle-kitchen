@@ -1,0 +1,108 @@
+:root {
+  --yellow: #fff39a;
+  --black: #0a0a0a;
+  --border: rgba(0,0,0,0.08);
+}
+
+.footer {
+  background: var(--black);
+  border-top: 1.5px solid rgba(255,243,154,0.2);
+  padding: 72px 40px 0;
+}
+.footerInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 64px;
+}
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 280px;
+}
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footerLogoDash {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--yellow);
+}
+.footerLogoText {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--yellow);
+}
+.footerTagline {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.32);
+}
+.footerSocial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.32);
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.footerSocial:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  transform: translateY(-2px);
+}
+.footerLinks {
+  display: flex;
+  gap: 80px;
+}
+.footerCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.footerColTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.25);
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+.footerLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+.footerLink:hover { color: var(--yellow); }
+
+.footerBottom {
+  margin-top: 56px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255,243,154,0.1);
+}
+.footerCopy {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .footerInner { flex-direction: column; gap: 40px; }
+  .footerLinks { gap: 40px; }
+  .footer { padding: 48px 20px 0; }
+  .footerCopy { font-size: 10px; padding: 0 16px; letter-spacing: 0; }
+}

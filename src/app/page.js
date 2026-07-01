@@ -9,7 +9,7 @@ import GetStartedModal from "./components/GetStartedModal";
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Menu",         href: "#menu" },
-  { label: "For businesses", href: "#for-businesses" },
+  { label: "Become a Delivery Location", href: "/for-businesses" },
   { label: "Pricing",     href: "#menu" },
 ];
 const HERO_DISHES = [
@@ -480,7 +480,7 @@ export default function Home() {
               <p className={styles.bizCardDesc}>Choose between full company subsidy, partial employee contribution, or direct payment.</p>
             </div>
           </div>
-          <Link href="/get-started" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a company code</Link>
+          <button className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3" onClick={() => setGsOpen(true)}>Get a company code</button>
         </div>
       </section>
 
