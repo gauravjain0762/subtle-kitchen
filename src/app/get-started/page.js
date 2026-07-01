@@ -213,13 +213,6 @@ export default function GetStarted() {
         {error && <p className={styles.error}>{error}</p>}
 
         <button className={styles.btnPrimary} onClick={handleContinue}>Continue</button>
-
-        <div className={styles.orDivider}><span>OR</span></div>
-
-        <p className={styles.dontHave}>Don&apos;t have a company code?</p>
-        <button className={styles.btnOutline} onClick={() => setShowModal(true)}>Request a company code</button>
-
-        <p className={styles.secNote}>🔒 Codes are assigned to approved businesses only.</p>
       </div>}
 
 

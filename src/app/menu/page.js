@@ -248,6 +248,7 @@ export default function MenuPage() {
     });
     if (!portions[k]) setPortions(p => ({ ...p, [k]: "regular" }));
     if (!quantities[k]) setQuantities(q => ({ ...q, [k]: 1 }));
+    setExpandedDish(null);
   };
 
   const setPortion = (d, di, v) => setPortions(p => ({ ...p, [getKey(d, di)]: v }));
@@ -542,7 +543,7 @@ export default function MenuPage() {
               <button
                 className={`${styles.reviewBtn} ${orderItems.length === 0 ? styles.reviewBtnDisabled : ""}`}
                 disabled={orderItems.length === 0}
-                onClick={() => orderItems.length > 0 && setShowAuth(true)}
+                onClick={() => orderItems.length > 0 && router.push("/review")}
               >
                 Review order
               </button>
@@ -689,94 +690,6 @@ export default function MenuPage() {
         );
       })()}
 
-      {/* ── Auth Modal ── */}
-      {showAuth && (
-        <div className={styles.authOverlay} onClick={e => e.target === e.currentTarget && setShowAuth(false)}>
-          <div className={styles.authModal}>
-            <button className={styles.authClose} onClick={() => setShowAuth(false)}>✕</button>
-
-            <div className={styles.authTop}>
-              <div className={styles.authLock}>🔒</div>
-              <h2 className={styles.authTitle}>Sign in to continue</h2>
-              <p className={styles.authSub}>Sign in or create an account to review and place your order.</p>
-            </div>
-
-            <div className={styles.authTabs}>
-              <button className={`${styles.authTab} ${authMode === "login" ? styles.authTabActive : ""}`} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Sign in</button>
-              <button className={`${styles.authTab} ${authMode === "signup" ? styles.authTabActive : ""}`} onClick={() => { setAuthMode("signup"); setAuthError(""); }}>Create account</button>
-            </div>
-
-            <form onSubmit={handleAuth} className={styles.authForm}>
-              {authMode === "signup" && (
-                <input className={styles.authInput} placeholder="Full name" value={authForm.name} onChange={e => setA("name", e.target.value)} />
-              )}
-              <div className={styles.emailRow}>
-                <input
-                  className={`${styles.authInput} ${styles.emailInput} ${otpSent ? styles.emailInputSent : ""}`}
-                  type="email" placeholder="Work email"
-                  value={authForm.email}
-                  onChange={e => setA("email", e.target.value)}
-                  autoFocus
-                />
-                {authMode === "signup" && authForm.email.trim() && (
-                  <button
-                    type="button"
-                    className={`${styles.otpSendBtn} ${otpSent ? styles.otpSendBtnSent : ""} ${otpSending ? styles.otpSendBtnLoading : ""}`}
-                    onClick={sendOtp}
-                    disabled={otpSending || otpSent}
-                  >
-                    {otpSending ? <span className={styles.authSpinnerSm} /> : otpSent ? "✓ Sent" : "Send OTP"}
-                  </button>
-                )}
-              </div>
-
-              {otpSent && (
-                <div className={styles.otpWrap}>
-                  <p className={styles.otpHint}>
-                    Enter the 4-digit code sent to <strong>{authForm.email}</strong>
-                  </p>
-                  <div className={styles.otpBoxes}>
-                    {otp.map((v, i) => (
-                      <input
-                        key={i}
-                        id={`otp-${i}`}
-                        className={`${styles.otpBox} ${otpError ? styles.otpBoxErr : ""}`}
-                        type="text" inputMode="numeric"
-                        maxLength={1} value={v}
-                        onChange={e => handleOtpInput(e.target.value, i)}
-                        onKeyDown={e => handleOtpKey(e, i)}
-                        autoFocus={i === 0}
-                      />
-                    ))}
-                  </div>
-                  {otpError && <p className={styles.otpError}>{otpError}</p>}
-                  <button
-                    type="button"
-                    className={`${styles.authSubmit} ${otpVerifying ? styles.authSubmitLoading : ""}`}
-                    onClick={verifyOtp}
-                    disabled={otpVerifying}
-                  >
-                    {otpVerifying ? <span className={styles.authSpinner} /> : "Verify & continue"}
-                  </button>
-                  <button type="button" className={styles.resendLink} onClick={() => { setOtp(["","","",""]); setOtpSent(false); setTimeout(sendOtp, 100); }}>
-                    Resend code
-                  </button>
-                </div>
-              )}
-
-              {!otpSent && (
-                <>
-                  <input className={styles.authInput} type="password" placeholder="Password" value={authForm.password} onChange={e => setA("password", e.target.value)} />
-                  {authError && <p className={styles.authError}>{authError}</p>}
-                  <button type="submit" className={`${styles.authSubmit} ${authLoading ? styles.authSubmitLoading : ""}`} disabled={authLoading}>
-                    {authLoading ? <span className={styles.authSpinner} /> : authMode === "login" ? "Sign in & review order" : "Create account & continue"}
-                  </button>
-                </>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -157,7 +157,7 @@
   margin: 0 auto;
   padding: 120px 40px 80px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 80px;
 }
 
@@ -360,6 +360,7 @@
   flex: 1;
   display: flex;
   justify-content: center;
+  padding-top: 80px;
   animation: slideInRight 0.9s 0.3s ease both;
 }
 .heroImgWrap {
@@ -846,6 +847,21 @@
   color: var(--black);
   border-color: transparent;
 }
+
+.orderNowBtn {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--black);
+  background: var(--yellow);
+  border-radius: 6px;
+  padding: 7px 14px;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  text-decoration: none;
+}
+.orderNowBtn:hover { opacity: 0.85; transform: translateY(-1px); }
+.menuRow:hover .orderNowBtn { background: var(--white); }
 
 /* Arrow */
 .menuArrow {

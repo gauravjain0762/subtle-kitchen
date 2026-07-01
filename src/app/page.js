@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
 import MarqueeBanner from "./components/MarqueeBanner";
+import GetStartedModal from "./components/GetStartedModal";
 
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
@@ -77,6 +78,7 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
   const [tSlide, setTSlide] = useState(0);
+  const [gsOpen, setGsOpen] = useState(false);
   const heroRef = useRef(null);
   const cursorRef = useRef(null);
   const imgRef = useRef(null);
@@ -249,6 +251,7 @@ export default function Home() {
   }, []);
 
   return (
+    <>
     <div className={styles.root}>
       <div ref={scrollProgressRef} className={styles.scrollProgress} />
 
@@ -266,7 +269,7 @@ export default function Home() {
           </ul>
           <div className={styles.navActions}>
             <Link href="/login" className={styles.signIn}>Sign in</Link>
-            <Link href="/get-started" className={styles.getStarted}>Get started</Link>
+            <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
           </div>
         </div>
       </nav>
@@ -303,7 +306,7 @@ export default function Home() {
           </p>
 
           <div className={styles.ctas}>
-            <Link href="/get-started" className={styles.ctaPrimary} data-magnetic>Get your company code</Link>
+            <button className={styles.ctaPrimary} data-magnetic onClick={() => setGsOpen(true)}>Get your company code</button>
             <Link href="/menu" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu</Link>
           </div>
 
@@ -430,6 +433,7 @@ export default function Home() {
                   <span className={styles.macroPill}>{item.kcal} KCAL</span>
                   <span className={styles.macroPill}>{item.protein}G PRO</span>
                 </div>
+                <Link href="/menu" className={styles.orderNowBtn}>Order now</Link>
               </div>
             ))}
           </div>
@@ -617,5 +621,8 @@ export default function Home() {
         </div>
       </footer>
     </div>
+
+    {gsOpen && <GetStartedModal onClose={() => setGsOpen(false)} />}
+    </>
   );
 }
