@@ -68,9 +68,7 @@
   box-shadow: 0 1px 0 var(--border);
 }
 .navInner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 32px;
   height: 68px;
   display: flex;
   align-items: center;
@@ -132,6 +130,11 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--black);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
   transition: opacity 0.2s;
 }
 .signIn:hover { opacity: 0.55; }

@@ -1,8 +1,10 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import AuthPanel from "../components/AuthPanel";
+import { useAuth } from "../context/AuthContext";
 
 const COMPANY = "ACME2024";
 
@@ -49,6 +51,30 @@ const WEEKLY_MENU = [
         img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",
         addons: [{ name: "Extra salmon", price: 2.50 }, { name: "Side salad", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
       },
+      {
+        name: "Thai Green Curry", price: 9.00,
+        desc: "Fragrant coconut green curry with jasmine rice, Thai basil, bamboo shoots and sugar snap peas.",
+        kcal: 560, protein: 28, carbs: 64, fat: 20,
+        tags: ["Spicy", "Dairy Free"], allergens: "Soy · Shellfish",
+        img: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80",
+        addons: [{ name: "Chicken add-on", price: 1.50 }, { name: "Extra rice", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Crispy Tofu Noodles", price: 8.00,
+        desc: "Wok-tossed rice noodles, crispy golden tofu, pak choi, spring onion and a hoisin-ginger glaze.",
+        kcal: 480, protein: 20, carbs: 70, fat: 14,
+        tags: ["Vegan", "High Fibre"], allergens: "Soy · Gluten · Sesame",
+        img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
+        addons: [{ name: "Extra tofu", price: 1.00 }, { name: "Chilli oil", price: 0.50 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Prawn & Mango Rice", price: 11.00,
+        desc: "Garlic butter king prawns, coconut jasmine rice, fresh mango salsa and crispy shallots.",
+        kcal: 530, protein: 34, carbs: 60, fat: 12,
+        tags: ["Gluten Free", "Low Cal"], allergens: "Shellfish · Dairy",
+        img: "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=600&q=80",
+        addons: [{ name: "Extra prawns", price: 2.00 }, { name: "Side salad", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
     ],
   },
   {
@@ -78,6 +104,30 @@ const WEEKLY_MENU = [
         img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80",
         addons: [{ name: "Extra halloumi", price: 1.50 }, { name: "Side of bread", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
       },
+      {
+        name: "Chicken Shawarma Wrap", price: 8.50,
+        desc: "Spiced chicken shawarma, garlic sauce, pickled turnip and crisp lettuce in a toasted flatbread.",
+        kcal: 590, protein: 38, carbs: 58, fat: 18,
+        tags: ["Popular", "High Protein"], allergens: "Gluten · Dairy · Sesame",
+        img: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&q=80",
+        addons: [{ name: "Extra sauce", price: 0.50 }, { name: "Side chips", price: 1.25 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Lamb Kofta Rice Bowl", price: 10.00,
+        desc: "Herb-spiced lamb koftas, saffron rice, roasted aubergine, tzatziki and pomegranate seeds.",
+        kcal: 680, protein: 44, carbs: 58, fat: 26,
+        tags: ["Chef's Pick", "High Protein"], allergens: "Dairy · Gluten",
+        img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+        addons: [{ name: "Extra kofta", price: 2.00 }, { name: "Extra tzatziki", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Greek Chicken Salad", price: 9.00,
+        desc: "Grilled lemon chicken, mixed greens, feta, kalamata olives, cucumber and house Greek dressing.",
+        kcal: 420, protein: 36, carbs: 18, fat: 22,
+        tags: ["Low Carb", "Gluten Free"], allergens: "Dairy",
+        img: "https://images.unsplash.com/photo-1512852939750-1305098529bf?w=600&q=80",
+        addons: [{ name: "Extra feta", price: 1.00 }, { name: "Warm pita", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
+      },
     ],
   },
   {
@@ -88,7 +138,12 @@ const WEEKLY_MENU = [
         desc: "Pulled chicken in a rich tomato basil sauce with al dente penne and parmesan.",
         kcal: 580, protein: 35, carbs: 78, fat: 14,
         tags: ["Comfort Food"], allergens: "Gluten · Dairy · Eggs",
-        img: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=600&q=80",
+        img: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80",
+        imgs: [
+          "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80",
+          "https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=600&q=80",
+          "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600&q=80",
+        ],
         addons: [{ name: "Extra parmesan", price: 0.50 }, { name: "Garlic bread", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
       },
       {
@@ -97,6 +152,11 @@ const WEEKLY_MENU = [
         kcal: 620, protein: 22, carbs: 82, fat: 18,
         tags: ["Vegetarian", "Popular"], allergens: "Gluten · Dairy",
         img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+        imgs: [
+          "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+          "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80",
+          "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=80",
+        ],
         addons: [{ name: "Extra cheese", price: 1.00 }, { name: "Rocket topping", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
       },
       {
@@ -106,6 +166,35 @@ const WEEKLY_MENU = [
         tags: ["Vegan", "Low Cal"], allergens: "Gluten",
         img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80",
         addons: [{ name: "Extra bread", price: 0.75 }, { name: "Side salad", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Mushroom Risotto", price: 9.50,
+        desc: "Creamy arborio risotto with wild mushrooms, truffle oil, aged parmesan and fresh thyme.",
+        kcal: 540, protein: 18, carbs: 72, fat: 20,
+        tags: ["Vegetarian", "Chef's Pick"], allergens: "Dairy · Gluten",
+        img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80",
+        imgs: [
+          "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+          "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80",
+          "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",
+        ],
+        addons: [{ name: "Extra truffle oil", price: 1.50 }, { name: "Side salad", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Pesto Gnocchi", price: 8.50,
+        desc: "Pillowy potato gnocchi tossed in basil pesto, cherry tomatoes, pine nuts and shaved pecorino.",
+        kcal: 610, protein: 20, carbs: 80, fat: 24,
+        tags: ["Vegetarian"], allergens: "Gluten · Dairy · Nuts",
+        img: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80",
+        addons: [{ name: "Grilled chicken", price: 2.00 }, { name: "Extra pesto", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Prosciutto Arugula Flatbread", price: 9.00,
+        desc: "Thin-crust flatbread with prosciutto crudo, rocket, shaved parmesan and a lemon drizzle.",
+        kcal: 520, protein: 26, carbs: 52, fat: 22,
+        tags: ["Popular", "Low Cal"], allergens: "Gluten · Dairy",
+        img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80",
+        addons: [{ name: "Extra prosciutto", price: 1.75 }, { name: "Burrata add-on", price: 2.00 }, { name: "Soft drink", price: 1.50 }],
       },
     ],
   },
@@ -136,6 +225,30 @@ const WEEKLY_MENU = [
         img: "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=600&q=80",
         addons: [{ name: "Extra halloumi", price: 1.50 }, { name: "Side of crisps", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
       },
+      {
+        name: "Fish Tacos", price: 9.00,
+        desc: "Beer-battered cod, chipotle slaw, pickled jalapeños and avocado crema in soft corn tortillas.",
+        kcal: 570, protein: 30, carbs: 64, fat: 20,
+        tags: ["Popular"], allergens: "Gluten · Fish · Dairy",
+        img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+        addons: [{ name: "Extra taco", price: 1.50 }, { name: "Salsa verde", price: 0.50 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Tandoori Chicken Flatbread", price: 8.50,
+        desc: "Marinated tandoori chicken strips, mint chutney, red onion and cucumber on a warm naan flatbread.",
+        kcal: 590, protein: 40, carbs: 56, fat: 16,
+        tags: ["High Protein"], allergens: "Gluten · Dairy",
+        img: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&q=80",
+        addons: [{ name: "Extra chicken", price: 1.75 }, { name: "Mango chutney", price: 0.50 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Veggie Quesadilla", price: 7.50,
+        desc: "Crispy flour tortilla filled with roasted peppers, black beans, sweetcorn, guacamole and melted cheese.",
+        kcal: 490, protein: 18, carbs: 62, fat: 18,
+        tags: ["Vegetarian", "Low Cal"], allergens: "Gluten · Dairy",
+        img: "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=600&q=80",
+        addons: [{ name: "Sour cream", price: 0.50 }, { name: "Extra guacamole", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
     ],
   },
   {
@@ -165,11 +278,37 @@ const WEEKLY_MENU = [
         img: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&q=80",
         addons: [{ name: "Extra BBQ sauce", price: 0.50 }, { name: "Curly fries", price: 1.75 }, { name: "Soft drink", price: 1.50 }],
       },
+      {
+        name: "Honey Garlic Salmon", price: 11.00,
+        desc: "Pan-seared salmon fillet with honey garlic butter glaze, wilted greens and crushed new potatoes.",
+        kcal: 620, protein: 46, carbs: 44, fat: 26,
+        tags: ["Gluten Free", "Omega-3 Rich"], allergens: "Fish · Dairy",
+        img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
+        addons: [{ name: "Extra potatoes", price: 0.75 }, { name: "Side greens", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Shepherd's Pie", price: 8.50,
+        desc: "Slow-braised lamb mince with root vegetables, rich gravy and a golden mashed potato crust.",
+        kcal: 660, protein: 36, carbs: 66, fat: 24,
+        tags: ["Comfort Food", "Hearty"], allergens: "Dairy · Celery",
+        img: "https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80",
+        addons: [{ name: "Extra gravy", price: 0.50 }, { name: "Mushy peas", price: 0.75 }, { name: "Soft drink", price: 1.50 }],
+      },
+      {
+        name: "Grilled Cheese & Tomato Soup", price: 7.50,
+        desc: "Thick-cut sourdough toastie with mature cheddar and a rich roasted tomato and basil soup.",
+        kcal: 560, protein: 22, carbs: 62, fat: 26,
+        tags: ["Vegetarian", "Comfort Food"], allergens: "Gluten · Dairy",
+        img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80",
+        addons: [{ name: "Extra toastie", price: 2.00 }, { name: "Side salad", price: 1.00 }, { name: "Soft drink", price: 1.50 }],
+      },
     ],
   },
 ];
 
 export default function MenuPage() {
+  const { user, logout } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
   const [selected, setSelected] = useState({});
   const [portions, setPortions] = useState({});
   const [quantities, setQuantities] = useState({});
@@ -295,12 +434,22 @@ export default function MenuPage() {
             <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
           </Link>
           <ul className={styles.navCenter}>
-            {[["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]].map(([l, href]) => (
+            {(user
+              ? [["How it works", "/"], ["Menu", "/menu"], ["Pricing", "/"]]
+              : [["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]]
+            ).map(([l, href]) => (
               <li key={l}><Link href={href} className={styles.navLink}>{l}</Link></li>
             ))}
           </ul>
           <div className={styles.navRight}>
-            <span className={styles.companyBadge}>Company: {COMPANY}</span>
+            {user ? (
+              <>
+                <span className={styles.companyBadge}>{user.companyCode || COMPANY}</span>
+                <button className={styles.navLogout} onClick={logout}>Log out</button>
+              </>
+            ) : (
+              <button className={styles.navSignIn} onClick={() => setAuthOpen(true)}>Sign in</button>
+            )}
           </div>
         </div>
       </nav>
@@ -308,6 +457,10 @@ export default function MenuPage() {
       {/* ── Main ── */}
       <div className={styles.mainWrap}>
         <div className={styles.menuListHeader}>
+          <div className={styles.orderDeadlineBanner}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Order before <strong>10:00 PM</strong> for next-day delivery
+          </div>
           <h1 className={styles.heading}>This week&apos;s menu</h1>
           <p className={styles.subtext}>Pick the days you want lunch. Each day has multiple dishes to choose from.</p>
         </div>
@@ -340,23 +493,19 @@ export default function MenuPage() {
           {/* Dish cards */}
           <div className={styles.dishGrid}>
             {WEEKLY_MENU[selectedDay].dishes.map((dish, di) => {
-              const k = getKey(selectedDay, di);
               const sel = isSelectedDish(selectedDay, di);
               const closed = WEEKLY_MENU[selectedDay].closed;
-              const portion = getPortion(selectedDay, di);
-              const qty = getQty(selectedDay, di);
-              const addonSet = getAddonSet(selectedDay, di);
-              const isExpanded = expandedDish === k;
-              const dishPrice = dish.price
-                + (portion === "large" ? 1.50 : 0)
-                + [...addonSet].reduce((s, n) => s + (dish.addons.find(a => a.name === n)?.price || 0), 0);
 
               return (
                 <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
                   {/* Image — click to open detail modal */}
                   <div className={styles.dishImgWrap} onClick={() => openDetail(selectedDay, di)}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={dish.img} alt={dish.name} className={styles.dishImg} />
+                    {dish.imgs ? (
+                      <DishImgCarousel imgs={dish.imgs} />
+                    ) : (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={dish.img} alt={dish.name} className={styles.dishImg} />
+                    )}
                     <div className={styles.dishImgOverlay} />
                     <div className={styles.dishImgViewHint}>View details</div>
                     <div className={styles.dishTagsWrap}>
@@ -390,64 +539,12 @@ export default function MenuPage() {
                     </div>
 
                     {!closed && (
-                      <>
-                        {/* Options toggle */}
-                        <button
-                          className={`${styles.optionsToggle} ${isExpanded ? styles.optionsToggleOpen : ""}`}
-                          onClick={() => setExpandedDish(isExpanded ? null : k)}
-                        >
-                          <span>Portion & add-ons</span>
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
-                            <path d="M2 4l4 4 4-4"/>
-                          </svg>
-                        </button>
-
-                        {/* Expanded options */}
-                        {isExpanded && (
-                          <div className={styles.dishOptions}>
-                            <div className={styles.optionGroup}>
-                              <p className={styles.optionLabel}>Portion Size</p>
-                              <div className={styles.optionBtns}>
-                                <button className={`${styles.optionBtn} ${portion === "regular" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(selectedDay, di, "regular")}>Regular</button>
-                                <button className={`${styles.optionBtn} ${portion === "large" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(selectedDay, di, "large")}>Large <span className={styles.optionExtra}>(+£1.50)</span></button>
-                              </div>
-                            </div>
-                            <div className={styles.optionGroup}>
-                              <p className={styles.optionLabel}>Add-ons <span className={styles.optionalTag}>Optional</span></p>
-                              <div className={styles.addonBtns}>
-                                {dish.addons.map(a => {
-                                  const active = addonSet.has(a.name);
-                                  return (
-                                    <button
-                                      key={a.name}
-                                      className={`${styles.addonBtn} ${active ? styles.addonBtnActive : ""}`}
-                                      onClick={() => toggleAddon(selectedDay, di, a.name)}
-                                    >
-                                      {active ? "✓ " : "+ "}{a.name}
-                                      <span className={styles.addonPrice}> +£{a.price.toFixed(2)}</span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Bottom: qty + add button */}
-                        <div className={styles.dishActions}>
-                          <div className={styles.qtyCtrl}>
-                            <button className={styles.qtyBtn} onClick={() => decrQty(selectedDay, di)} disabled={qty <= 1}>−</button>
-                            <span className={styles.qtyNum}>{qty}</span>
-                            <button className={styles.qtyBtn} onClick={() => incrQty(selectedDay, di)}>+</button>
-                          </div>
-                          <button
-                            className={`${styles.dishAddBtn} ${sel ? styles.dishAddBtnActive : ""}`}
-                            onClick={() => toggleDish(selectedDay, di)}
-                          >
-                            {sel ? "✓ Added to order" : `Add · £${dishPrice.toFixed(2)}`}
-                          </button>
-                        </div>
-                      </>
+                      <button
+                        className={`${styles.dishAddBtn} ${sel ? styles.dishAddBtnActive : ""}`}
+                        onClick={() => openDetail(selectedDay, di)}
+                      >
+                        {sel ? "✓ Added" : `Add · £${dish.price.toFixed(2)}`}
+                      </button>
                     )}
                   </div>
                 </div>
@@ -571,8 +668,12 @@ export default function MenuPage() {
 
               {/* Left: image */}
               <div className={styles.dishDetailLeft}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={dish.img} alt={dish.name} className={styles.dishDetailImg} />
+                {dish.imgs ? (
+                  <DishImgCarousel imgs={dish.imgs} />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={dish.img} alt={dish.name} className={styles.dishDetailImg} />
+                )}
               </div>
 
               {/* Right: content */}
@@ -690,6 +791,42 @@ export default function MenuPage() {
         );
       })()}
 
+      {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
+    </div>
+  );
+}
+
+function DishImgCarousel({ imgs }) {
+  const [idx, setIdx] = useState(0);
+  const [prev, setPrev] = useState(null);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIdx(i => {
+        const next = (i + 1) % imgs.length;
+        setPrev(i);
+        return next;
+      });
+    }, 2800);
+    return () => clearInterval(t);
+  }, [imgs.length]);
+
+  return (
+    <div className={styles.carousel}>
+      {imgs.map((src, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={i}
+          src={src}
+          alt=""
+          className={`${styles.carouselImg} ${i === idx ? styles.carouselImgActive : i === prev ? styles.carouselImgPrev : ""}`}
+        />
+      ))}
+      <div className={styles.carouselDots}>
+        {imgs.map((_, i) => (
+          <span key={i} className={`${styles.carouselDot} ${i === idx ? styles.carouselDotActive : ""}`} onClick={e => { e.stopPropagation(); setIdx(i); setPrev(null); }} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-/* ── Root ── */
+﻿/* ── Root ── */
 .root {
   min-height: 100vh;
   background: var(--yellow);
@@ -21,9 +21,7 @@
 }
 
 .navInner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 32px;
   height: 68px;
   display: flex;
   align-items: center;
@@ -46,6 +44,20 @@
 .navLink:hover { opacity: 0.55; }
 
 .navRight { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.navGreet { font-size: 13px; font-weight: 600; color: var(--black); opacity: 0.55; }
+.navSignIn {
+  font-size: 14px; font-weight: 500; color: var(--black);
+  background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;
+  transition: opacity 0.2s;
+}
+.navSignIn:hover { opacity: 0.55; }
+.navLogout {
+  font-size: 13px; font-weight: 600; color: var(--black);
+  background: none; border: 1.5px solid rgba(0,0,0,0.15); border-radius: 100px;
+  padding: 5px 14px; cursor: pointer; font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+}
+.navLogout:hover { background: var(--black); color: var(--yellow); border-color: var(--black); }
 .companyBadge {
   font-size: 12px;
   font-weight: 700;
@@ -85,6 +97,24 @@
 .menuListHeader {
   margin-bottom: 24px;
   animation: fadeUp 0.5s 0.1s ease both;
+}
+
+.orderDeadlineBanner {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff8e1;
+  border: 1.5px solid #f59e0b;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+.orderDeadlineBanner strong {
+  color: #92400e;
+  font-weight: 800;
 }
 
 .main {
@@ -1445,6 +1475,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  align-items: start;
   animation: fadeUp 0.4s 0.15s ease both;
 }
 
@@ -1483,6 +1514,8 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 60%);
+  z-index: 2;
+  pointer-events: none;
 }
 .dishTagsWrap {
   position: absolute;
@@ -1490,6 +1523,7 @@
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+  z-index: 3;
 }
 .dishTag {
   font-size: 9px;
@@ -1503,6 +1537,7 @@
 .dishClosedBanner {
   position: absolute;
   inset: 0;
+  z-index: 5;
   background: rgba(0,0,0,0.68);
   display: flex;
   flex-direction: column;
@@ -1524,6 +1559,7 @@
 .dishAddedBadge {
   position: absolute;
   top: 10px; right: 10px;
+  z-index: 5;
   font-size: 10px;
   font-weight: 700;
   color: var(--black);
@@ -1718,6 +1754,7 @@
   pointer-events: none;
   letter-spacing: 0.02em;
   opacity: 0;
+  z-index: 4;
 }
 .dishImgWrap:hover .dishImgViewHint {
   background: rgba(0,0,0,0.32);
@@ -1745,7 +1782,7 @@
   background: var(--white);
   border-radius: 20px;
   width: 100%;
-  max-width: 860px;
+  max-width: 1100px;
   max-height: 90vh;
   display: flex;
   overflow: hidden;
@@ -1779,12 +1816,15 @@
 
 /* Left: image */
 .dishDetailLeft {
-  width: 42%;
+  width: 50%;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
 }
 .dishDetailImg {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -2054,7 +2094,7 @@
   .main { flex-direction: column; }
   .sidebar { width: 100%; position: static; }
   .navCenter { display: none; }
-  .navInner { padding: 0 20px; gap: 16px; }
+  .navInner { padding: 0 16px; gap: 16px; }
 }
 @media (max-width: 900px) {
   .dishGrid { grid-template-columns: repeat(2, 1fr); }
@@ -2067,4 +2107,48 @@
   .mainWrap { padding: 20px 16px 40px; }
   .nav { padding: 0 16px; }
   .dishImgWrap { height: 140px; }
+}
+
+/* ── Dish Image Carousel ── */
+.carousel {
+  position: absolute;
+  inset: 0;
+}
+.carouselImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+.carouselImgActive {
+  opacity: 1;
+}
+.carouselImgPrev {
+  opacity: 0;
+}
+.carouselDots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 6;
+}
+.carouselDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.carouselDotActive {
+  background: #fff;
+  transform: scale(1.3);
 }

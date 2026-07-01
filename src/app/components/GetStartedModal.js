@@ -49,7 +49,7 @@ export default function GetStartedModal({ onClose }) {
           <div className={styles.step}>
             <h2 className={styles.heading}>Enter your company code</h2>
             <p className={styles.subtext}>
-              Your code links directly to your office delivery address.
+              Your code links directly to your workplace delivery address.
             </p>
             <input
               type="text"
@@ -65,10 +65,10 @@ export default function GetStartedModal({ onClose }) {
           </div>
         )}
 
-        {/* ── Step: Confirm office ── */}
+        {/* ── Step: Confirm workplace ── */}
         {view === "confirm" && (
           <div className={styles.step}>
-            <h2 className={styles.heading}>Is this your office?</h2>
+            <h2 className={styles.heading}>Is this your workplace?</h2>
             <p className={styles.subtext}>We found your company linked to <span className={styles.accent}>{code}</span></p>
 
             <div className={styles.companyCard}>
@@ -93,7 +93,7 @@ export default function GetStartedModal({ onClose }) {
               </div>
             </div>
 
-            <button className={styles.btnPrimary} onClick={handleConfirm}>Yes, that&apos;s my office</button>
+            <button className={styles.btnPrimary} onClick={handleConfirm}>Yes, that&apos;s my workplace</button>
             <button className={styles.btnGhost} onClick={() => setView("code")}>Try a different code</button>
           </div>
         )}

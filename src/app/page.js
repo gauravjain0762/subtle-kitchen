@@ -5,10 +5,12 @@ import styles from "./page.module.css";
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
 import MarqueeBanner from "./components/MarqueeBanner";
 import GetStartedModal from "./components/GetStartedModal";
+import AuthPanel from "./components/AuthPanel";
+import { useAuth } from "./context/AuthContext";
 
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
-  { label: "Menu",         href: "#menu" },
+  { label: "Menu",         href: "/menu" },
   { label: "Become a Delivery Location", href: "/for-businesses" },
   { label: "Pricing",     href: "#menu" },
 ];
@@ -54,7 +56,7 @@ const HOW_STEPS = [
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="#0a0a0a" stroke="none"/></svg>,
     title: "Enter your Company code",
-    desc: "Simply use your office's unique code to unlock your custom menu.",
+    desc: "Simply use your workplace's unique code to unlock your custom menu.",
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="#0a0a0a" strokeWidth="2.5"/></svg>,
@@ -79,6 +81,8 @@ export default function Home() {
   const [slide, setSlide] = useState(0);
   const [tSlide, setTSlide] = useState(0);
   const [gsOpen, setGsOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const { user, logout } = useAuth();
   const heroRef = useRef(null);
   const cursorRef = useRef(null);
   const imgRef = useRef(null);
@@ -263,13 +267,24 @@ export default function Home() {
             <img src="/logo.png" alt="Subtle Kitchen" className={styles.logoImg} />
           </Link>
           <ul className={styles.navLinks}>
-            {NAV_LINKS.map((link) => (
+            {(user
+              ? NAV_LINKS.filter(l => l.label !== "Become a Delivery Location")
+              : NAV_LINKS
+            ).map((link) => (
               <li key={link.label}><a href={link.href} className={styles.navLink}>{link.label}</a></li>
             ))}
           </ul>
           <div className={styles.navActions}>
-            <Link href="/login" className={styles.signIn}>Sign in</Link>
-            <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
+            {user ? (
+              <>
+                <button className={styles.getStarted} onClick={logout}>Log out</button>
+              </>
+            ) : (
+              <>
+                <button className={styles.signIn} onClick={() => setAuthOpen(true)}>Sign in</button>
+                <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -300,7 +315,7 @@ export default function Home() {
           </h1>
 
           <p className={styles.subtext}>
-            Nutritious, <span className={styles.accent}>chef-prepared</span> meals delivered directly to your office.
+            Nutritious, <span className={styles.accent}>chef-prepared</span> meals delivered directly to your workplace.
             <br />
             No more uninspired sandwiches or <span className={styles.accent}>expensive solo deliveries.</span>
           </p>
@@ -447,7 +462,7 @@ export default function Home() {
       <section id="for-businesses" className={styles.biz}>
         <div className={styles.bizInner}>
           <p className={styles.bizLabel} data-animate="fade-in">EMPOWER YOUR TEAM</p>
-          <h2 className={styles.bizHeading} data-animate="fade-up" data-stagger-delay="1">Set up your office in minutes.</h2>
+          <h2 className={styles.bizHeading} data-animate="fade-up" data-stagger-delay="1">Set up your workplace in minutes.</h2>
           <div className={styles.bizGrid}>
             <div className={styles.bizCard} data-cursor="true" data-animate="scale-in" data-stagger-delay="0">
               <div className={styles.bizIcon}>
@@ -456,7 +471,7 @@ export default function Home() {
                   <rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/>
                 </svg>
               </div>
-              <h3 className={styles.bizCardTitle}>One code per office</h3>
+              <h3 className={styles.bizCardTitle}>One code per workplace</h3>
               <p className={styles.bizCardDesc}>Distribute a single invite code. No individual account creation needed for employees to browse.</p>
             </div>
             <div className={`${styles.bizCard} ${styles.bizCardDark}`} data-cursor="true" data-animate="scale-in" data-stagger-delay="1">
@@ -467,7 +482,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className={`${styles.bizCardTitle} ${styles.bizCardTitleDark}`}>Full orders dashboard</h3>
-              <p className={`${styles.bizCardDesc} ${styles.bizCardDescDark}`}>Track consumption, manage office locations, and view nutritional analytics in real-time.</p>
+              <p className={`${styles.bizCardDesc} ${styles.bizCardDescDark}`}>Track consumption, manage workplace locations, and view nutritional analytics in real-time.</p>
             </div>
             <div className={styles.bizCard} data-cursor="true" data-animate="scale-in" data-stagger-delay="2">
               <div className={styles.bizIcon}>
@@ -573,7 +588,7 @@ export default function Home() {
       {/* ── Final CTA ── */}
       <section className={styles.finalCta} ref={ctaRef}>
         <div ref={eatBetterRef} className={styles.eatBetter} aria-hidden="true">EAT BETTER</div>
-        <h2 className={styles.finalCtaHeading} data-animate="fade-up">Ready to upgrade your office lunch?</h2>
+        <h2 className={styles.finalCtaHeading} data-animate="fade-up">Ready to upgrade your workplace lunch?</h2>
         <div className={styles.finalCtaBtns} data-animate="fade-up" data-stagger-delay="1">
           <Link href="/get-started" className={styles.finalCtaPrimary}>
             Get a company code
@@ -623,6 +638,7 @@ export default function Home() {
     </div>
 
     {gsOpen && <GetStartedModal onClose={() => setGsOpen(false)} />}
+    {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
     </>
   );
 }

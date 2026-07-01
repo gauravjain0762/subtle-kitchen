@@ -60,7 +60,7 @@ export default function AuthPage() {
             Lunch your team actually looks forward to.
           </h2>
           <p className={styles.leftSubtext}>
-            Join thousands of companies delivering nutritious, chef-prepared meals directly to their offices every week.
+            Join thousands of companies delivering nutritious, chef-prepared meals directly to their workplaces every week.
           </p>
 
           <div className={styles.leftPerks}>

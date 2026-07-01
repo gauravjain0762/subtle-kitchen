@@ -4,6 +4,8 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import GetStartedModal from "../components/GetStartedModal";
 import Footer from "../components/Footer";
+import AuthPanel from "../components/AuthPanel";
+import { useAuth } from "../context/AuthContext";
 
 const WORKSPACES = [
   {
@@ -53,6 +55,8 @@ export default function ForBusinesses() {
   const [active, setActive] = useState(0);
   const [visible, setVisible] = useState(false);
   const [gsOpen, setGsOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const { user, logout } = useAuth();
   const sectionRef = useRef(null);
   const timerRef = useRef(null);
   const total = WORKSPACES.length;
@@ -92,8 +96,16 @@ export default function ForBusinesses() {
             ))}
           </ul>
           <div className={styles.navActions}>
-            <Link href="/login" className={styles.signIn}>Sign in</Link>
-            <Link href="/get-started" className={styles.getStarted}>Get started</Link>
+            {user ? (
+              <>
+                <button className={styles.getStarted} onClick={logout}>Log out</button>
+              </>
+            ) : (
+              <>
+                <button className={styles.signIn} onClick={() => setAuthOpen(true)}>Sign in</button>
+                <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -112,7 +124,7 @@ export default function ForBusinesses() {
             <span className={styles.headingAccent}>for Every Workplace</span>
           </h1>
           <p className={styles.subtext}>
-            We don't just serve offices — we provide fresh, chef-prepared lunches
+            We don't just serve workplaces — we provide fresh, chef-prepared lunches
             for garages, warehouses, workshops, and other Small &amp; Medium Enterprises (SMEs).
           </p>
           <div className={styles.ctas}>
@@ -258,6 +270,7 @@ export default function ForBusinesses() {
     </div>
 
     {gsOpen && <GetStartedModal onClose={() => setGsOpen(false)} />}
+    {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
     </>
   );
 }
