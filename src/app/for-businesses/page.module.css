@@ -10,7 +10,7 @@
 
 .root {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--yellow);
   font-family: 'Inter', sans-serif;
 }
 
@@ -21,6 +21,11 @@
   z-index: 100;
   background: var(--yellow);
   border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.navScrolled {
+  background: var(--white);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
 }
 .navInner {
   padding: 0 32px;
@@ -695,43 +700,4 @@
 }
 .featRowFlip:not(.featRowVis) .featContent {
   transform: translateX(-40px);
-}
-.featContent {
-  transition: opacity 0.85s 0.15s cubic-bezier(0.16,1,0.3,1), transform 0.85s 0.15s cubic-bezier(0.16,1,0.3,1);
-}
-.featRowVis .featContent {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.featHeading {
-  font-size: clamp(26px, 3vw, 38px);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  color: var(--black);
-}
-.featBody {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.75;
-  max-width: 460px;
-}
-.featBtn {
-  display: inline-block;
-  font-size: 14px; font-weight: 700;
-  color: var(--yellow);
-  background: var(--black);
-  border: none; cursor: pointer; font-family: inherit;
-  padding: 13px 26px;
-  border-radius: 10px;
-  text-decoration: none;
-  width: fit-content;
-  transition: opacity 0.2s, transform 0.2s;
-}
-.featBtn:hover { opacity: 0.85; transform: translateY(-2px); }
-
-@media (max-width: 900px) {
-  .featRow, .featRowFlip { flex-direction: column; gap: 36px; padding: 60px 24px; }
-  .featImgWrap { flex: none; width: 100%; }
 }

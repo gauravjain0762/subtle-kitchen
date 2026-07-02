@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -56,6 +56,7 @@ export default function ForBusinesses() {
   const [visible, setVisible] = useState(false);
   const [gsOpen, setGsOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user, logout } = useAuth();
   const sectionRef = useRef(null);
   const timerRef = useRef(null);
@@ -63,6 +64,12 @@ export default function ForBusinesses() {
 
   const next = useCallback(() => setActive(a => (a + 1) % total), [total]);
   const prev = useCallback(() => setActive(a => (a - 1 + total) % total), [total]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     timerRef.current = setInterval(next, 4000);
@@ -84,7 +91,7 @@ export default function ForBusinesses() {
     <div className={styles.root}>
 
       {/* ── Navbar ── */}
-      <nav className={styles.nav}>
+      <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
         <div className={styles.navInner}>
           <Link href="/" className={styles.logoLink}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
