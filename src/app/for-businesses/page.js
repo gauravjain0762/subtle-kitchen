@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import GetStartedModal from "../components/GetStartedModal";
 import Footer from "../components/Footer";
 import AuthPanel from "../components/AuthPanel";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 const WORKSPACES = [
@@ -90,32 +91,7 @@ export default function ForBusinesses() {
     <>
     <div className={styles.root}>
 
-      {/* ── Navbar ── */}
-      <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
-        <div className={styles.navInner}>
-          <Link href="/" className={styles.logoLink}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
-          </Link>
-          <ul className={styles.navLinks}>
-            {[["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]].map(([l, href]) => (
-              <li key={l}><Link href={href} className={styles.navLink}>{l}</Link></li>
-            ))}
-          </ul>
-          <div className={styles.navActions}>
-            {user ? (
-              <>
-                <button className={styles.getStarted} onClick={logout}>Log out</button>
-              </>
-            ) : (
-              <>
-                <button className={styles.signIn} onClick={() => setAuthOpen(true)}>Sign in</button>
-                <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar onSignIn={() => setAuthOpen(true)} />
 
       {/* ── Hero ── */}
       <section className={styles.hero}>

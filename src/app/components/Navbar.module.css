@@ -1,0 +1,235 @@
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--yellow, #fff39a);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.navScrolled {
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+}
+.navInner {
+  padding: 0 32px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Logo */
+.logoLink {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.logoLink:hover { opacity: 0.75; }
+.logo {
+  height: 88px;
+  width: auto;
+  max-width: 300px;
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) contrast(2);
+  transition: filter 0.2s ease;
+}
+.logoLink:hover .logo { filter: brightness(0) contrast(2) opacity(0.65); }
+
+/* Links */
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 36px;
+  flex: 1;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+.navLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black, #0a0a0a);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: opacity 0.2s;
+}
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--black, #0a0a0a);
+  transition: width 0.25s ease;
+}
+.navLink:hover::after { width: 100%; }
+.navLink:hover { opacity: 0.65; }
+
+/* Actions */
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.signIn {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow, #fff39a);
+  background: var(--black, #0a0a0a);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.signIn:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+.getStarted {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow, #fff39a);
+  background: var(--black, #0a0a0a);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.getStarted:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+/* Profile avatar + dropdown */
+.profileWrap {
+  position: relative;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--black, #0a0a0a);
+  border: none;
+  border-radius: 100px;
+  padding: 6px 12px 6px 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease;
+}
+.profileBtn:hover { background: #222; }
+
+.profileInitial {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--yellow, #fff39a);
+  color: var(--black, #0a0a0a);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profileChevron {
+  color: var(--yellow, #fff39a);
+  transition: transform 0.2s ease;
+}
+.profileBtn:hover .profileChevron { transform: rotate(180deg); }
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.09);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  padding: 6px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 200;
+}
+.dropdownOpen {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.dropdownUser {
+  padding: 10px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dropdownUserName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a0a0a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dropdownCompany {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: #0a0a0a;
+  padding: 2px 8px;
+  border-radius: 100px;
+  align-self: flex-start;
+  letter-spacing: 0.04em;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin: 4px 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0a0a0a;
+  text-decoration: none;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+.dropdownItem:hover { background: rgba(0,0,0,0.05); }
+
+.dropdownLogout { color: #dc2626; }
+.dropdownLogout:hover { background: rgba(220,38,38,0.07); }
+
+.companyBadge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--yellow, #fff39a);
+  background: var(--black, #0a0a0a);
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}

@@ -128,16 +128,20 @@
 }
 .signIn {
   font-size: 14px;
-  font-weight: 500;
-  color: var(--black);
-  background: none;
+  font-weight: 600;
+  color: var(--yellow);
+  background: var(--black);
   border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
   cursor: pointer;
-  padding: 0;
   font-family: inherit;
-  transition: opacity 0.2s;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-.signIn:hover { opacity: 0.55; }
+.signIn:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
 .getStarted {
   font-size: 14px;
   font-weight: 600;
@@ -652,6 +656,29 @@
   color: var(--text-muted);
   position: relative;
   z-index: 1;
+}
+
+.howFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+.howLearnMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow);
+  background: var(--black);
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.howLearnMore:hover {
+  background: #222;
+  transform: translateY(-2px);
 }
 
 /* ── This Week's Menu ── */

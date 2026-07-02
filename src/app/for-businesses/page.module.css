@@ -50,11 +50,13 @@
 
 .navActions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
 .signIn {
-  font-size: 14px; font-weight: 500; color: var(--black);
-  background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;
-  transition: opacity 0.2s;
+  font-size: 14px; font-weight: 600;
+  color: var(--yellow); background: var(--black);
+  border: none; border-radius: 8px;
+  padding: 10px 22px; cursor: pointer; font-family: inherit;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-.signIn:hover { opacity: 0.6; }
+.signIn:hover { background: #222; transform: translateY(-1px); }
 .getStarted {
   font-size: 14px; font-weight: 700;
   background: var(--black); color: var(--yellow);

@@ -1563,7 +1563,7 @@
   font-size: 10px;
   font-weight: 700;
   color: var(--black);
-  background: #86efac;
+  background: #C5C6C7;
   padding: 4px 10px;
   border-radius: 100px;
   letter-spacing: 0.02em;
@@ -1728,7 +1728,7 @@
   white-space: nowrap;
 }
 .dishAddBtn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
-.dishAddBtnActive { background: #16a34a; color: var(--white); }
+.dishAddBtnActive { background: #C5C6C7; color: var(--black); }
 .dishAddBtnActive:hover { background: #15803d; }
 
 /* Addon price label */

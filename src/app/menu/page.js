@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import AuthPanel from "../components/AuthPanel";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 const COMPANY = "ACME2024";
@@ -378,6 +379,7 @@ export default function MenuPage() {
   const getAddonSet = (d, di) => addons[getKey(d, di)] || new Set();
 
   const toggleDish = (d, di) => {
+    if (!user) { setAuthOpen(true); return; }
     if (WEEKLY_MENU[d].closed) return;
     const k = getKey(d, di);
     setSelected(s => {
@@ -426,33 +428,7 @@ export default function MenuPage() {
 
   return (
     <div className={styles.root}>
-      {/* ── Navbar ── */}
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link href="/" className={styles.logoLink}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
-          </Link>
-          <ul className={styles.navCenter}>
-            {(user
-              ? [["How it works", "/"], ["Menu", "/menu"], ["Pricing", "/"]]
-              : [["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]]
-            ).map(([l, href]) => (
-              <li key={l}><Link href={href} className={styles.navLink}>{l}</Link></li>
-            ))}
-          </ul>
-          <div className={styles.navRight}>
-            {user ? (
-              <>
-                <span className={styles.companyBadge}>{user.companyCode || COMPANY}</span>
-                <button className={styles.navLogout} onClick={logout}>Log out</button>
-              </>
-            ) : (
-              <button className={styles.navSignIn} onClick={() => setAuthOpen(true)}>Sign in</button>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar onSignIn={() => setAuthOpen(true)} />
 
       {/* ── Main ── */}
       <div className={styles.mainWrap}>

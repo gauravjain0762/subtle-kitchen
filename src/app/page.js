@@ -6,10 +6,10 @@ import { useScrollAnimation } from "./hooks/useScrollAnimation";
 import MarqueeBanner from "./components/MarqueeBanner";
 import GetStartedModal from "./components/GetStartedModal";
 import AuthPanel from "./components/AuthPanel";
-import { useAuth } from "./context/AuthContext";
+import Navbar from "./components/Navbar";
 
 const NAV_LINKS = [
-  { label: "How it works", href: "#how-it-works" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "Menu",         href: "/menu" },
   { label: "Become a Delivery Location", href: "/for-businesses" },
   { label: "Pricing",     href: "#menu" },
@@ -77,12 +77,10 @@ const HOW_STEPS = [
 
 export default function Home() {
   useScrollAnimation();
-  const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
   const [tSlide, setTSlide] = useState(0);
   const [gsOpen, setGsOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const { user, logout } = useAuth();
   const heroRef = useRef(null);
   const cursorRef = useRef(null);
   const imgRef = useRef(null);
@@ -94,7 +92,6 @@ export default function Home() {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 10);
       if (scrollProgressRef.current) {
         const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
         scrollProgressRef.current.style.width = pct + "%";
@@ -259,35 +256,7 @@ export default function Home() {
     <div className={styles.root}>
       <div ref={scrollProgressRef} className={styles.scrollProgress} />
 
-      {/* ── Navbar ── */}
-      <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
-        <div className={styles.navInner}>
-          <Link href="/" className={styles.logo}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Subtle Kitchen" className={styles.logoImg} />
-          </Link>
-          <ul className={styles.navLinks}>
-            {(user
-              ? NAV_LINKS.filter(l => l.label !== "Become a Delivery Location")
-              : NAV_LINKS
-            ).map((link) => (
-              <li key={link.label}><a href={link.href} className={styles.navLink}>{link.label}</a></li>
-            ))}
-          </ul>
-          <div className={styles.navActions}>
-            {user ? (
-              <>
-                <button className={styles.getStarted} onClick={logout}>Log out</button>
-              </>
-            ) : (
-              <>
-                <button className={styles.signIn} onClick={() => setAuthOpen(true)}>Sign in</button>
-                <button className={styles.getStarted} onClick={() => setGsOpen(true)}>Get started</button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar onSignIn={() => setAuthOpen(true)} />
 
       {/* ── Hero ── */}
       <section className={styles.hero} ref={heroRef}>
@@ -413,6 +382,12 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className={styles.howFooter} data-animate="fade-up">
+            <Link href="/how-it-works" className={styles.howLearnMore}>
+              Learn more
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
           </div>
         </div>
       </section>

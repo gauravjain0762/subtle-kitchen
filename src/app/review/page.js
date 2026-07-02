@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import AuthPanel from "../components/AuthPanel";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 const DELIVERY_ADDRESS = {
@@ -37,6 +39,7 @@ export default function ReviewPage() {
   const [subType, setSubType] = useState("weekly");
   const [payMethod, setPayMethod] = useState("");
   const { user, logout } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
 
   const subtotal = items.reduce((s, i) => s + i.price, 0);
   const discount = promoApplied ? subtotal * 0.15 : 0;
@@ -56,31 +59,7 @@ export default function ReviewPage() {
 
   return (
     <div className={styles.root}>
-      {/* ── Navbar ── */}
-      <nav className={styles.nav}>
-        <Link href="/" className={styles.logoLink}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
-        </Link>
-        <div className={styles.navLinks}>
-          {(user
-            ? [["How it works", "/"], ["Menu", "/menu"], ["Pricing", "/"]]
-            : [["How it works", "/"], ["Menu", "/menu"], ["Become a Delivery Location", "/for-businesses"], ["Pricing", "/"]]
-          ).map(([l, href]) => (
-            <Link key={l} href={href} className={styles.navLink}>{l}</Link>
-          ))}
-        </div>
-        <div className={styles.navRight}>
-          {user ? (
-            <>
-              {user.companyCode && <span className={styles.navCompanyBadge}>{user.companyCode}</span>}
-              <button className={styles.navLogout} onClick={logout}>Log out</button>
-            </>
-          ) : (
-            <div className={styles.navSpacer} />
-          )}
-        </div>
-      </nav>
+      <Navbar onSignIn={() => setAuthOpen(true)} />
 
       {/* ── Two-column layout ── */}
       <div className={styles.twoCol}>
@@ -268,5 +247,6 @@ export default function ReviewPage() {
         </div>
       </div>
     </div>
+    {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
   );
 }
