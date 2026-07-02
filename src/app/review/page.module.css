@@ -551,3 +551,87 @@
   border-color: var(--black);
   background: radial-gradient(circle, var(--black) 45%, transparent 45%);
 }
+
+/* ── Mobile responsive ── */
+@media (max-width: 768px) {
+  .twoCol {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  /* Left panel — full width, no fixed scroll */
+  .addrPanel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1.5px solid rgba(0,0,0,0.09);
+    padding: 24px 20px;
+    overflow-y: visible;
+    justify-content: flex-start;
+  }
+
+  .deliveryInfo { width: 100%; }
+
+  .deliveryInfoLogo {
+    height: 56px;
+    margin-bottom: 14px;
+  }
+
+  .deliveryAddrCard {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Time chips wrap better on small screens */
+  .timeChips { gap: 6px; }
+  .timeChip { font-size: 12px; padding: 7px 12px; }
+
+  /* Right panel — full width, no fixed scroll */
+  .main {
+    overflow-y: visible;
+    padding: 20px 16px 100px;
+    gap: 14px;
+  }
+
+  .heading { font-size: 22px; }
+
+  /* Order items — tighter on mobile */
+  .orderItem { padding: 12px 14px; }
+  .itemImg { width: 42px; height: 42px; }
+  .dayBadge { width: 38px; height: 38px; }
+  .dayBadgeNum { font-size: 13px; }
+
+  /* Totals */
+  .totals { padding: 12px 14px; }
+  .grandTotal { font-size: 16px; }
+
+  /* Frequency card */
+  .weeklyCard { padding: 14px; }
+  .subTypeOption { padding: 10px 12px; }
+
+  /* Promo */
+  .promoTrigger { padding: 12px 14px; }
+
+  /* Payment */
+  .payCard { padding: 14px; }
+  .payOption { padding: 10px 12px; }
+
+  /* Checkout button — sticky at bottom */
+  .ctaWrap {
+    position: sticky;
+    bottom: 0;
+    background: var(--cream);
+    padding: 12px 0 16px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 10;
+  }
+  .checkoutBtn { font-size: 15px; padding: 13px 18px; }
+}
+
+@media (max-width: 400px) {
+  .addrPanel { padding: 20px 14px; }
+  .main { padding: 16px 12px 100px; }
+  .timeChip { font-size: 11px; padding: 6px 10px; }
+}

@@ -376,7 +376,7 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-.timeInput {
+.timeSelect {
   flex: 1;
   margin: 0;
 }
@@ -694,9 +694,18 @@
   .formWrap { padding: 36px 24px 80px; }
   .timeGrid { grid-template-columns: repeat(3, 1fr); }
   .btnPrimary { position: sticky; bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+  /* Stack all side-by-side rows on mobile */
+  .row { flex-direction: column; gap: 14px; }
+
+  /* Selects: larger touch target, prevent iOS font-size zoom */
+  .select {
+    font-size: 16px;
+    padding: 15px 40px 15px 16px;
+    min-height: 52px;
+  }
 }
 @media (max-width: 520px) {
-  .row { flex-direction: column; gap: 18px; }
   .mealTypeGroup { grid-template-columns: 1fr; }
   .timeGrid { grid-template-columns: repeat(2, 1fr); }
   .countryGroup { flex-direction: column; }

@@ -129,7 +129,7 @@ const QUALITY = [
 const TIMELINE = [
   { emoji: "📱", time: "Before 10 PM", label: "You place your order online" },
   { emoji: "🌅", time: "Next morning", label: "Fresh cooking begins at dawn" },
-  { emoji: "🍱", time: "Lunchtime", label: "Hot delivery arrives at your workplace" },
+  { emoji: "🍱", time: "Lunch time", label: "Hot delivery arrives at your workplace" },
 ];
 
 export default function HowItWorksPage() {

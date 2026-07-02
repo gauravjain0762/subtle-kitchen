@@ -200,7 +200,7 @@ export default function ForBusinesses() {
                   </svg>
                 </div>
                 <p className={styles.deliveryCardTitle}>Delivery Limit</p>
-                <p className={styles.deliveryCardSub}>We serve within a 15km radius</p>
+                <p className={styles.deliveryCardSub}>We serve within a 15 km radius</p>
               </div>
             </div>
           </div>

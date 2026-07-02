@@ -975,3 +975,57 @@
   .statsRow { grid-template-columns: repeat(2, 1fr); }
   .navLinks { display: none; }
 }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  /* Hero: single column, hide image panel */
+  .heroWrap {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .heroLeft {
+    padding: 52px 24px 60px;
+    min-height: calc(100svh - 68px);
+  }
+  .heroRight { display: none; }
+  .heroHeading { margin-bottom: 20px; }
+  .heroSub { margin-bottom: 28px; font-size: 14px; }
+  .heroStats {
+    margin-top: 32px;
+    padding-top: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .heroStatVal { font-size: 17px; }
+  .heroActions { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .heroCta { width: 100%; text-align: center; padding: 14px 20px; }
+
+  /* Steps */
+  .steps { padding: 64px 20px; }
+  .stepsGrid { grid-template-columns: 1fr; gap: 16px; }
+  .stepsSub { margin-bottom: 36px; font-size: 14px; }
+  .stepImgWrap { height: 180px; }
+  .stepBody { padding: 20px 20px 24px; }
+
+  /* Deadline */
+  .deadline { padding: 64px 20px; }
+  .deadlineInner { grid-template-columns: 1fr; gap: 40px; }
+  .deadlineRight { display: none; }
+  .deadlineSub { font-size: 14px; margin-bottom: 28px; }
+
+  /* Quality */
+  .quality { padding: 64px 20px; }
+  .qualityGrid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 40px; }
+  .qualitySub { margin-bottom: 36px; font-size: 14px; }
+  .qualityCard { padding: 24px 20px; }
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+  .stat { padding: 24px 16px; }
+  .statVal { font-size: 26px; }
+
+  /* CTA */
+  .cta { padding: 80px 20px; }
+  .ctaHeading { white-space: normal; font-size: clamp(36px, 11vw, 60px); }
+  .ctaSub { font-size: 14px; margin-bottom: 32px; }
+  .ctaActions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .ctaPrimary, .ctaSecondary { text-align: center; padding: 15px 24px; }
+}

@@ -5,6 +5,18 @@ import styles from "./page.module.css";
 
 const EMPLOYEE_OPTIONS = ["1 – 10", "11 – 25", "26 – 50", "51 – 100", "101 – 250", "250+"];
 const PREMISE_OPTIONS  = ["Office", "Warehouse", "Garage / Workshop", "School", "Retail", "Other"];
+const DELIVERY_TIMES   = [
+  "10:00 AM", "10:30 AM",
+  "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM",
+  "1:00 PM",  "1:30 PM",
+  "2:00 PM",  "2:30 PM",
+  "3:00 PM",  "3:30 PM",
+  "4:00 PM",  "4:30 PM",
+  "5:00 PM",  "5:30 PM",
+  "6:00 PM",  "6:30 PM",
+  "7:00 PM",
+];
 const MEAL_TYPES = [
   { value: "standard",   label: "Standard",   desc: "Home-style portions, balanced nutrition",      note: "Orders must be placed by 10 PM the night before delivery." },
   { value: "commercial", label: "Commercial",  desc: "Larger portions for physical workplaces",      note: "Minimum order quantity of 100 meals per delivery." },
@@ -162,7 +174,7 @@ export default function GetWorkspaceCodePage() {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                     </svg>
                     <span className={styles.addressText}>
-                      {workspace.address1 || <span className={styles.addressPlaceholder}>Click to pick address on Google Maps</span>}
+                      {workspace.address1 || <span className={styles.addressPlaceholder}>Enter your address or Click to pick address</span>}
                     </span>
                     <span className={styles.addressOpenBadge}>Open Maps ↗</span>
                   </div>
@@ -207,21 +219,22 @@ export default function GetWorkspaceCodePage() {
                 <div className={styles.field} style={{ "--fi": 7 }}>
                   <label className={styles.label}>
                     Lunch delivery time <span className={styles.req}>*</span>
-                    <span className={styles.opt}> — type e.g. 12:30 PM</span>
                   </label>
 
                   <div className={styles.timeSlotsWrap}>
                     {workspace.deliveryTimes.map((t, i) => (
                       <div key={i} className={styles.timeSlotRow} style={{ animationDelay: (i * 0.06) + "s" }}>
-                        <span className={styles.timeSlotTag}>
-                          Break {i + 1}
-                        </span>
-                        <input
-                          className={`${styles.input} ${styles.timeInput} ${i === 0 && errors.deliveryTimes ? styles.inputError : ""}`}
-                          placeholder="e.g. 12:30 PM"
+                        <span className={styles.timeSlotTag}>Break {i + 1}</span>
+                        <select
+                          className={`${styles.input} ${styles.select} ${styles.timeSelect} ${i === 0 && errors.deliveryTimes ? styles.inputError : ""}`}
                           value={t}
                           onChange={e => updateTime(i, e.target.value)}
-                        />
+                        >
+                          <option value="">Select time…</option>
+                          {DELIVERY_TIMES.map(time => (
+                            <option key={time} value={time}>{time}</option>
+                          ))}
+                        </select>
                         {i > 0 && (
                           <button type="button" className={styles.timeRemoveBtn} onClick={() => removeTime(i)} aria-label="Remove">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
