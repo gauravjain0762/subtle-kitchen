@@ -8,7 +8,7 @@ const NAV_LINKS = [
   { label: "How it works",              href: "/how-it-works" },
   { label: "Order now",                  href: "/menu" },
   { label: "Become a Delivery Location", href: "/for-businesses" },
-  { label: "Pricing",                   href: "/#pricing" },
+  { label: "Pricing",                   href: "/#pricing", disabled: true },
 ];
 
 function ProfileMenu({ user, logout }) {
@@ -122,7 +122,10 @@ export default function Navbar({ onSignIn }) {
         <ul className={styles.navLinks}>
           {links.map(link => (
             <li key={link.label}>
-              <Link href={link.href} className={styles.navLink}>{link.label}</Link>
+              {link.disabled
+                ? <span className={`${styles.navLink} ${styles.navLinkDisabled}`}>{link.label}</span>
+                : <Link href={link.href} className={styles.navLink}>{link.label}</Link>
+              }
             </li>
           ))}
         </ul>

@@ -280,9 +280,10 @@ export default function ProfilePage() {
               )}
             </p>
           </div>
-          <button className={styles.editProfileBtn} onClick={() => setEditOpen(true)}>
-            EDIT PROFILE
-          </button>
+          <div className={styles.workspaceCodeBlock}>
+            <span className={styles.workspaceCodeLabel}>Workspace Code</span>
+            <span className={styles.workspaceCodeValue}>{user?.companyCode || "SK-2024-ARPIT"}</span>
+          </div>
         </div>
       </div>
 
