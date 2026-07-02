@@ -673,15 +673,32 @@
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
-  .root { grid-template-columns: 1fr; }
-  .left { position: static; height: auto; padding: 28px 28px 36px; }
+  .root {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  .left {
+    position: static;
+    height: auto;
+    padding: 28px 28px 36px;
+  }
+  .right {
+    height: auto;
+    min-height: 0;
+    overflow-y: visible;
+  }
   .leftHeading { font-size: 36px; }
   .benefits { display: none; }
-  .formWrap { padding: 36px 28px 52px; }
+  .formWrap { padding: 36px 24px 80px; }
   .timeGrid { grid-template-columns: repeat(3, 1fr); }
+  .btnPrimary { position: sticky; bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
 }
 @media (max-width: 520px) {
   .row { flex-direction: column; gap: 18px; }
+  .mealTypeGroup { grid-template-columns: 1fr; }
   .timeGrid { grid-template-columns: repeat(2, 1fr); }
   .countryGroup { flex-direction: column; }
+  .formWrap { padding: 28px 16px 80px; }
 }

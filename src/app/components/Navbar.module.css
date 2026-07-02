@@ -55,6 +55,7 @@
   position: relative;
   padding-bottom: 2px;
   transition: opacity 0.2s;
+  white-space: nowrap;
 }
 .navLink::after {
   content: '';
@@ -308,3 +309,185 @@
 .dropdownLogout { color: #c0392b; }
 .dropdownLogout svg { color: #c0392b; }
 .dropdownLogout:hover { background: #fff5f5; color: #991b1b; }
+
+/* ── Hamburger button ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #0a0a0a;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: center;
+}
+.hamburgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburgerOpen span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile overlay ── */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  top: 68px;
+  background: rgba(0,0,0,0.35);
+  z-index: 98;
+}
+
+/* ── Mobile drawer ── */
+.mobileMenu {
+  position: fixed;
+  top: 68px;
+  left: 0; right: 0;
+  background: var(--yellow, #fff39a);
+  z-index: 99;
+  padding: 8px 0 24px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+.mobileMenuOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.mobileLinks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mobileLink {
+  display: block;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #0a0a0a;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.mobileLink:hover { background: rgba(0,0,0,0.06); }
+.mobileLinkDisabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.mobileDivider {
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+  margin: 8px 28px;
+}
+
+.mobileUser { padding: 4px 0; }
+.mobileUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 28px 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s;
+}
+.mobileUserInfo:hover { background: rgba(0,0,0,0.04); }
+.mobileUserText { flex: 1; min-width: 0; }
+.mobileUserAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0a0a0a;
+  color: #fff39a;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mobileUserName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0a0a0a;
+  margin: 0 0 2px;
+}
+.mobileUserCode {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(10,10,10,0.5);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+.mobileProfileChevron {
+  color: rgba(10,10,10,0.4);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.mobileProfileChevronOpen {
+  transform: rotate(180deg);
+}
+.mobileProfileItems {
+  animation: mobileProfileIn 0.18s ease both;
+}
+@keyframes mobileProfileIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.mobileSignOut {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #c0392b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mobileSignIn {
+  display: block;
+  margin: 12px 28px 0;
+  width: calc(100% - 56px);
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--yellow, #fff39a);
+  background: #0a0a0a;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: background 0.18s;
+}
+.mobileSignIn:hover { background: #222; }
+
+/* ── Responsive breakpoint ── */
+@media (max-width: 768px) {
+  .navLinks  { display: none; }
+  .navActions { display: none; }
+  .hamburger  { display: flex; margin-left: auto; }
+  .navInner   { gap: 16px; padding: 0 20px; }
+  .logo       { height: 56px; }
+}

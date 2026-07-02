@@ -15,6 +15,8 @@ const DELIVERY_ADDRESS = {
   deliveryDate: "Monday, 30 June 2026",
 };
 
+const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
+
 const ORDER_ITEMS = [
   { day: "Mon", date: "30", month: "Jun", label: "Monday Lunch",    name: "Chicken Teriyaki",    portion: "Regular", price: 8.50, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80" },
   { day: "Wed", date: "2",  month: "Jul", label: "Wednesday Lunch", name: "Mediterranean Salmon", portion: "Regular", price: 8.50, img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=80&q=80" },
@@ -36,6 +38,7 @@ export default function ReviewPage() {
   const [checking, setChecking] = useState(false);
   const [promoOpen, setPromoOpen] = useState(false);
   const [promoInput, setPromoInput] = useState("");
+  const [lunchTime, setLunchTime] = useState("12:00 PM");
   const [subType, setSubType] = useState("weekly");
   const [payMethod, setPayMethod] = useState("");
   const { user, logout } = useAuth();
@@ -90,6 +93,25 @@ export default function ReviewPage() {
             <div className={styles.deliveryInfoEtaBadge}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               {DELIVERY_ADDRESS.deliveryDate}
+            </div>
+
+            <div className={styles.timeSelector}>
+              <p className={styles.timeSelectorLabel}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Select lunch time
+              </p>
+              <div className={styles.timeChips}>
+                {LUNCH_TIMES.map(t => (
+                  <button
+                    key={t}
+                    className={`${styles.timeChip} ${lunchTime === t ? styles.timeChipActive : ""}`}
+                    onClick={() => setLunchTime(t)}
+                    type="button"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

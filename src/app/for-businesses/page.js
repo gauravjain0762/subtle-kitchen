@@ -111,7 +111,7 @@ export default function ForBusinesses() {
             for garages, warehouses, workshops, and other Small &amp; Medium Enterprises (SMEs).
           </p>
           <div className={styles.ctas}>
-            <button className={styles.ctaPrimary} onClick={() => setGsOpen(true)}>Start order</button>
+            <Link href="/get-workspace-code" className={styles.ctaPrimary}>Start order</Link>
             <Link href="/menu" className={styles.ctaSecondary}>View our menu</Link>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function ForBusinesses() {
 
           {/* Right — content */}
           <div className={styles.deliveryRight}>
-            <h2 className={styles.deliveryHeading}>Guaranteed Fresh<br />and Hot Food</h2>
+            <h2 className={`${styles.deliveryHeading} ${styles.deliveryHeadingInline}`}>Guaranteed Fresh and Hot Food</h2>
             <p className={styles.deliverySubtext}>
               To maintain food quality and temperature, we serve within a fixed delivery area (Catchment Area).
             </p>
@@ -217,10 +217,10 @@ export default function ForBusinesses() {
               <p className={styles.deliveryInfoA}>Contact us to verify and get the best food experience for your team.</p>
             </div>
 
-            <button className={styles.deliveryBtn} onClick={() => setGsOpen(true)}>
+            <Link href="/contact" className={styles.deliveryBtn}>
               Contact Us
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
+            </Link>
           </div>
 
         </div>
@@ -294,7 +294,10 @@ function FeatureRow({ flip, badge, heading, body, cta, onCta, img }) {
         <span className={styles.featBadge}>{badge}</span>
         <h2 className={styles.featHeading}>{heading}</h2>
         <p className={styles.featBody}>{body}</p>
-        <button className={styles.featBtn} onClick={onCta}>{cta}</button>
+        {onCta
+          ? <Link href="/get-workspace-code" className={styles.featBtn}>{cta}</Link>
+          : <button className={styles.featBtn}>{cta}</button>
+        }
       </div>
     </div>
   );

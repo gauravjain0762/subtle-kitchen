@@ -1,100 +1,10 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
 import { useAuth } from "../context/AuthContext";
-
-function EditProfilePanel({ user, onClose }) {
-  const [name,  setName]  = useState(user?.name  || user?.email?.split("@")[0] || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [editingName,  setEditingName]  = useState(false);
-  const [editingEmail, setEditingEmail] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const panelRef = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (panelRef.current && !panelRef.current.contains(e.target)) onClose();
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [onClose]);
-
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => { setSaved(false); onClose(); }, 900);
-  };
-
-  return (
-    <div className={styles.editOverlay}>
-      <div className={styles.editPanel} ref={panelRef}>
-        <div className={styles.editPanelHeader}>
-          <button className={styles.editCloseBtn} onClick={onClose} aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-          <h2 className={styles.editPanelTitle}>Edit profile</h2>
-        </div>
-
-        <div className={styles.editFields}>
-          {/* Name field */}
-          <div className={styles.editField}>
-            <span className={styles.editFieldLabel}>Name</span>
-            {editingName ? (
-              <div className={styles.editFieldInput}>
-                <input
-                  className={styles.editInput}
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  autoFocus
-                  placeholder="Your name"
-                />
-                <button className={styles.editSaveFieldBtn} onClick={() => setEditingName(false)}>Done</button>
-              </div>
-            ) : (
-              <div className={styles.editFieldRow}>
-                <span className={styles.editFieldValue}>{name || "—"}</span>
-                <button className={styles.editChangeBtn} onClick={() => setEditingName(true)}>CHANGE</button>
-              </div>
-            )}
-          </div>
-
-          <div className={styles.editDivider} />
-
-          {/* Email field */}
-          <div className={styles.editField}>
-            <span className={styles.editFieldLabel}>Email id</span>
-            {editingEmail ? (
-              <div className={styles.editFieldInput}>
-                <input
-                  className={styles.editInput}
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  autoFocus
-                  type="email"
-                  placeholder="Your email"
-                />
-                <button className={styles.editSaveFieldBtn} onClick={() => setEditingEmail(false)}>Done</button>
-              </div>
-            ) : (
-              <div className={styles.editFieldRow}>
-                <span className={styles.editFieldValue}>{email || "—"}</span>
-                <button className={styles.editChangeBtn} onClick={() => setEditingEmail(true)}>CHANGE</button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <button className={`${styles.editSubmitBtn} ${saved ? styles.editSubmitBtnSaved : ""}`} onClick={handleSave}>
-          {saved ? "Saved ✓" : "Save changes"}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 const PAST_ORDERS = [
   {
@@ -159,74 +69,72 @@ function OrdersPanel() {
         </div>
       ) : (
         <div className={styles.orderScroll}>
-        <div className={styles.orderList}>
-          {PAST_ORDERS.map((order, i) => (
-            <div key={order.id} className={styles.orderCard}>
-              <div className={styles.orderCardTop}>
-                <div className={styles.orderImgStack}>
-                  {order.items.slice(0, 2).map((item, j) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={j} src={item.img} alt={item.name} className={styles.orderThumb} style={{ zIndex: order.items.length - j, marginLeft: j > 0 ? -12 : 0 }} />
-                  ))}
-                </div>
-                <div className={styles.orderCardInfo}>
-                  <div className={styles.orderCardMeta}>
-                    <span className={styles.orderDate}>{order.date}</span>
-                    <span className={styles.orderStatusBadge}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      {order.status}
-                    </span>
+          <div className={styles.orderList}>
+            {PAST_ORDERS.map((order, i) => (
+              <div key={order.id} className={styles.orderCard}>
+                <div className={styles.orderCardTop}>
+                  <div className={styles.orderImgStack}>
+                    {order.items.slice(0, 2).map((item, j) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={j} src={item.img} alt={item.name} className={styles.orderThumb} style={{ zIndex: order.items.length - j, marginLeft: j > 0 ? -12 : 0 }} />
+                    ))}
                   </div>
-                  <p className={styles.orderId}>ORDER #{order.id}</p>
-                  <button className={styles.viewDetailsBtn} onClick={() => setExpanded(expanded === i ? null : i)}>
-                    {expanded === i ? "Hide details" : "View details"}
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      {expanded === i ? <path d="M18 15l-6-6-6 6"/> : <path d="M6 9l6 6 6-6"/>}
-                    </svg>
-                  </button>
-                </div>
-                <div className={styles.orderCardRight}>
-                  <span className={styles.orderTotal}>£{order.total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {expanded === i && (
-                <div className={styles.orderDetails}>
-                  {order.items.map((item, j) => (
-                    <div key={j} className={styles.orderDetailItem}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={item.img} alt={item.name} className={styles.orderDetailImg} />
-                      <span className={styles.orderDetailName}>{item.name}</span>
-                      <span className={styles.orderDetailPortion}>{item.portion}</span>
-                      <span className={styles.orderDetailQty}>x{item.qty}</span>
+                  <div className={styles.orderCardInfo}>
+                    <div className={styles.orderCardMeta}>
+                      <span className={styles.orderDate}>{order.date}</span>
+                      <span className={styles.orderStatusBadge}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        {order.status}
+                      </span>
                     </div>
-                  ))}
+                    <p className={styles.orderId}>ORDER #{order.id}</p>
+                    <button className={styles.viewDetailsBtn} onClick={() => setExpanded(expanded === i ? null : i)}>
+                      {expanded === i ? "Hide details" : "View details"}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        {expanded === i ? <path d="M18 15l-6-6-6 6"/> : <path d="M6 9l6 6 6-6"/>}
+                      </svg>
+                    </button>
+                  </div>
+                  <div className={styles.orderCardRight}>
+                    <span className={styles.orderTotal}>£{order.total.toFixed(2)}</span>
+                  </div>
                 </div>
-              )}
 
-              <div className={styles.orderCardActions}>
-                <Link href="/menu" className={styles.reorderBtn}>Reorder</Link>
+                {expanded === i && (
+                  <div className={styles.orderDetails}>
+                    {order.items.map((item, j) => (
+                      <div key={j} className={styles.orderDetailItem}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.img} alt={item.name} className={styles.orderDetailImg} />
+                        <span className={styles.orderDetailName}>{item.name}</span>
+                        <span className={styles.orderDetailPortion}>{item.portion}</span>
+                        <span className={styles.orderDetailQty}>x{item.qty}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className={styles.orderCardActions}>
+                  <Link href="/menu" className={styles.reorderBtn}>Reorder</Link>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function SettingsPanel({ user }) {
+function SettingsPanel() {
   const [marketing, setMarketing] = useState(true);
-
   return (
     <div className={styles.panel}>
       <h2 className={styles.panelHeading}>Email Preferences</h2>
-
       <div className={styles.prefGroup}>
         <div className={styles.prefItem}>
           <div className={styles.prefItemLeft}>
-            <span className={styles.prefTitle}>Recommendations & offers</span>
+            <span className={styles.prefTitle}>Recommendations &amp; offers</span>
             <span className={styles.prefDesc}>New menu drops, personalised picks, and exclusive deals.</span>
           </div>
           <button
@@ -247,7 +155,6 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const [tab, setTab]           = useState("orders");
   const [authOpen, setAuthOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
 
   const NAV_TABS = [
     {
@@ -262,60 +169,62 @@ export default function ProfilePage() {
 
   const displayName  = user?.name  || user?.email?.split("@")[0] || "Account";
   const displayEmail = user?.email || "";
+  const companyCode  = user?.companyCode || "SK-2024-ARPIT";
 
   return (
     <>
     <div className={styles.root}>
       <Navbar onSignIn={() => setAuthOpen(true)} />
 
-      {/* ── Yellow banner (Swiggy-style) ── */}
-      <div className={styles.profileBanner}>
-        <div className={styles.profileBannerInner}>
-          <div>
-            <h1 className={styles.profileName}>{displayName}</h1>
-            <p className={styles.profileMeta}>
-              {displayEmail}
-              {user?.companyCode && (
-                <><span className={styles.metaDot}>·</span>{user.companyCode}</>
-              )}
-            </p>
+      {/* ── Profile header ── */}
+      <div className={styles.profileHeader}>
+        <div className={styles.profileHeaderInner}>
+          <div className={styles.avatarCircle}>
+            {(displayName)[0].toUpperCase()}
           </div>
-          <div className={styles.workspaceCodeBlock}>
-            <span className={styles.workspaceCodeLabel}>Workspace Code</span>
-            <span className={styles.workspaceCodeValue}>{user?.companyCode || "SK-2024-ARPIT"}</span>
+          <div className={styles.profileInfo}>
+            <h1 className={styles.profileName}>{displayName}</h1>
+            <div className={styles.profileMetas}>
+              <span className={styles.profileMetaItem}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                {displayEmail}
+              </span>
+              <span className={styles.profileMetaDot} />
+              <span className={styles.profileMetaItem}>
+                <span className={styles.profileMetaKey}>Company code:</span>
+                {companyCode}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── White body card ── */}
-      <div className={styles.bodyOuter}>
-        <div className={styles.bodyCard}>
+      {/* ── Full-width body ── */}
+      <div className={styles.body}>
 
-          {/* Sidebar */}
-          <aside className={styles.sidebar}>
-            {NAV_TABS.map(t => (
-              <button
-                key={t.id}
-                className={`${styles.sidebarItem} ${tab === t.id ? styles.sidebarItemActive : ""}`}
-                onClick={() => setTab(t.id)}
-              >
-                <span className={styles.sidebarIconCircle}>{t.icon}</span>
-                <span className={styles.sidebarLabel}>{t.label}</span>
-              </button>
-            ))}
-          </aside>
+        {/* Sidebar */}
+        <aside className={styles.sidebar}>
+          {NAV_TABS.map(t => (
+            <button
+              key={t.id}
+              className={`${styles.sidebarItem} ${tab === t.id ? styles.sidebarItemActive : ""}`}
+              onClick={() => setTab(t.id)}
+            >
+              <span className={styles.sidebarIconCircle}>{t.icon}</span>
+              <span className={styles.sidebarLabel}>{t.label}</span>
+            </button>
+          ))}
+        </aside>
 
-          {/* Content */}
-          <main className={styles.content}>
-            {tab === "orders"   && <OrdersPanel />}
-            {tab === "settings" && <SettingsPanel user={user} />}
-          </main>
+        {/* Content */}
+        <main className={styles.content}>
+          {tab === "orders"   && <OrdersPanel />}
+          {tab === "settings" && <SettingsPanel />}
+        </main>
 
-        </div>
       </div>
     </div>
     {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
-    {editOpen && <EditProfilePanel user={user} onClose={() => setEditOpen(false)} />}
     </>
   );
 }

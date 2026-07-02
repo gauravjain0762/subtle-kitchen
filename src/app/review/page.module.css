@@ -129,6 +129,51 @@
   letter-spacing: 0.02em;
 }
 
+/* ── Time selector ── */
+.timeSelector {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.timeSelectorLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+.timeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.timeChip {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s;
+}
+.timeChip:hover {
+  border-color: var(--black);
+  transform: translateY(-1px);
+}
+.timeChipActive {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--yellow);
+}
+
 /* ── Right: review order ── */
 .main {
   flex: 1;

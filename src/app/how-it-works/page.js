@@ -156,7 +156,7 @@ export default function HowItWorksPage() {
             The Subtle Kitchen way
           </div>
           <h1 className={styles.heroHeading}>
-            How it<br /><span className={styles.heroAccent}>works</span>
+            How it <span className={styles.heroAccent}>works</span>
           </h1>
           <p className={styles.heroSub}>
             Order before 10 PM tonight. Fresh chef-prepared lunch delivered hot to your workplace tomorrow — no queues, no leaving the building.
@@ -417,7 +417,7 @@ export default function HowItWorksPage() {
         <div className={styles.ctaInner}>
           <div className={styles.ctaBadge}>Ready to start?</div>
           <h2 className={styles.ctaHeading}>
-            Eat better<br />at work
+            Eat better at work
           </h2>
           <p className={styles.ctaSub}>
             Join offices, garages, and workshops across London who already enjoy Subtle Kitchen every week.

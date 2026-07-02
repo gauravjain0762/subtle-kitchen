@@ -153,7 +153,8 @@
 .ctaSecondary:hover { border-color: var(--black); transform: translateY(-1px); }
 
 .featBtn {
-  display: inline-block;
+  display: block;
+  width: 100%;
   margin-top: 8px;
   font-size: 15px;
   font-weight: 700;
@@ -164,6 +165,8 @@
   border-radius: 10px;
   padding: 14px 28px;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
   transition: background 0.2s, transform 0.2s;
 }
 .featBtn:hover { background: #222; transform: translateY(-1px); }
@@ -588,6 +591,10 @@
   line-height: 1.15;
   color: #ffffff;
 }
+.deliveryHeadingInline {
+  font-size: clamp(18px, 1.8vw, 26px);
+  white-space: nowrap;
+}
 .deliverySubtext {
   font-size: 15px;
   color: rgba(255,255,255,0.55);
@@ -718,4 +725,34 @@
 }
 .featRowFlip:not(.featRowVis) .featContent {
   transform: translateX(-40px);
+}
+
+/* ── Feature rows mobile ── */
+@media (max-width: 900px) {
+  .featRow {
+    flex-direction: column !important;
+    gap: 36px;
+    padding: 48px 24px;
+  }
+  .featRowFlip { flex-direction: column !important; }
+  .featImgWrap {
+    flex: none;
+    width: 100%;
+  }
+  .featImg { height: 240px; }
+  .featRow:not(.featRowVis) .featContent {
+    transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .deliveryHeadingInline {
+    white-space: normal;
+    font-size: clamp(22px, 6vw, 30px);
+  }
+  .featSection { padding: 20px 0; }
+  .featImg { height: 200px; }
+  .featRow { padding: 36px 16px; }
+  .heroLeft { gap: 20px; }
+  .subtext { font-size: 15px; }
 }

@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 const COMPANY = "ACME2024";
+const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
 
 const MONTH_IDX = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
 function isClosed(dateStr) {
@@ -317,6 +318,8 @@ export default function MenuPage() {
   const [expandedDish, setExpandedDish] = useState(null);
   const [detailDish, setDetailDish] = useState(null); // { d, di }
   const [detailTab, setDetailTab] = useState("overview");
+  const [lunchTime, setLunchTime] = useState("12:00 PM");
+  const [headCount, setHeadCount] = useState(1);
   const [weekly, setWeekly] = useState(false);
   const [selectedDay, setSelectedDay] = useState(() => {
     const idx = WEEKLY_MENU.findIndex(d => !d.closed);
@@ -441,19 +444,72 @@ export default function MenuPage() {
           <p className={styles.subtext}>Pick the days you want lunch. Each day has multiple dishes to choose from.</p>
         </div>
 
-        {/* Day picker — full width above flex row */}
-        <div className={styles.dayPicker}>
-          {WEEKLY_MENU.map((day, i) => (
-            <button
-              key={i}
-              className={`${styles.dayTab} ${selectedDay === i ? styles.dayTabActive : ""} ${day.closed ? styles.dayTabClosed : ""}`}
-              onClick={() => setSelectedDay(i)}
-            >
-              {dayHasItems(i) && <span className={styles.dayTabDot} />}
-              <span className={styles.dayTabDay}>{day.day}</span>
-              <span className={styles.dayTabDate}>{day.date.split(" ")[0]}</span>
-            </button>
-          ))}
+        {/* Picker row — date chips + time chips + people */}
+        <div className={styles.dayPickerRow}>
+
+          {/* Lunch date */}
+          <div className={styles.pickerControlGroup}>
+            <span className={styles.pickerControlLabel}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Lunch date
+            </span>
+            <div className={styles.timeChips}>
+              {WEEKLY_MENU.map((day, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`${styles.timeChip} ${selectedDay === i ? styles.timeChipActive : ""} ${day.closed ? styles.timeChipDisabled : ""}`}
+                  onClick={() => !day.closed && setSelectedDay(i)}
+                >
+                  {dayHasItems(i) && <span className={styles.chipDot} />}
+                  {day.day} {day.date.split(" ")[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Lunch time */}
+          <div className={styles.pickerControlGroup}>
+            <span className={styles.pickerControlLabel}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Lunch time
+            </span>
+            <div className={styles.timeChips}>
+              {LUNCH_TIMES.map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`${styles.timeChip} ${lunchTime === t ? styles.timeChipActive : ""}`}
+                  onClick={() => setLunchTime(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* People */}
+          <div className={styles.pickerControlGroup}>
+            <span className={styles.pickerControlLabel}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              People
+            </span>
+            <div className={styles.headCountCtrl}>
+              <button
+                type="button"
+                className={styles.headCountBtn}
+                onClick={() => setHeadCount(n => Math.max(1, n - 1))}
+                disabled={headCount <= 1}
+              >−</button>
+              <span className={styles.headCountNum}>{headCount}</span>
+              <button
+                type="button"
+                className={styles.headCountBtn}
+                onClick={() => setHeadCount(n => n + 1)}
+              >+</button>
+            </div>
+          </div>
+
         </div>
 
         {/* Day date label — full width above flex row */}

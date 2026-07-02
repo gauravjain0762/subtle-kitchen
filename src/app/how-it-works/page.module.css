@@ -901,6 +901,7 @@
   letter-spacing: -0.03em;
   line-height: 1.05;
   margin: 0 0 18px;
+  white-space: nowrap;
 }
 .ctaSub {
   font-size: 16px;

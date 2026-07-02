@@ -1,0 +1,213 @@
+.root {
+  min-height: 100vh;
+  background: #0a0a0a;
+  font-family: 'Inter', sans-serif;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 80px;
+  align-items: flex-start;
+}
+
+/* ── Left ── */
+.left {}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #fff39a;
+  margin-bottom: 20px;
+}
+
+.heading {
+  font-size: clamp(32px, 3.5vw, 52px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0 0 18px;
+}
+
+.accent { color: #fff39a; }
+
+.sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.65;
+  margin: 0 0 40px;
+  max-width: 480px;
+}
+
+/* ── Form ── */
+.form { display: flex; flex-direction: column; gap: 14px; }
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field { display: flex; flex-direction: column; }
+
+.input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.18s, background 0.18s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input::placeholder { color: rgba(255,255,255,0.3); }
+.input:focus {
+  border-color: rgba(255,243,154,0.5);
+  background: rgba(255,255,255,0.07);
+}
+
+.select {
+  appearance: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+}
+.select option { background: #1a1a1a; color: #fff; }
+
+.textarea { resize: vertical; min-height: 130px; }
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fff39a;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+  margin-top: 4px;
+}
+.submitBtn:hover { background: #ffe94d; transform: translateY(-1px); }
+
+/* ── Success ── */
+.successBox {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255,243,154,0.08);
+  border: 1px solid rgba(255,243,154,0.2);
+  border-radius: 14px;
+  padding: 24px 20px;
+  margin-top: 8px;
+}
+.successTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff39a;
+  margin: 0 0 4px;
+}
+.successSub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+/* ── Right cards ── */
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 100px;
+}
+
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.cardHighlight {
+  border-color: rgba(255,243,154,0.3);
+  background: rgba(255,243,154,0.05);
+}
+
+.cardLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fff39a;
+  margin-bottom: 8px;
+}
+
+.cardText {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.cardNote {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+}
+
+.cardLink {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.cardLink:hover { color: #fff39a; }
+
+/* ── Quick links ── */
+.quickLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.quickBtn {
+  display: block;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.quickBtn:hover {
+  background: rgba(255,243,154,0.08);
+  border-color: rgba(255,243,154,0.25);
+  color: #fff39a;
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 100px 24px 60px;
+  }
+  .row2 { grid-template-columns: 1fr; }
+  .right { position: static; }
+}

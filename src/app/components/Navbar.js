@@ -99,7 +99,8 @@ function ProfileMenu({ user, logout }) {
 
 export default function Navbar({ onSignIn }) {
   const { user, logout } = useAuth();
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled]     = useState(false);
+  const [menuOpen, setMenuOpen]     = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -107,18 +108,28 @@ export default function Navbar({ onSignIn }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = user
-    ? NAV_LINKS.filter(l => l.label !== "Become a Delivery Location")
-    : NAV_LINKS;
+  // close mobile menu on route change / resize
+  useEffect(() => {
+    if (menuOpen) document.body.style.overflow = "hidden";
+    else          document.body.style.overflow = "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
+
+  const links = NAV_LINKS;
+
+  const close = () => { setMenuOpen(false); setMobileProfileOpen(false); };
 
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
       <div className={styles.navInner}>
-        <Link href="/" className={styles.logoLink}>
+        <Link href="/" className={styles.logoLink} onClick={close}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Subtle Kitchen" className={styles.logo} />
         </Link>
 
+        {/* Desktop links */}
         <ul className={styles.navLinks}>
           {links.map(link => (
             <li key={link.label}>
@@ -130,6 +141,7 @@ export default function Navbar({ onSignIn }) {
           ))}
         </ul>
 
+        {/* Desktop actions */}
         <div className={styles.navActions}>
           {user ? (
             <ProfileMenu user={user} logout={logout} />
@@ -137,6 +149,60 @@ export default function Navbar({ onSignIn }) {
             <button className={styles.signIn} onClick={onSignIn}>Sign in</button>
           )}
         </div>
+
+        {/* Hamburger */}
+        <button
+          className={`${styles.hamburger} ${menuOpen ? styles.hamburgerOpen : ""}`}
+          onClick={() => setMenuOpen(v => !v)}
+          aria-label="Toggle menu"
+        >
+          <span /><span /><span />
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {menuOpen && <div className={styles.mobileOverlay} onClick={close} />}
+      <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
+        <ul className={styles.mobileLinks}>
+          {links.map(link => (
+            <li key={link.label}>
+              {link.disabled
+                ? <span className={`${styles.mobileLink} ${styles.mobileLinkDisabled}`}>{link.label}</span>
+                : <Link href={link.href} className={styles.mobileLink} onClick={close}>{link.label}</Link>
+              }
+            </li>
+          ))}
+        </ul>
+        <div className={styles.mobileDivider} />
+        {user ? (
+          <div className={styles.mobileUser}>
+            <button
+              className={styles.mobileUserInfo}
+              onClick={() => setMobileProfileOpen(v => !v)}
+              aria-expanded={mobileProfileOpen}
+            >
+              <span className={styles.mobileUserAvatar}>{(user?.name || user?.email || "A")[0].toUpperCase()}</span>
+              <div className={styles.mobileUserText}>
+                <p className={styles.mobileUserName}>{user?.name || user?.email}</p>
+                {user?.companyCode && <p className={styles.mobileUserCode}>{user.companyCode}</p>}
+              </div>
+              <svg
+                className={`${styles.mobileProfileChevron} ${mobileProfileOpen ? styles.mobileProfileChevronOpen : ""}`}
+                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            {mobileProfileOpen && (
+              <div className={styles.mobileProfileItems}>
+                <Link href="/profile" className={styles.mobileLink} onClick={close}>My orders</Link>
+                <button className={styles.mobileSignOut} onClick={() => { logout(); close(); }}>Sign out</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className={styles.mobileSignIn} onClick={() => { onSignIn(); close(); }}>Sign in</button>
+        )}
       </div>
     </nav>
   );
