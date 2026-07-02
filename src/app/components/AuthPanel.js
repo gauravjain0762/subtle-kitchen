@@ -1,10 +1,61 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import styles from "./AuthPanel.module.css";
 
+function OtpInput({ value, onChange }) {
+  const refs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
+  const digits = value.split("").concat(Array(6).fill("")).slice(0, 6);
+
+  const handleKey = (i, e) => {
+    if (e.key === "Backspace") {
+      const next = digits.slice();
+      if (next[i]) { next[i] = ""; onChange(next.join("")); }
+      else if (i > 0) { next[i - 1] = ""; onChange(next.join("")); refs[i - 1].current?.focus(); }
+      return;
+    }
+    if (e.key === "ArrowLeft" && i > 0) { refs[i - 1].current?.focus(); return; }
+    if (e.key === "ArrowRight" && i < 5) { refs[i + 1].current?.focus(); return; }
+    if (!/^\d$/.test(e.key)) return;
+    const next = digits.slice();
+    next[i] = e.key;
+    onChange(next.join(""));
+    if (i < 5) refs[i + 1].current?.focus();
+  };
+
+  const handlePaste = (e) => {
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (pasted) { onChange(pasted.padEnd(6, "").slice(0, 6)); refs[Math.min(pasted.length, 5)].current?.focus(); }
+    e.preventDefault();
+  };
+
+  return (
+    <div className={styles.otpRow}>
+      {digits.map((d, i) => (
+        <input
+          key={i}
+          ref={refs[i]}
+          className={`${styles.otpBox} ${d ? styles.otpBoxFilled : ""}`}
+          type="text"
+          inputMode="numeric"
+          maxLength={1}
+          value={d}
+          onChange={() => {}}
+          onKeyDown={e => handleKey(i, e)}
+          onPaste={handlePaste}
+          autoFocus={i === 0}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function AuthPanel({ onClose }) {
-  const [mode, setMode] = useState("signin"); // "signin" | "signup"
+  const [mode, setMode] = useState("signin"); // "signin" | "signup" | "forgot"
+  const [forgotStep, setForgotStep] = useState(1); // 1=email, 2=otp, 3=new password, 4=done
+  const [otp, setOtp] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", companyCode: "", password: "", confirmPassword: "",
   });
@@ -54,6 +105,40 @@ export default function AuthPanel({ onClose }) {
     setErrors({});
   };
 
+  // Forgot step handlers
+  const handleSendOtp = (e) => {
+    e.preventDefault();
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
+      setErrors({ email: "Valid email required" }); return;
+    }
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setForgotStep(2); setOtp(""); }, 800);
+  };
+
+  const handleVerifyOtp = (e) => {
+    e.preventDefault();
+    if (otp.replace(/\D/g, "").length < 6) {
+      setErrors({ otp: "Enter all 6 digits" }); return;
+    }
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setForgotStep(3); setErrors({}); }, 700);
+  };
+
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+    const e2 = {};
+    if (!newPass || newPass.length < 6) e2.newPass = "Min 6 characters";
+    if (newPass !== confirmPass) e2.confirmPass = "Passwords don't match";
+    if (Object.keys(e2).length) { setErrors(e2); return; }
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setForgotStep(4); }, 800);
+  };
+
+  const goBackToSignIn = () => {
+    setMode("signin"); setForgotStep(1); setOtp("");
+    setNewPass(""); setConfirmPass(""); setErrors({});
+  };
+
   return (
     <>
       <div className={styles.overlay} onClick={onClose} />
@@ -66,13 +151,25 @@ export default function AuthPanel({ onClose }) {
 
         <div className={styles.header}>
           <div className={styles.headerText}>
-            <h2 className={styles.heading}>{mode === "signin" ? "Sign in" : "Create account"}</h2>
-            <p className={styles.toggle}>
-              {mode === "signin" ? "New here? " : "Already have an account? "}
-              <button className={styles.toggleLink} onClick={switchMode}>
-                {mode === "signin" ? "Create an account" : "Sign in"}
-              </button>
-            </p>
+            <h2 className={styles.heading}>
+              {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account"
+                : forgotStep === 1 ? "Forgot password" : forgotStep === 2 ? "Enter OTP"
+                : forgotStep === 3 ? "New password" : "Password reset!"}
+            </h2>
+            {mode === "forgot" ? (
+              forgotStep < 4 && (
+                <p className={styles.toggle}>
+                  <button className={styles.toggleLink} onClick={goBackToSignIn}>← Back to sign in</button>
+                </p>
+              )
+            ) : (
+              <p className={styles.toggle}>
+                {mode === "signin" ? "New here? " : "Already have an account? "}
+                <button className={styles.toggleLink} onClick={switchMode}>
+                  {mode === "signin" ? "Create an account" : "Sign in"}
+                </button>
+              </p>
+            )}
             <div className={styles.divider} />
           </div>
           <div className={styles.foodImgWrap}>
@@ -85,7 +182,109 @@ export default function AuthPanel({ onClose }) {
           </div>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        {/* ── Forgot password multi-step ── */}
+        {mode === "forgot" && (
+          <div className={styles.form}>
+
+            {/* Step indicator */}
+            {forgotStep < 4 && (
+              <div className={styles.stepRow}>
+                {[1,2,3].map(s => (
+                  <div key={s} className={`${styles.stepDot} ${forgotStep >= s ? styles.stepDotActive : ""}`} />
+                ))}
+              </div>
+            )}
+
+            {/* Step 1 — Email */}
+            {forgotStep === 1 && (
+              <form onSubmit={handleSendOtp} noValidate style={{ display:"flex", flexDirection:"column", gap:20 }}>
+                <p className={styles.resetHint}>Enter your work email and we'll send you a 6-digit OTP.</p>
+                <div className={styles.field}>
+                  <label className={styles.label}>Work email</label>
+                  <input
+                    type="email"
+                    className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+                    placeholder="jane@company.com"
+                    value={form.email}
+                    onChange={e => set("email", e.target.value)}
+                    autoFocus
+                  />
+                  {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
+                </div>
+                <button type="submit" className={styles.submitBtn} disabled={loading}>
+                  {loading ? "Sending OTP…" : "Send OTP"}
+                </button>
+              </form>
+            )}
+
+            {/* Step 2 — OTP */}
+            {forgotStep === 2 && (
+              <form onSubmit={handleVerifyOtp} noValidate style={{ display:"flex", flexDirection:"column", gap:20 }}>
+                <p className={styles.resetHint}>We sent a 6-digit code to <strong>{form.email}</strong>. Enter it below.</p>
+                <div className={styles.field}>
+                  <label className={styles.label}>One-time password</label>
+                  <OtpInput value={otp} onChange={v => { setOtp(v); setErrors(e => ({ ...e, otp: "" })); }} />
+                  {errors.otp && <p className={styles.errorMsg}>{errors.otp}</p>}
+                </div>
+                <button type="submit" className={styles.submitBtn} disabled={loading || otp.length < 6}>
+                  {loading ? "Verifying…" : "Verify OTP"}
+                </button>
+                <p className={styles.resendRow}>
+                  Didn't receive it?{" "}
+                  <button type="button" className={styles.forgotLink} onClick={() => { setForgotStep(1); setOtp(""); }}>Resend OTP</button>
+                </p>
+              </form>
+            )}
+
+            {/* Step 3 — New password */}
+            {forgotStep === 3 && (
+              <form onSubmit={handleResetPassword} noValidate style={{ display:"flex", flexDirection:"column", gap:20 }}>
+                <p className={styles.resetHint}>Choose a new password for your account.</p>
+                <div className={styles.field}>
+                  <label className={styles.label}>New password</label>
+                  <input
+                    type="password"
+                    className={`${styles.input} ${errors.newPass ? styles.inputError : ""}`}
+                    placeholder="Min 6 characters"
+                    value={newPass}
+                    onChange={e => { setNewPass(e.target.value); setErrors(ev => ({ ...ev, newPass: "" })); }}
+                    autoFocus
+                  />
+                  {errors.newPass && <p className={styles.errorMsg}>{errors.newPass}</p>}
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Confirm password</label>
+                  <input
+                    type="password"
+                    className={`${styles.input} ${errors.confirmPass ? styles.inputError : ""}`}
+                    placeholder="Repeat new password"
+                    value={confirmPass}
+                    onChange={e => { setConfirmPass(e.target.value); setErrors(ev => ({ ...ev, confirmPass: "" })); }}
+                  />
+                  {errors.confirmPass && <p className={styles.errorMsg}>{errors.confirmPass}</p>}
+                </div>
+                <button type="submit" className={styles.submitBtn} disabled={loading}>
+                  {loading ? "Saving…" : "Reset password"}
+                </button>
+              </form>
+            )}
+
+            {/* Step 4 — Done */}
+            {forgotStep === 4 && (
+              <div className={styles.resetSuccess}>
+                <div className={styles.resetSuccessIcon}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h3 className={styles.resetSuccessTitle}>Password updated!</h3>
+                <p className={styles.resetSuccessDesc}>Your password has been reset. Sign in with your new password.</p>
+                <button type="button" className={styles.submitBtn} onClick={goBackToSignIn}>Sign in now</button>
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {mode !== "forgot" && <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {mode === "signup" && (
             <div className={styles.row}>
               <div className={styles.field}>
@@ -138,7 +337,14 @@ export default function AuthPanel({ onClose }) {
           )}
 
           <div className={styles.field}>
-            <label className={styles.label}>Password</label>
+            <div className={styles.passwordLabelRow}>
+              <label className={styles.label}>Password</label>
+              {mode === "signin" && (
+                <button type="button" className={styles.forgotLink} onClick={() => { setErrors({}); setMode("forgot"); }}>
+                  Forgot password?
+                </button>
+              )}
+            </div>
             <input
               type="password"
               className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
@@ -171,7 +377,7 @@ export default function AuthPanel({ onClose }) {
             By continuing, you agree to our{" "}
             <a href="#">Terms &amp; Conditions</a> &amp; <a href="#">Privacy Policy</a>
           </p>
-        </form>
+        </form>}
       </div>
     </>
   );

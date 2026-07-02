@@ -210,6 +210,128 @@
   text-underline-offset: 2px;
 }
 
+/* ── Forgot flow step indicator ── */
+.stepRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.stepDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  transition: background 0.25s, transform 0.25s;
+}
+.stepDotActive {
+  background: var(--black, #0a0a0a);
+  transform: scale(1.25);
+}
+
+/* ── OTP boxes ── */
+.otpRow {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+.otpBox {
+  width: 52px;
+  height: 58px;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  border-radius: 12px;
+  background: #fafaf8;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--black, #0a0a0a);
+  text-align: center;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  caret-color: transparent;
+}
+.otpBox:focus {
+  border-color: var(--black, #0a0a0a);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.06);
+}
+.otpBoxFilled {
+  border-color: var(--black, #0a0a0a);
+  background: #fff;
+}
+
+.resendRow {
+  font-size: 13px;
+  color: rgba(10,10,10,0.5);
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Password row with forgot link ── */
+.passwordLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.forgotLink {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(10,10,10,0.5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.forgotLink:hover { color: var(--black, #0a0a0a); }
+
+/* ── Forgot password ── */
+.resetHint {
+  font-size: 14px;
+  color: rgba(10,10,10,0.55);
+  line-height: 1.6;
+  margin: 0;
+}
+.resetSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0 8px;
+  text-align: center;
+}
+.resetSuccessIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--black, #0a0a0a);
+  color: var(--yellow, #fff39a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: iconPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes iconPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.resetSuccessTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black, #0a0a0a);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.resetSuccessDesc {
+  font-size: 14px;
+  color: rgba(10,10,10,0.55);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 320px;
+}
+
 @media (max-width: 520px) {
   .panel { width: 100vw; }
   .header { padding: 88px 28px 28px; }

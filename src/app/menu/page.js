@@ -519,7 +519,7 @@ export default function MenuPage() {
                         className={`${styles.dishAddBtn} ${sel ? styles.dishAddBtnActive : ""}`}
                         onClick={() => openDetail(selectedDay, di)}
                       >
-                        {sel ? "✓ Added" : `Add · £${dish.price.toFixed(2)}`}
+                        {sel ? "✓ Added" : `Add £${dish.price.toFixed(2)}`}
                       </button>
                     )}
                   </div>

@@ -423,8 +423,12 @@
   animation: fadeUp 0.5s 0.4s ease both;
 }
 .checkoutBtn {
-  width: 100%; padding: 16px;
-  display: block; text-align: center; text-decoration: none;
+  width: 100%;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   font-size: 16px; font-weight: 700;
   color: var(--yellow); background: var(--black);
   border: none; border-radius: 100px;
@@ -437,12 +441,30 @@
   transform: translateY(-2px);
   box-shadow: 0 10px 32px rgba(0,0,0,0.25);
 }
+.checkoutBtnLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkoutBtnPrice {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(255,255,255,0.13);
+  padding: 4px 14px;
+  border-radius: 100px;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+.checkoutSubNote {
+  font-size: 12px;
+  color: var(--text-muted, #999);
+  text-align: center;
+  margin: 0;
+}
 .ctaNote {
   display: flex; align-items: center; gap: 5px;
   font-size: 12px; color: var(--text-muted);
-}
-.checkoutBtn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
 

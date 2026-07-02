@@ -102,18 +102,19 @@
 .orderDeadlineBanner {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: #fff8e1;
-  border: 1.5px solid #f59e0b;
-  color: #92400e;
+  gap: 8px;
+  background: var(--black, #0a0a0a);
+  color: var(--yellow, #fff39a);
   font-size: 13px;
   font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 10px;
-  margin-bottom: 14px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
 }
 .orderDeadlineBanner strong {
-  color: #92400e;
+  color: #fff;
   font-weight: 800;
 }
 

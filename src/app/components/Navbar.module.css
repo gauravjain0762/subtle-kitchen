@@ -114,38 +114,23 @@
 }
 
 .profileBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--black, #0a0a0a);
-  border: none;
-  border-radius: 100px;
-  padding: 6px 12px 6px 6px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s ease;
-}
-.profileBtn:hover { background: #222; }
-
-.profileInitial {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: var(--yellow, #fff39a);
-  color: var(--black, #0a0a0a);
-  font-size: 12px;
-  font-weight: 700;
+  background: #5a5a5a;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
 }
-
-.profileChevron {
-  color: var(--yellow, #fff39a);
-  transition: transform 0.2s ease;
+.profileBtn:hover {
+  background: #444;
+  box-shadow: 0 0 0 3px rgba(10,10,10,0.15);
 }
-.profileBtn:hover .profileChevron { transform: rotate(180deg); }
 
 /* Dropdown */
 .dropdown {
