@@ -74,6 +74,23 @@
   color: #6b6b5a;
   line-height: 1.5;
 }
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(10,10,10,0.45);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  margin-bottom: 10px;
+  transition: color 0.18s;
+}
+.backLink:hover { color: #0a0a0a; }
+
 .toggleLink {
   color: #0a0a0a;
   font-weight: 700;
@@ -90,11 +107,20 @@
 .toggleLink:hover { opacity: 0.5; }
 
 .divider {
-  width: 40px;
-  height: 3.5px;
-  background: #0a0a0a;
-  border-radius: 2px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
   margin-top: 20px;
+}
+.divider::before,
+.divider::after,
+.divider span {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0a0a0a;
 }
 
 /* Food image — circular premium badge */
@@ -161,6 +187,30 @@
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
 }
 .inputError { border-color: #dc2626 !important; box-shadow: 0 0 0 4px rgba(220,38,38,0.07) !important; }
+
+.passWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.passWrap .input {
+  width: 100%;
+  padding-right: 46px;
+}
+.eyeBtn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(10,10,10,0.38);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.eyeBtn:hover { color: #0a0a0a; }
 .errorMsg {
   font-size: 11px;
   color: #dc2626;
@@ -217,15 +267,15 @@
   align-items: center;
 }
 .stepDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
   background: rgba(0,0,0,0.15);
-  transition: background 0.25s, transform 0.25s;
+  transition: background 0.25s, width 0.25s;
 }
 .stepDotActive {
   background: var(--black, #0a0a0a);
-  transform: scale(1.25);
+  width: 32px;
 }
 
 /* ── OTP boxes ── */

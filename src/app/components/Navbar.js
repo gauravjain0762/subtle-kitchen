@@ -14,47 +14,83 @@ const NAV_LINKS = [
 function ProfileMenu({ user, logout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const closeTimer = useRef(null);
+
+  const handleEnter = () => {
+    clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const handleLeave = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
+  };
 
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      clearTimeout(closeTimer.current);
+    };
   }, []);
 
   return (
     <div
       className={styles.profileWrap}
       ref={ref}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
       <button className={styles.profileBtn} aria-label="Profile menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
+        <span className={styles.profileAvatar}>
+          {(user?.name || user?.email || "A")[0].toUpperCase()}
+        </span>
+        <span className={styles.profileName}>
+          {(user?.name || user?.email || "Account").split(" ")[0]}
+        </span>
+        <svg className={`${styles.profileChevron} ${open ? styles.profileChevronOpen : ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
         </svg>
       </button>
 
       <div className={`${styles.dropdown} ${open ? styles.dropdownOpen : ""}`}>
-        <div className={styles.dropdownUser}>
-          <span className={styles.dropdownUserName}>{user?.name || user?.email || "Account"}</span>
-          {user?.companyCode && <span className={styles.dropdownCompany}>{user.companyCode}</span>}
+        {/* User identity block */}
+        <div className={styles.dropdownHeader}>
+          <div className={styles.dropdownAvatarLg}>
+            {(user?.name || user?.email || "A")[0].toUpperCase()}
+          </div>
+          <div className={styles.dropdownIdentity}>
+            <span className={styles.dropdownFullName}>{user?.name || "Account"}</span>
+            <span className={styles.dropdownEmail}>{user?.email}</span>
+          </div>
         </div>
+
+        {/* Workspace / company details */}
+        {(user?.companyCode || user?.workspaceName || user?.company) && (
+          <div className={styles.dropdownWorkspace}>
+            <div className={styles.dropdownWorkspaceRow}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              <span className={styles.dropdownWorkspaceName}>{user?.workspaceName || user?.company || "Workspace"}</span>
+            </div>
+            {user?.companyCode && (
+              <span className={styles.dropdownCodeBadge}>{user.companyCode}</span>
+            )}
+          </div>
+        )}
+
         <div className={styles.dropdownDivider} />
+
         <Link href="/profile" className={styles.dropdownItem} onClick={() => setOpen(false)}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          Profile
-        </Link>
-        <Link href="/orders" className={styles.dropdownItem} onClick={() => setOpen(false)}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-          Orders
+          My orders
         </Link>
+
         <div className={styles.dropdownDivider} />
+
         <button className={`${styles.dropdownItem} ${styles.dropdownLogout}`} onClick={() => { logout(); setOpen(false); }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Log out
+          Sign out
         </button>
       </div>
     </div>

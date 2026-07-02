@@ -3,6 +3,44 @@ import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import styles from "./AuthPanel.module.css";
 
+function EyeIcon({ open }) {
+  return open ? (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  ) : (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  );
+}
+
+function PasswordInput({ value, onChange, placeholder, className, autoFocus, hasError }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className={styles.passWrap}>
+      <input
+        type={show ? "text" : "password"}
+        className={`${styles.input} ${hasError ? styles.inputError : ""} ${className || ""}`}
+        placeholder={placeholder || "Min 6 characters"}
+        value={value}
+        onChange={onChange}
+        autoFocus={autoFocus}
+      />
+      <button
+        type="button"
+        className={styles.eyeBtn}
+        onClick={() => setShow(v => !v)}
+        tabIndex={-1}
+        aria-label={show ? "Hide password" : "Show password"}
+      >
+        <EyeIcon open={show} />
+      </button>
+    </div>
+  );
+}
+
 function OtpInput({ value, onChange }) {
   const refs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
   const digits = value.split("").concat(Array(6).fill("")).slice(0, 6);
@@ -151,18 +189,15 @@ export default function AuthPanel({ onClose }) {
 
         <div className={styles.header}>
           <div className={styles.headerText}>
+            {mode === "forgot" && forgotStep < 4 && (
+              <button className={styles.backLink} onClick={goBackToSignIn}>← Back to sign in</button>
+            )}
             <h2 className={styles.heading}>
               {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account"
                 : forgotStep === 1 ? "Forgot password" : forgotStep === 2 ? "Enter OTP"
                 : forgotStep === 3 ? "New password" : "Password reset!"}
             </h2>
-            {mode === "forgot" ? (
-              forgotStep < 4 && (
-                <p className={styles.toggle}>
-                  <button className={styles.toggleLink} onClick={goBackToSignIn}>← Back to sign in</button>
-                </p>
-              )
-            ) : (
+            {mode !== "forgot" && (
               <p className={styles.toggle}>
                 {mode === "signin" ? "New here? " : "Already have an account? "}
                 <button className={styles.toggleLink} onClick={switchMode}>
@@ -170,7 +205,6 @@ export default function AuthPanel({ onClose }) {
                 </button>
               </p>
             )}
-            <div className={styles.divider} />
           </div>
           <div className={styles.foodImgWrap}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -242,24 +276,21 @@ export default function AuthPanel({ onClose }) {
                 <p className={styles.resetHint}>Choose a new password for your account.</p>
                 <div className={styles.field}>
                   <label className={styles.label}>New password</label>
-                  <input
-                    type="password"
-                    className={`${styles.input} ${errors.newPass ? styles.inputError : ""}`}
-                    placeholder="Min 6 characters"
+                  <PasswordInput
                     value={newPass}
                     onChange={e => { setNewPass(e.target.value); setErrors(ev => ({ ...ev, newPass: "" })); }}
+                    hasError={!!errors.newPass}
                     autoFocus
                   />
                   {errors.newPass && <p className={styles.errorMsg}>{errors.newPass}</p>}
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label}>Confirm password</label>
-                  <input
-                    type="password"
-                    className={`${styles.input} ${errors.confirmPass ? styles.inputError : ""}`}
-                    placeholder="Repeat new password"
+                  <PasswordInput
                     value={confirmPass}
                     onChange={e => { setConfirmPass(e.target.value); setErrors(ev => ({ ...ev, confirmPass: "" })); }}
+                    placeholder="Repeat new password"
+                    hasError={!!errors.confirmPass}
                   />
                   {errors.confirmPass && <p className={styles.errorMsg}>{errors.confirmPass}</p>}
                 </div>
@@ -325,7 +356,7 @@ export default function AuthPanel({ onClose }) {
 
           {mode === "signup" && (
             <div className={styles.field}>
-              <label className={styles.label}>Company code</label>
+              <label className={styles.label}>Workspace code</label>
               <input
                 className={`${styles.input} ${errors.companyCode ? styles.inputError : ""}`}
                 placeholder="e.g. ACME2024"
@@ -345,12 +376,10 @@ export default function AuthPanel({ onClose }) {
                 </button>
               )}
             </div>
-            <input
-              type="password"
-              className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
-              placeholder="Min 6 characters"
+            <PasswordInput
               value={form.password}
               onChange={e => set("password", e.target.value)}
+              hasError={!!errors.password}
             />
             {errors.password && <p className={styles.errorMsg}>{errors.password}</p>}
           </div>
@@ -358,12 +387,11 @@ export default function AuthPanel({ onClose }) {
           {mode === "signup" && (
             <div className={styles.field}>
               <label className={styles.label}>Confirm password</label>
-              <input
-                type="password"
-                className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
-                placeholder="Repeat your password"
+              <PasswordInput
                 value={form.confirmPassword}
                 onChange={e => set("confirmPassword", e.target.value)}
+                placeholder="Repeat your password"
+                hasError={!!errors.confirmPassword}
               />
               {errors.confirmPassword && <p className={styles.errorMsg}>{errors.confirmPassword}</p>}
             </div>

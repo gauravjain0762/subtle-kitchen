@@ -55,8 +55,8 @@ const PERKS = [
 const HOW_STEPS = [
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="#0a0a0a" stroke="none"/></svg>,
-    title: "Enter your Company code",
-    desc: "Simply use your workplace's unique code to unlock your custom menu.",
+    title: "Enter your workspace code",
+    desc: "Simply use your workspace's unique code to unlock your custom menu.",
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="#0a0a0a" strokeWidth="2.5"/></svg>,
@@ -290,7 +290,7 @@ export default function Home() {
           </p>
 
           <div className={styles.ctas}>
-            <button className={styles.ctaPrimary} data-magnetic onClick={() => setGsOpen(true)}>Get your company code</button>
+            <Link href="/get-workspace-code" className={styles.ctaPrimary} data-magnetic>Get your workspace code</Link>
             <Link href="/menu" className={styles.ctaSecondary} data-magnetic>See this week&apos;s menu</Link>
           </div>
 
@@ -469,7 +469,7 @@ export default function Home() {
               <p className={styles.bizCardDesc}>Choose between full company subsidy, partial employee contribution, or direct payment.</p>
             </div>
           </div>
-          <button className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3" onClick={() => setGsOpen(true)}>Get a company code</button>
+          <Link href="/get-workspace-code" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a workspace code</Link>
         </div>
       </section>
 
@@ -564,8 +564,8 @@ export default function Home() {
         <div ref={eatBetterRef} className={styles.eatBetter} aria-hidden="true">EAT BETTER</div>
         <h2 className={styles.finalCtaHeading} data-animate="fade-up">Ready to upgrade your workplace lunch?</h2>
         <div className={styles.finalCtaBtns} data-animate="fade-up" data-stagger-delay="1">
-          <Link href="/get-started" className={styles.finalCtaPrimary}>
-            Get a company code
+          <Link href="/get-workspace-code" className={styles.finalCtaPrimary}>
+            Get a workspace code
             <svg className={styles.ctaArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
             </svg>

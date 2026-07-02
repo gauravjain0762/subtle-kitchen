@@ -37,7 +37,7 @@ export default function GetStarted() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleContinue = () => {
-    if (!code.trim()) { setError("Please enter your company code."); return; }
+    if (!code.trim()) { setError("Please enter your workspace code."); return; }
     setError("");
     setView("confirm");
   };
@@ -195,7 +195,7 @@ export default function GetStarted() {
       )}
 
       {view === "code" && <div className={styles.card}>
-        <h1 className={styles.heading}>Enter your company code</h1>
+        <h1 className={styles.heading}>Enter your workspace code</h1>
         <p className={styles.subtext}>
           Your code links <span className={styles.accent}>directly</span> to your office
           delivery address. No need to enter it manually.
@@ -224,16 +224,16 @@ export default function GetStarted() {
               <>
                 <div className={styles.modalTopBar}>
                   <div className={styles.modalHeader}>
-                    <h2 className={styles.modalHeading}>Request a company code</h2>
-                    <p className={styles.modalSubtext}>Fill in your company details and we&apos;ll generate a unique delivery code instantly.</p>
+                    <h2 className={styles.modalHeading}>Request a workspace code</h2>
+                    <p className={styles.modalSubtext}>Fill in your workspace details and we&apos;ll generate a unique delivery code instantly.</p>
                   </div>
                   <button className={styles.closeBtn} onClick={closeModal} aria-label="Close">✕</button>
                 </div>
 
                 <form onSubmit={handleRequest} className={styles.form}>
                   <div className={styles.field}>
-                    <label className={styles.label}>Company name</label>
-                    <input className={styles.input} placeholder="Acme Corp" value={form.company} onChange={e => set("company", e.target.value)} />
+                    <label className={styles.label}>Workspace name</label>
+                    <input className={styles.input} placeholder="Acme HQ" value={form.company} onChange={e => set("company", e.target.value)} />
                   </div>
 
                   <div className={styles.field}>
@@ -260,14 +260,14 @@ export default function GetStarted() {
                   {formError && <p className={styles.error}>{formError}</p>}
 
                   <button type="submit" className={`${styles.btnPrimary} ${submitting ? styles.btnLoading : ""}`} disabled={submitting}>
-                    {submitting ? <span className={styles.spinner} /> : "Generate my company code"}
+                    {submitting ? <span className={styles.spinner} /> : "Generate my workspace code"}
                   </button>
                 </form>
               </>
             ) : (
               <div className={styles.successWrap}>
                 <div className={styles.successIcon}>✓</div>
-                <h2 className={styles.modalHeading}>Your company code is ready!</h2>
+                <h2 className={styles.modalHeading}>Your workspace code is ready!</h2>
                 <p className={styles.modalSubtext}>Share this code with your team. They&apos;ll use it to unlock your custom menu.</p>
                 <div className={styles.codeBox}>
                   <span className={styles.codeText}>{generatedCode}</span>

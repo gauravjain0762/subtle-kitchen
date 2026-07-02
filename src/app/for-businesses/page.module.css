@@ -152,6 +152,22 @@
 }
 .ctaSecondary:hover { border-color: var(--black); transform: translateY(-1px); }
 
+.featBtn {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--black, #0a0a0a);
+  color: var(--yellow, #fff39a);
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.featBtn:hover { background: #222; transform: translateY(-1px); }
+
 .perks {
   display: flex;
   gap: 28px;

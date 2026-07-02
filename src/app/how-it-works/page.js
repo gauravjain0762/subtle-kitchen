@@ -53,8 +53,8 @@ const STEPS = [
         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
       </svg>
     ),
-    title: "Enter your company code",
-    desc: "Your workplace has a unique code. Sign up with it to unlock your company's lunch programme, delivery address, and team pricing.",
+    title: "Sign up through your workspace code",
+    desc: "Your workplace has a unique code. Sign up with it to unlock your workspace's lunch programme, delivery address, and team pricing.",
     tag: "Takes 60 seconds",
     colour: "#f59e0b",
   },
@@ -81,7 +81,7 @@ const STEPS = [
     ),
     title: "Hot lunch at your desk",
     desc: "We prepare your meal fresh overnight and deliver it hot to your workplace the next day. No queues, no leaving the building.",
-    tag: "Delivered by 12 PM",
+    tag: "Delivered at lunchtime",
     colour: "#6366f1",
   },
 ];
@@ -128,9 +128,8 @@ const QUALITY = [
 
 const TIMELINE = [
   { emoji: "📱", time: "Before 10 PM", label: "You place your order online" },
-  { emoji: "👨‍🍳", time: "That night", label: "Our chefs prep your meal from scratch" },
   { emoji: "🌅", time: "Next morning", label: "Fresh cooking begins at dawn" },
-  { emoji: "🍱", time: "By 12 PM", label: "Hot delivery arrives at your workplace" },
+  { emoji: "🍱", time: "Lunchtime", label: "Hot delivery arrives at your workplace" },
 ];
 
 export default function HowItWorksPage() {
@@ -149,14 +148,15 @@ export default function HowItWorksPage() {
 
       {/* ── 1: Hero ── */}
       <div className={styles.heroWrap}>
-      <section className={styles.hero}>
+
+        {/* LEFT: dark content panel */}
         <div className={styles.heroLeft}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot} />
             The Subtle Kitchen way
           </div>
           <h1 className={styles.heroHeading}>
-            How it<br />works
+            How it<br /><span className={styles.heroAccent}>works</span>
           </h1>
           <p className={styles.heroSub}>
             Order before 10 PM tonight. Fresh chef-prepared lunch delivered hot to your workplace tomorrow — no queues, no leaving the building.
@@ -170,25 +170,53 @@ export default function HowItWorksPage() {
               </svg>
             </a>
           </div>
+          <div className={styles.heroStats}>
+            <div className={styles.heroStat}>
+              <span className={styles.heroStatVal}>10 PM</span>
+              <span className={styles.heroStatLbl}>Order cutoff</span>
+            </div>
+            <div className={styles.heroStatDivider} />
+            <div className={styles.heroStat}>
+              <span className={styles.heroStatVal}>Lunch</span>
+              <span className={styles.heroStatLbl}>Delivery window</span>
+            </div>
+            <div className={styles.heroStatDivider} />
+            <div className={styles.heroStat}>
+              <span className={styles.heroStatVal}>52</span>
+              <span className={styles.heroStatLbl}>Menus / year</span>
+            </div>
+          </div>
         </div>
 
+        {/* RIGHT: food image + floating 3D cards */}
         <div className={styles.heroRight}>
-          {STEPS.map((step, i) => (
-            <div key={i} className={styles.heroStepCard} style={{ "--i": i }}>
-              <div className={styles.heroStepCardLeft}>
-                <span className={styles.heroStepNum}>{step.num}</span>
-                <div className={styles.heroStepIcon} style={{ "--step-colour": step.colour }}>
-                  {step.icon}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=85"
+            alt=""
+            className={styles.heroImg}
+          />
+          <div className={styles.heroImgOverlay} />
+          <div className={styles.heroScene}>
+            {STEPS.map((step, i) => (
+              <div key={i} className={styles.heroCard3dWrap} style={{ "--i": i }}>
+                <div className={styles.heroStepCard}>
+                  <div className={styles.heroStepCardLeft}>
+                    <span className={styles.heroStepNum}>{step.num}</span>
+                    <div className={styles.heroStepIcon} style={{ "--step-colour": step.colour }}>
+                      {step.icon}
+                    </div>
+                  </div>
+                  <div className={styles.heroStepCardRight}>
+                    <p className={styles.heroStepTitle}>{step.title}</p>
+                    <span className={styles.heroStepTag}>{step.tag}</span>
+                  </div>
                 </div>
               </div>
-              <div className={styles.heroStepCardRight}>
-                <p className={styles.heroStepTitle}>{step.title}</p>
-                <span className={styles.heroStepTag}>{step.tag}</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </section>
+
       </div>
 
       {/* ── 2: Steps ── */}
@@ -342,7 +370,7 @@ export default function HowItWorksPage() {
         <div className={styles.qualityInner}>
           <p className={styles.sectionLabel}>Our promise</p>
           <h2 className={styles.qualityHeading}>
-            No shortcuts.<br />Ever.
+            No shortcuts ever.
           </h2>
           <p className={styles.qualitySub}>
             We believe workplace food shouldn&apos;t mean compromise. Here&apos;s what we stand for.
@@ -367,7 +395,7 @@ export default function HowItWorksPage() {
               { val: "100%", label: "Fresh daily" },
               { val: "0×", label: "Reheated dishes" },
               { val: "52", label: "New menus per year" },
-              { val: "12 PM", label: "Latest delivery" },
+              { val: "Lunch", label: "Delivery window" },
             ].map((s, i) => (
               <div
                 key={i}
@@ -396,7 +424,7 @@ export default function HowItWorksPage() {
           </p>
           <div className={styles.ctaActions}>
             <Link href="/menu" className={styles.ctaPrimary}>View this week&apos;s menu</Link>
-            <Link href="/for-businesses" className={styles.ctaSecondary}>Get your company code</Link>
+            <Link href="/for-businesses" className={styles.ctaSecondary}>Get your workspace code</Link>
           </div>
         </div>
       </section>

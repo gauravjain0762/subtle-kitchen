@@ -25,7 +25,7 @@ export default function GetStartedModal({ onClose }) {
   const router = useRouter();
 
   const handleContinue = () => {
-    if (!code.trim()) { setError("Please enter your company code."); return; }
+    if (!code.trim()) { setError("Please enter your workspace code."); return; }
     setError("");
     setView("confirm");
   };
@@ -47,7 +47,7 @@ export default function GetStartedModal({ onClose }) {
         {/* ── Step: Enter code ── */}
         {view === "code" && (
           <div className={styles.step}>
-            <h2 className={styles.heading}>Enter your company code</h2>
+            <h2 className={styles.heading}>Enter your workspace code</h2>
             <p className={styles.subtext}>
               Your code links directly to your workplace delivery address.
             </p>
@@ -69,7 +69,7 @@ export default function GetStartedModal({ onClose }) {
         {view === "confirm" && (
           <div className={styles.step}>
             <h2 className={styles.heading}>Is this your workplace?</h2>
-            <p className={styles.subtext}>We found your company linked to <span className={styles.accent}>{code}</span></p>
+            <p className={styles.subtext}>We found your workspace linked to <span className={styles.accent}>{code}</span></p>
 
             <div className={styles.companyCard}>
               <div className={styles.companyRow}>
