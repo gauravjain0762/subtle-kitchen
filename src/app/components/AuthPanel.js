@@ -81,7 +81,6 @@ function OtpInput({ value, onChange }) {
           onChange={() => {}}
           onKeyDown={e => handleKey(i, e)}
           onPaste={handlePaste}
-          autoFocus={i === 0}
         />
       ))}
     </div>
@@ -241,7 +240,6 @@ export default function AuthPanel({ onClose }) {
                     placeholder="jane@company.com"
                     value={form.email}
                     onChange={e => set("email", e.target.value)}
-                    autoFocus
                   />
                   {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
                 </div>
@@ -280,7 +278,6 @@ export default function AuthPanel({ onClose }) {
                     value={newPass}
                     onChange={e => { setNewPass(e.target.value); setErrors(ev => ({ ...ev, newPass: "" })); }}
                     hasError={!!errors.newPass}
-                    autoFocus
                   />
                   {errors.newPass && <p className={styles.errorMsg}>{errors.newPass}</p>}
                 </div>
@@ -349,7 +346,6 @@ export default function AuthPanel({ onClose }) {
               placeholder="jane@company.com"
               value={form.email}
               onChange={e => set("email", e.target.value)}
-              autoFocus={mode === "signin"}
             />
             {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
           </div>
