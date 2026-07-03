@@ -132,7 +132,7 @@
   flex-direction: column;
   gap: 14px;
   position: sticky;
-  top: 100px;
+  top: 200px;
 }
 
 .card {

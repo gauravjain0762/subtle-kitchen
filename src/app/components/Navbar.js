@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: "Order now",                  href: "/menu" },
   { label: "Become a Delivery Location", href: "/for-businesses" },
   { label: "Pricing",                   href: "/#pricing", disabled: true },
+  { label: "Contact us",                href: "/contact" },
 ];
 
 function ProfileMenu({ user, logout }) {

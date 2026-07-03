@@ -2191,7 +2191,7 @@
 }
 @media (max-width: 600px) {
   .expandedInner { padding-left: 18px; flex-direction: column; gap: 14px; }
-  .mainWrap { padding: 20px 16px 40px; }
+  .mainWrap { padding: calc(68px + 20px) 16px 40px; }
   .nav { padding: 0 16px; }
   .dishImgWrap { height: 140px; }
 }
