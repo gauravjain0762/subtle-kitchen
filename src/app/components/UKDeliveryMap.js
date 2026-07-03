@@ -1,100 +1,101 @@
 "use client";
 import styles from "./UKDeliveryMap.module.css";
 
-// Delivery pin locations on the UK SVG (viewBox "0 0 200 280")
-// Concentrated in London / SE England where Subtle Kitchen operates
+// London / SE England delivery pin locations
+// Coordinates match the UK SVG path coordinate space (viewBox "0 0 250 340")
 const PINS = [
-  { cx: 157, cy: 210, label: "Central London" },
-  { cx: 163, cy: 205, label: "City of London" },
-  { cx: 165, cy: 215, label: "Greenwich" },
-  { cx: 151, cy: 215, label: "Canary Wharf" },
-  { cx: 152, cy: 204, label: "Islington" },
-  { cx: 160, cy: 220, label: "Lewisham" },
-  { cx: 168, cy: 208, label: "Stratford" },
-  { cx: 147, cy: 209, label: "Hammersmith" },
-  { cx: 158, cy: 226, label: "Croydon" },
-  { cx: 172, cy: 200, label: "Romford" },
+  { cx: 158, cy: 281, label: "Central London" },
+  { cx: 164, cy: 278, label: "City of London" },
+  { cx: 166, cy: 285, label: "Greenwich" },
+  { cx: 155, cy: 284, label: "Canary Wharf" },
+  { cx: 154, cy: 276, label: "Islington" },
+  { cx: 162, cy: 290, label: "Lewisham" },
+  { cx: 170, cy: 279, label: "Stratford" },
+  { cx: 150, cy: 278, label: "Hammersmith" },
+  { cx: 160, cy: 294, label: "Croydon" },
+  { cx: 172, cy: 274, label: "Romford" },
 ];
+
+// Full Great Britain outline — clockwise from John O'Groats
+// Coordinates: x=(lon+8)/10*250, y=(60.9-lat)/11.1*340
+const UK_PATH = `
+  M 122,70
+  L 148,97 L 145,114 L 135,130 L 132,142 L 148,150
+  L 163,175 L 200,200 L 210,236 L 230,237
+  L 234,282 L 232,292 L 222,297 L 205,302
+  L 182,302 L 140,308 L 114,312 L 92,318
+  L 73,320 L 58,320
+  L 60,312 L 75,294 L 84,288 L 92,286
+  L 108,282 L 107,277 L 97,279 L 79,276
+  L 65,272 L 49,267
+  L 63,260 L 77,246 L 69,230 L 76,226
+  L 101,223 L 106,215 L 101,206
+  L 92,192 L 94,185
+  L 79,185 L 53,192
+  L 41,172 L 46,157 L 44,142
+  L 29,132 L 39,105 L 51,94
+  L 55,78 L 66,78 L 82,71
+  Z
+`;
+
+// Zoomed viewBox focuses on SE England / London
+const ZOOMED_VIEWBOX = "95 230 155 115";
+const FULL_VIEWBOX   = "0 0 250 340";
 
 export default function UKDeliveryMap() {
   return (
     <div className={styles.wrap}>
+      {/* ── Main zoomed map: SE England ── */}
       <svg
-        viewBox="0 0 200 280"
+        viewBox={ZOOMED_VIEWBOX}
         xmlns="http://www.w3.org/2000/svg"
-        className={styles.svg}
-        aria-label="UK delivery map"
+        className={styles.svgMain}
+        aria-label="London delivery zone map"
       >
-        {/* ── Subtle grid ── */}
-        {[56, 112, 168].map(x => (
-          <line key={x} x1={x} y1="0" x2={x} y2="280" className={styles.grid} />
+        {/* subtle grid */}
+        {[120,150,180,210,240].map(x => (
+          <line key={x} x1={x} y1="220" x2={x} y2="355" className={styles.grid} />
         ))}
-        {[70, 140, 210].map(y => (
-          <line key={y} x1="0" y1={y} x2="200" y2={y} className={styles.grid} />
+        {[240,260,280,300,320,340].map(y => (
+          <line key={y} x1="85" y1={y} x2="260" y2={y} className={styles.grid} />
         ))}
 
-        {/* ── Great Britain outline ── */}
-        {/* Scotland */}
-        <path className={styles.land} d="
-          M 98,18 L 82,22 L 68,30 L 56,42 L 50,56
-          L 44,68 L 40,80 L 48,88 L 44,98
-          L 52,104 L 60,96 L 66,102 L 72,108
-          L 80,106 L 86,112 L 96,108
-          L 102,100 L 110,96 L 118,100
-          L 124,106 L 130,112 L 128,102
-          L 136,94 L 138,82 L 134,70
-          L 126,58 L 120,46 L 116,34
-          L 108,24 Z
-        " />
+        {/* Land */}
+        <path d={UK_PATH} className={styles.land} />
 
-        {/* England + Wales */}
-        <path className={styles.land} d="
-          M 86,112 L 80,106 L 72,108 L 66,102
-          L 60,96 L 52,104 L 48,110 L 50,120
-          L 46,132 L 44,142 L 48,150
-          L 42,158 L 38,168 L 42,178
-          L 48,182 L 44,192 L 50,198
-          L 56,202 L 52,212 L 58,220
-          L 66,224 L 74,220 L 76,212
-          L 80,206 L 78,198 L 84,192
-          L 88,200 L 92,208 L 96,218
-          L 100,228 L 104,238 L 108,248
-          L 116,256 L 124,260 L 132,258
-          L 140,252 L 148,244 L 154,234
-          L 160,224 L 164,212 L 168,200
-          L 172,188 L 174,174 L 172,162
-          L 176,150 L 174,138 L 170,128
-          L 164,120 L 162,110 L 156,104
-          L 148,100 L 140,104 L 134,108
-          L 130,112 L 124,106 L 118,100
-          L 110,96 L 102,100 L 96,108 Z
-        " />
-
-        {/* ── Delivery pin pulses + dots ── */}
+        {/* Delivery pins */}
         {PINS.map((pin, i) => (
           <g key={i}>
-            <circle
-              cx={pin.cx} cy={pin.cy} r="10"
+            <circle cx={pin.cx} cy={pin.cy} r="9"
               className={styles.pulse}
-              style={{ animationDelay: `${i * 0.28}s` }}
-            />
-            <circle
-              cx={pin.cx} cy={pin.cy} r="5"
-              className={styles.pulse2}
-              style={{ animationDelay: `${i * 0.28 + 0.14}s` }}
+              style={{ animationDelay: `${i * 0.25}s` }}
             />
             <circle cx={pin.cx} cy={pin.cy} r="3.5" className={styles.dot} />
           </g>
         ))}
 
-        {/* ── London label ── */}
-        <text x="158" y="236" className={styles.cityLabel}>London</text>
+        {/* London label */}
+        <text x="157" y="303" className={styles.cityLabel}>LONDON</text>
       </svg>
+
+      {/* ── Inset: full UK silhouette with red square showing zoom area ── */}
+      <div className={styles.inset}>
+        <svg
+          viewBox={FULL_VIEWBOX}
+          xmlns="http://www.w3.org/2000/svg"
+          className={styles.svgInset}
+        >
+          <path d={UK_PATH} className={styles.insetLand} />
+          {/* Red rectangle showing current zoom area */}
+          <rect x="95" y="230" width="155" height="115"
+            className={styles.insetZoomBox} />
+        </svg>
+      </div>
 
       {/* Legend */}
       <div className={styles.legend}>
         <span className={styles.legendDot} />
-        <span className={styles.legendText}>Active delivery zones</span>
+        <span className={styles.legendText}>Active delivery zones · London</span>
       </div>
     </div>
   );

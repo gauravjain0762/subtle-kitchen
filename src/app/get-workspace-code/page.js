@@ -162,14 +162,12 @@ export default function GetWorkspaceCodePage() {
                 {/* Address */}
                 <div className={styles.field} style={{ "--fi": 1 }}>
                   <label className={styles.label}>Address <span className={styles.req}>*</span></label>
-                  <div className={styles.addressWrap}
-                    onClick={() => window.open("https://www.google.com/maps?output=svembed&action=loc:-0.1278,51.5074", "_blank")}
-                    role="button" tabIndex={0}
-                    onKeyDown={e => e.key === "Enter" && window.open("https://www.google.com/maps", "_blank")}>
-                    <span className={styles.addressText}>
-                      {workspace.address1 || <span className={styles.addressPlaceholder}>Click to select location on map</span>}
-                    </span>
-                  </div>
+                  <input
+                    className={`${styles.input} ${errors.address1 ? styles.inputError : ""}`}
+                    placeholder="e.g. 12 Business Park, Canary Wharf"
+                    value={workspace.address1}
+                    onChange={e => setW("address1", e.target.value)}
+                  />
                   {errors.address1 && <p className={styles.errMsg}>{errors.address1}</p>}
                 </div>
 
