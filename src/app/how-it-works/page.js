@@ -115,16 +115,6 @@ const QUALITY = [
     title: "Seasonal & locally sourced",
     desc: "Our menu rotates weekly using fresh, locally sourced produce. Real ingredients, real flavour and it shows.",
   },
-  {
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-    ),
-    title: "Unlimited new menus a year",
-    desc: "We design a completely new menu every single week so lunch never gets boring, and there's always something to look forward to.",
-  },
 ];
 
 const TIMELINE = [
@@ -192,11 +182,6 @@ export default function HowItWorksPage() {
             <div className={styles.heroStat}>
               <span className={styles.heroStatVal}>Lunch</span>
               <span className={styles.heroStatLbl}>Delivery window</span>
-            </div>
-            <div className={styles.heroStatDivider} />
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatVal}>Unlimited</span>
-              <span className={styles.heroStatLbl}>Menus / year</span>
             </div>
           </div>
         </div>
@@ -407,7 +392,6 @@ export default function HowItWorksPage() {
             {[
               { val: "100%", label: "Fresh daily" },
               { val: "0×", label: "Reheated dishes" },
-              { val: "Unlimited", label: "New menus per year" },
               { val: "Lunch", label: "Delivery window" },
             ].map((s, i) => (
               <div

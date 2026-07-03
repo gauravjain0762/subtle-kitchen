@@ -299,6 +299,7 @@
   text-decoration: none;
   transition: background 0.18s, transform 0.18s;
   display: inline-block;
+  cursor: pointer;
 }
 .reorderBtn:hover { background: #222; transform: translateY(-1px); }
 
@@ -358,6 +359,201 @@
 }
 .toggleOn .toggleKnob { transform: translateX(18px); }
 
+/* ══════════════════════════════════════
+   Plans & Subscriptions Panel
+══════════════════════════════════════ */
+.subCard {
+  background: #fafaf6;
+  border: 1.5px solid rgba(0,0,0,0.09);
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  margin-bottom: 32px;
+}
+.subCardHeader { margin-bottom: 18px; }
+.subCardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.subCardName {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0a0a0a;
+  letter-spacing: -0.02em;
+}
+.subStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}
+.subStatusActive  { background: #e8f5e9; color: #2e7d32; }
+.subStatusPaused  { background: #fff8e1; color: #f57f17; }
+.subCardPrice { display: flex; align-items: baseline; gap: 0; }
+.subPriceAmount { font-size: 26px; font-weight: 900; color: #0a0a0a; letter-spacing: -0.03em; }
+.subPricePer    { font-size: 14px; font-weight: 500; color: rgba(10,10,10,0.45); }
+.subPricePerMeal{ font-size: 12px; font-weight: 500; color: rgba(10,10,10,0.35); }
+
+/* Day pills */
+.subDaysRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.subDay {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 5px 11px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  color: rgba(10,10,10,0.3);
+  background: #fff;
+}
+.subDayActive {
+  background: #0a0a0a;
+  color: #fff39a;
+  border-color: #0a0a0a;
+}
+
+/* Info grid */
+.subInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0,0,0,0.07);
+}
+.subInfoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.subInfoItem svg { color: rgba(10,10,10,0.35); margin-bottom: 2px; }
+.subInfoLabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: rgba(10,10,10,0.4); text-transform: uppercase; }
+.subInfoVal   { font-size: 13px; font-weight: 600; color: #0a0a0a; }
+
+/* Action buttons */
+.subActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.subActionPause {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  background: #fff;
+  color: #0a0a0a;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+.subActionPause:hover { border-color: #0a0a0a; background: #f5f5f0; }
+.subActionManage {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 100px;
+  background: #0a0a0a;
+  color: #fff39a;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.subActionManage:hover { opacity: 0.85; }
+.subActionCancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 100px;
+  border: none;
+  background: none;
+  color: rgba(10,10,10,0.35);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s;
+  margin-left: auto;
+}
+.subActionCancel:hover { color: #c0392b; }
+
+/* Other plans */
+.subOtherHeading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(10,10,10,0.4);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.subOtherGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  max-width: 360px;
+}
+.subOtherCard {
+  position: relative;
+  background: #fafaf6;
+  border: 1.5px solid rgba(0,0,0,0.09);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.subOtherTag {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: #fff39a;
+  color: #0a0a0a;
+}
+.subOtherName  { font-size: 15px; font-weight: 800; color: #0a0a0a; letter-spacing: -0.01em; margin: 0; }
+.subOtherDays  { font-size: 12px; color: rgba(10,10,10,0.45); margin: 2px 0 8px; }
+.subOtherPrice { font-size: 20px; font-weight: 900; color: #0a0a0a; letter-spacing: -0.02em; margin: 0 0 12px; }
+.subOtherPriceSub { font-size: 13px; font-weight: 500; color: rgba(10,10,10,0.4); }
+.subOtherBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  background: #fff;
+  color: #0a0a0a;
+  text-decoration: none;
+  width: fit-content;
+  transition: border-color 0.2s, background 0.2s;
+}
+.subOtherBtn:hover { border-color: #0a0a0a; background: #f5f5f0; }
+
 @media (max-width: 768px) {
   .profileHeader { padding: 24px 20px; }
   .body { flex-direction: column; }
@@ -365,4 +561,8 @@
   .sidebarItem { flex: 1; justify-content: center; padding: 12px 8px; }
   .content { padding: 24px 20px; }
   .orderScroll { height: auto; max-height: 60vh; }
+  .subInfoGrid { grid-template-columns: 1fr 1fr; }
+  .subOtherGrid { grid-template-columns: 1fr; }
+  .subActions { flex-direction: column; }
+  .subActionCancel { margin-left: 0; }
 }

@@ -17,10 +17,6 @@ const DELIVERY_TIMES   = [
   "6:00 PM",  "6:30 PM",
   "7:00 PM",
 ];
-const MEAL_TYPES = [
-  { value: "standard",   label: "Standard",   desc: "Home-style portions, balanced nutrition",      note: "Orders must be placed by 10 PM the night before delivery." },
-  { value: "commercial", label: "Commercial",  desc: "Larger portions for physical workplaces",      note: "Minimum order quantity of 100 meals per delivery." },
-];
 
 const BENEFITS = [
   { icon: "⚡", text: "Setup in under 5 minutes" },
@@ -37,7 +33,6 @@ export default function GetWorkspaceCodePage() {
     name: "", address1: "",
     town: "", city: "", postcode: "",
     deliveryTimes: [""],   // index 0 = main, 1+ = Break 1, Break 2…
-    mealType: "",
     employees: "", premiseType: "",
   });
   const [contact, setContact] = useState({
@@ -61,7 +56,6 @@ export default function GetWorkspaceCodePage() {
     if (!workspace.city.trim())                 e.city          = "Required";
     if (!workspace.postcode.trim())             e.postcode      = "Required";
     if (!workspace.deliveryTimes[0].trim())     e.deliveryTimes = "At least one delivery time is required";
-    if (!workspace.mealType)                    e.mealType      = "Required";
     if (!workspace.employees)                   e.employees     = "Required";
     if (!workspace.premiseType)                 e.premiseType   = "Required";
     setErrors(e);
@@ -244,28 +238,6 @@ export default function GetWorkspaceCodePage() {
                   {errors.deliveryTimes && <p className={styles.errMsg}>{errors.deliveryTimes}</p>}
                 </div>
 
-                {/* Meal type */}
-                <div className={styles.field} style={{ "--fi": 8 }}>
-                  <label className={styles.label}>Meal type <span className={styles.req}>*</span></label>
-                  <div className={styles.mealTypeGroup}>
-                    {MEAL_TYPES.map(m => (
-                      <button key={m.value} type="button"
-                        className={`${styles.mealTypeBtn} ${workspace.mealType === m.value ? styles.mealTypeBtnActive : ""} ${errors.mealType ? styles.mealTypeBtnError : ""}`}
-                        onClick={() => setW("mealType", m.value)}>
-                        <span className={styles.mealTypeName}>{m.label}</span>
-                        <span className={styles.mealTypeDesc}>{m.desc}</span>
-                        {workspace.mealType === m.value && (
-                          <span className={styles.mealTypeNote}>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            {m.note}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  {errors.mealType && <p className={styles.errMsg}>{errors.mealType}</p>}
-                </div>
-
                 {/* Employees + Premise */}
                 <div className={styles.row}>
                   <div className={styles.field} style={{ "--fi": 9 }}>
@@ -356,12 +328,6 @@ export default function GetWorkspaceCodePage() {
                     </span>
                     {filledTimes.map((t, i) => `Break ${i + 1}: ${t}`).join("  ·  ")}
                   </div>
-                  <div className={styles.summaryRow}>
-                    <span className={styles.summaryIcon}>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13"/></svg>
-                    </span>
-                    {workspace.mealType}
-                  </div>
                 </div>
               </div>
 
@@ -413,11 +379,6 @@ export default function GetWorkspaceCodePage() {
                       </span>
                     ))}
                   </span>
-                </div>
-                <div className={styles.successDivider} />
-                <div className={styles.successRow}>
-                  <span className={styles.successLabel}>Meal type</span>
-                  <span className={styles.successVal} style={{ textTransform: "capitalize" }}>{workspace.mealType}</span>
                 </div>
                 <div className={styles.successDivider} />
                 <div className={styles.successRow}>

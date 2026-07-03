@@ -8,8 +8,7 @@ export const metadata = {
   title: "Subtle Kitchen — Fresh Lunch, Delivered Daily",
   description: "Nutritious, chef-prepared meals delivered directly to your workplace.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/icon.svg",
   },
 };
 

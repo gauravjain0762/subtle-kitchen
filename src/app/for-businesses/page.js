@@ -221,7 +221,7 @@ export default function ForBusinesses() {
           flip={false}
           badge="Commercial Meal Prep for Businesses"
           heading="Exclusive Commercial Meal Prep"
-          body="Looking for fresh, chef-prepared meals for your team? We offer refrigerated commercial meal prep solutions for a select number of businesses. Whether you're an office, warehouse, garage, school, or other workplace, we'll work with you to create a tailored meal solution. Contact us to check availability and whether your business is within our delivery area."
+          body="Built for businesses that need volume typically 100+ meals a week. We offer refrigerated commercial meal prep solutions for a select number of workplaces, including offices, warehouses, garages, and schools. If your team needs fresh, chef-prepared lunches at scale, we'll work with you to create a tailored meal solution. Contact us to check availability and whether your business is within our delivery area."
           cta="Enquire Now"
           onCta={() => setGsOpen(true)}
           img="https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=80"
