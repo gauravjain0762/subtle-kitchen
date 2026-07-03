@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import Navbar from "../components/Navbar";
 import GetStartedModal from "../components/GetStartedModal";
 import AuthPanel from "../components/AuthPanel";
+import Footer from "../components/Footer";
 
 function useReveal(threshold = 0.15) {
   const ref = useRef(null);
@@ -121,15 +122,27 @@ const QUALITY = [
         <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
       </svg>
     ),
-    title: "52 new menus a year",
+    title: "Unlimited new menus a year",
     desc: "We design a completely new menu every single week — so lunch never gets boring, and there's always something to look forward to.",
   },
 ];
 
 const TIMELINE = [
-  { emoji: "📱", time: "Before 10 PM", label: "You place your order online" },
-  { emoji: "🌅", time: "Next morning", label: "Fresh cooking begins at dawn" },
-  { emoji: "🍱", time: "Lunch time", label: "Hot delivery arrives at your workplace" },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
+    time: "Before 10 PM",
+    label: "You place your order online",
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 2 12"/><path d="M12 6v6l4 2"/><path d="M2 12a10 10 0 0 1 10-10"/></svg>,
+    time: "Next morning",
+    label: "Fresh cooking begins at dawn",
+  },
+  {
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
+    time: "Lunch time",
+    label: "Hot delivery arrives at your workplace",
+  },
 ];
 
 export default function HowItWorksPage() {
@@ -182,7 +195,7 @@ export default function HowItWorksPage() {
             </div>
             <div className={styles.heroStatDivider} />
             <div className={styles.heroStat}>
-              <span className={styles.heroStatVal}>52</span>
+              <span className={styles.heroStatVal}>Unlimited</span>
               <span className={styles.heroStatLbl}>Menus / year</span>
             </div>
           </div>
@@ -278,7 +291,7 @@ export default function HowItWorksPage() {
                   className={`${styles.timelineItem} ${deadlineVisible ? styles.timelineItemVisible : ""}`}
                   style={{ "--d": `${i * 0.14 + 0.2}s` }}
                 >
-                  <div className={styles.timelineEmoji}>{t.emoji}</div>
+                  <div className={styles.timelineEmoji}>{t.icon}</div>
                   <div className={styles.timelineText}>
                     <p className={styles.timelineTime}>{t.time}</p>
                     <p className={styles.timelineLabel}>{t.label}</p>
@@ -394,7 +407,7 @@ export default function HowItWorksPage() {
             {[
               { val: "100%", label: "Fresh daily" },
               { val: "0×", label: "Reheated dishes" },
-              { val: "52", label: "New menus per year" },
+              { val: "Unlimited", label: "New menus per year" },
               { val: "Lunch", label: "Delivery window" },
             ].map((s, i) => (
               <div
@@ -430,6 +443,8 @@ export default function HowItWorksPage() {
       </section>
 
     </div>
+
+    <Footer />
 
     {gsOpen && <GetStartedModal onClose={() => setGsOpen(false)} />}
     {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}

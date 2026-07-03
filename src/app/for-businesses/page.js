@@ -6,6 +6,7 @@ import GetStartedModal from "../components/GetStartedModal";
 import Footer from "../components/Footer";
 import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
+import UKDeliveryMap from "../components/UKDeliveryMap";
 import { useAuth } from "../context/AuthContext";
 
 const WORKSPACES = [
@@ -187,30 +188,10 @@ export default function ForBusinesses() {
       <section className={styles.deliverySection}>
         <div className={styles.deliveryInner}>
 
-          {/* Left — map visual */}
+          {/* Left — UK delivery map */}
           <div className={styles.deliveryLeft}>
             <div className={styles.deliveryMapBg}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&q=80"
-                alt="Delivery area map"
-                className={styles.deliveryMapImg}
-              />
-              <div className={styles.deliveryMapOverlay} />
-
-              {/* Pulse rings */}
-              <div className={styles.deliveryMapRing} />
-              <div className={styles.deliveryMapRing2} />
-
-              {/* Pin with logo */}
-              <div className={styles.deliveryPin}>
-                <div className={styles.deliveryPinBadge}>
-                  <span className={styles.deliveryPinDash}>—</span>
-                  <span className={styles.deliveryPinName}>subtle<br/>KITCHEN</span>
-                </div>
-                <div className={styles.deliveryPinTail} />
-                <div className={styles.deliveryPinDot} />
-              </div>
+              <UKDeliveryMap />
             </div>
           </div>
 

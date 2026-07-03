@@ -57,10 +57,10 @@ export default function AuthPage() {
         <div className={styles.leftContent}>
           <div className={styles.leftBadge}>✦ FRESH LUNCH, DELIVERED DAILY</div>
           <h2 className={styles.leftHeading}>
-            Lunch your team actually looks forward to.
+            Fresh Meals, Delivered to Your Workplace
           </h2>
           <p className={styles.leftSubtext}>
-            Join thousands of companies delivering nutritious, chef-prepared meals directly to their workplaces every week.
+            {"Enjoy fresh, chef-prepared meals delivered directly to your office, warehouse, garage, or workplace. Choose from one-off orders or flexible weekly meal plans designed to fit your team's schedule"}
           </p>
 
           <div className={styles.leftPerks}>

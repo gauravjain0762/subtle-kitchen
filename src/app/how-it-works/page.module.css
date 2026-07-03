@@ -635,11 +635,11 @@
 }
 .timelineItemVisible { opacity: 1; translate: 0 0; }
 .timelineEmoji {
-  font-size: 22px;
   width: 44px; height: 44px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,243,154,0.12);
+  border: 1px solid rgba(255,243,154,0.25);
+  color: var(--yellow, #fff39a);
   display: flex;
   align-items: center;
   justify-content: center;

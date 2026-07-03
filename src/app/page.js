@@ -15,9 +15,8 @@ const HERO_DISHES = [
 ];
 
 const HEADLINE_LINES = [
-  ["Lunch", "your", "team"],
-  ["actually", "looks"],
-  ["forward", "to", "..."],
+  ["Fresh", "Meals"],
+  ["Delivered", "to", "Your", "Workplace"],
 ];
 
 const MENU_HEADING = "This week’s menu";
@@ -317,9 +316,7 @@ export default function Home() {
           </h1>
 
           <p className={styles.subtext}>
-            Nutritious, <span className={styles.accent}>chef-prepared</span> meals delivered directly to your workplace.
-            <br />
-            No more uninspired sandwiches or <span className={styles.accent}>expensive solo deliveries.</span>
+            {"Enjoy fresh, "}<span className={styles.accent}>chef-prepared</span>{" meals delivered directly to your office, warehouse, garage, or workplace. Choose from "}<span className={styles.accent}>one-off orders</span>{" or flexible "}<span className={styles.accent}>weekly meal plans</span>{" designed to fit your team's schedule."}
           </p>
 
           <div className={styles.ctas}>
@@ -422,14 +419,12 @@ export default function Home() {
         </div>
       </section>
 
-      <div className={styles.sectionDivider} />
-
       {/* ── This Week's Menu ── */}
       <section id="menu" className={styles.menu}>
         <div className={styles.menuInner}>
           <div className={styles.menuHeader} data-animate="fade-up">
             <h2 className={styles.menuHeading}>{MENU_HEADING}</h2>
-            <p className={styles.menuSubtext}>Experience precision nutrition with our curated weekly selection. Fresh ingredients delivered daily to your office, optimized for performance and well-being.</p>
+            <p className={styles.menuSubtext}>Experience precision nutrition with our curated weekly selection.<br />Fresh ingredients delivered daily to your office, optimised for performance and well-being.</p>
           </div>
 
           <div className={styles.menuCardGrid}>
@@ -500,12 +495,30 @@ export default function Home() {
           <div className={styles.subscribeContent} data-animate="slide-right">
             <h2 className={styles.subscribeHeading}>Subscribe and never think about lunch again.</h2>
             <ul className={styles.subscribePerks}>
-              {["🍽️ One-Off & Weekly Orders", "📅 Choose Your Delivery Days", "⏸️ Pause or Update Anytime", "💰 Exclusive Subscription Savings"].map((p, i) => (
-                <li key={p} className={styles.subscribePerk} data-animate="slide-right" data-stagger-delay={i}>
+              {[
+                {
+                  label: "One-Off & Weekly Orders",
+                  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
+                },
+                {
+                  label: "Choose Your Delivery Days",
+                  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>,
+                },
+                {
+                  label: "Pause or Update Anytime",
+                  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>,
+                },
+                {
+                  label: "Exclusive Subscription Savings",
+                  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
+                },
+              ].map((p, i) => (
+                <li key={p.label} className={styles.subscribePerk} data-animate="slide-right" data-stagger-delay={i}>
                   <span className={styles.subscribeCheck}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   </span>
-                  <span className={styles.subscribePerkText}>{p}</span>
+                  <span className={styles.subscribePerkIcon}>{p.icon}</span>
+                  <span className={styles.subscribePerkText}>{p.label}</span>
                 </li>
               ))}
             </ul>

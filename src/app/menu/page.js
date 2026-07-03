@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 
 const COMPANY = "ACME2024";
@@ -807,6 +808,7 @@ export default function MenuPage() {
         );
       })()}
 
+      <Footer />
       {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
     </div>
   );

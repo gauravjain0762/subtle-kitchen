@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
+import Footer from "../components/Footer";
 import styles from "./page.module.css";
 
 export default function ContactPage() {
@@ -164,6 +165,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+      <Footer />
       {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
     </>
   );

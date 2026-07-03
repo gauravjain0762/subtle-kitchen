@@ -171,66 +171,59 @@
   margin-bottom: 4px;
 }
 
-/* 3D ring: flips in on X axis like a coin landing */
+/* Wrapper — just positions ring + circle, no animation here */
 .iconWrap {
   position: relative;
   width: 64px; height: 64px;
   margin-bottom: 4px;
-  animation: ring3d 0.65s cubic-bezier(0.16,1,0.3,1) 0.05s both;
-}
-@keyframes ring3d {
-  0%   { opacity: 0; transform: perspective(500px) rotateX(90deg) scale(0.4); }
-  60%  { opacity: 1; transform: perspective(500px) rotateX(-12deg) scale(1.06); }
-  80%  { transform: perspective(500px) rotateX(5deg) scale(0.97); }
-  100% { transform: perspective(500px) rotateX(0deg) scale(1); }
 }
 
+/* Ring expands outward after circle lands */
 .iconRing {
   position: absolute;
-  inset: -8px;
+  inset: -10px;
   border-radius: 50%;
   border: 2px solid rgba(10,10,10,0.1);
-  animation: ringExpand 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+  opacity: 0;
+  animation: ringExpand 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.35s forwards;
 }
 @keyframes ringExpand {
-  from { transform: scale(0.5); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
+  0%   { opacity: 0; transform: scale(0.6); }
+  60%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-/* 3D icon circle: spins in on Y axis (card-flip reveal) */
+/* Circle: spring pop with 3D Y flip */
 .iconCircle {
   width: 64px; height: 64px;
   border-radius: 50%;
   background: var(--black, #0a0a0a);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 8px 28px rgba(0,0,0,0.22);
-  animation: icon3d 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+  opacity: 0;
+  animation: circlePop 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards;
 }
-@keyframes icon3d {
-  0%   { opacity: 0; transform: perspective(400px) rotateY(180deg) scale(0.3); }
-  70%  { opacity: 1; transform: perspective(400px) rotateY(-8deg) scale(1.05); }
-  100% { transform: perspective(400px) rotateY(0deg) scale(1); }
+@keyframes circlePop {
+  0%   { opacity: 0; transform: scale(0) rotate(-20deg); }
+  70%  { opacity: 1; transform: scale(1.12) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
-/* SVG pops in with spring, then tick draws itself */
+/* SVG sits inside circle — no own animation, tick path animates */
 .checkSvg {
   width: 28px; height: 28px;
   stroke: var(--yellow, #fff39a);
-  animation: tickPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.75s both;
+  overflow: visible;
 }
-@keyframes tickPop {
-  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
-  60%  { opacity: 1; transform: scale(1.2) rotate(6deg); }
-  80%  { transform: scale(0.92) rotate(-3deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
+
+/* Tick stroke draws itself */
 .checkPath {
-  stroke-dasharray: 30;
-  stroke-dashoffset: 30;
-  animation: drawTick 0.45s ease-out 0.9s both;
+  stroke-dasharray: 28;
+  stroke-dashoffset: 28;
+  animation: drawTick 0.45s ease-out 0.55s both;
 }
 @keyframes drawTick {
-  0%   { stroke-dashoffset: 30; }
+  0%   { stroke-dashoffset: 28; }
   100% { stroke-dashoffset: 0; }
 }
 

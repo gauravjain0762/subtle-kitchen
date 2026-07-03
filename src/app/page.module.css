@@ -162,7 +162,7 @@
   min-height: 100vh;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 120px 40px 80px;
+  padding: 60px 40px 80px;
   display: flex;
   align-items: flex-start;
   gap: 80px;
@@ -214,7 +214,7 @@
 }
 
 .headline {
-  font-size: clamp(40px, 4.5vw, 68px);
+  font-size: clamp(30px, 4.5vw, 48px);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -225,6 +225,10 @@
 .headlineLine {
   display: block;
   white-space: nowrap;
+  margin-bottom: 0.12em;
+}
+.headlineLine:last-child {
+  margin-bottom: 0;
 }
 
 .word {
@@ -669,7 +673,7 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--yellow);
+  color: #fff;
   background: var(--black);
   text-decoration: none;
   padding: 12px 28px;
@@ -694,10 +698,10 @@
   gap: 48px;
 }
 .menuHeader {
-  text-align: left;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
 }
 .menuHeading {
@@ -711,7 +715,7 @@
   font-size: 16px;
   line-height: 1.7;
   color: rgba(10,10,10,0.52);
-  max-width: 500px;
+  max-width: 720px;
 }
 
 /* ── Card grid ── */
@@ -1018,6 +1022,18 @@
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(255,243,154,0.4);
 }
+.subscribePerkIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(255,243,154,0.1);
+  border: 1px solid rgba(255,243,154,0.18);
+  color: var(--yellow, #fff39a);
+  flex-shrink: 0;
+}
 .subscribePerkText {
   font-size: 17px;
   font-weight: 400;
@@ -1098,22 +1114,24 @@
   z-index: 2;
 }
 .subscribeBtn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   width: fit-content;
-  font-size: 15px;
+  gap: 10px;
+  font-size: 16px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: var(--black);
   background: var(--yellow);
-  padding: 16px 36px;
-  border-radius: 8px;
-  border: 1.5px solid var(--yellow);
-  transition: background 0.2s ease, transform 0.25s ease;
+  padding: 18px 40px;
+  border-radius: 100px;
+  border: 2px solid var(--black);
+  transition: all 0.2s ease;
 }
 .subscribeBtn:hover {
-  background: var(--yellow-dark);
-  border-color: var(--yellow-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 0 0 2px var(--black), 0 0 0 5px rgba(0,0,0,0.25);
+  background: var(--black);
+  color: var(--yellow);
+  border-color: var(--yellow);
 }
 
 /* ── Final CTA ── */
