@@ -108,7 +108,7 @@ export default function ForBusinesses() {
             <span className={styles.headingAccent}>for Every Workplace</span>
           </h1>
           <p className={styles.subtext}>
-            We don't just serve workplaces — we provide fresh, chef-prepared lunches
+            We don't just serve workplaces we provide fresh, chef-prepared lunches
             for garages, warehouses, workshops, and other Small &amp; Medium Enterprises (SMEs).
           </p>
           <div className={styles.ctas}>

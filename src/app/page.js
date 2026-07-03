@@ -58,7 +58,7 @@ const HOW_STEPS = [
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 4M7 13l-1.5 7h13L17 13"/></svg>,
     title: "Choose your portion",
-    desc: "Standard or Large — whatever your hunger levels demand that day.",
+    desc: "Standard or Large whatever your hunger levels demand that day.",
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
@@ -563,7 +563,6 @@ export default function Home() {
         <div className={styles.footerInner} data-animate="fade-up">
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo}>
-              <span className={styles.footerLogoDash}>—</span>
               <span className={styles.footerLogoText}>Subtle Kitchen</span>
             </div>
             <p className={styles.footerTagline}>Refined dining for the modern workplace. Delivered daily, with care.</p>

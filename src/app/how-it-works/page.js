@@ -68,7 +68,7 @@ const STEPS = [
       </svg>
     ),
     title: "Pick your meals for the week",
-    desc: "Browse this week's freshly designed menu. Choose the days you want lunch and select your dishes — all before the 10 PM cutoff.",
+    desc: "Browse this week's freshly designed menu. Choose the days you want lunch and select your dishes all before the 10 PM cutoff.",
     tag: "New menu every week",
     colour: "#10b981",
   },
@@ -103,7 +103,7 @@ const QUALITY = [
         <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
       </svg>
     ),
-    title: "Hot at delivery — always",
+    title: "Hot at delivery always",
     desc: "Insulated packaging and optimised routes mean your food arrives at the perfect temperature every single time.",
   },
   {
@@ -113,7 +113,7 @@ const QUALITY = [
       </svg>
     ),
     title: "Seasonal & locally sourced",
-    desc: "Our menu rotates weekly using fresh, locally sourced produce. Real ingredients, real flavour — and it shows.",
+    desc: "Our menu rotates weekly using fresh, locally sourced produce. Real ingredients, real flavour and it shows.",
   },
   {
     icon: (
@@ -123,7 +123,7 @@ const QUALITY = [
       </svg>
     ),
     title: "Unlimited new menus a year",
-    desc: "We design a completely new menu every single week — so lunch never gets boring, and there's always something to look forward to.",
+    desc: "We design a completely new menu every single week so lunch never gets boring, and there's always something to look forward to.",
   },
 ];
 
@@ -172,7 +172,7 @@ export default function HowItWorksPage() {
             How it <span className={styles.heroAccent}>works</span>
           </h1>
           <p className={styles.heroSub}>
-            Order before 10 PM tonight. Fresh chef-prepared lunch delivered hot to your workplace tomorrow — no queues, no leaving the building.
+            Order before 10 PM tonight. Fresh chef-prepared lunch delivered hot to your workplace tomorrow no queues, no leaving the building.
           </p>
           <div className={styles.heroActions}>
             <Link href="/menu" className={styles.heroCta}>View this week&apos;s menu</Link>

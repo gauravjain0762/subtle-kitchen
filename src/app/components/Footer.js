@@ -7,7 +7,6 @@ export default function Footer() {
       <div className={styles.footerInner}>
         <div className={styles.footerBrand}>
           <div className={styles.footerLogo}>
-            <span className={styles.footerLogoDash}>—</span>
             <span className={styles.footerLogoText}>Subtle Kitchen</span>
           </div>
           <p className={styles.footerTagline}>Refined dining for the modern workplace. Delivered daily, with care.</p>
