@@ -158,7 +158,7 @@ export default function ContactPage() {
             </div>
 
             <div className={styles.quickLinks}>
-              <Link href="/get-workspace-code" className={styles.quickBtn}>Get workspace code →</Link>
+              <Link href="/get-workspace-code" className={styles.quickBtn}>Get your workspace code →</Link>
               <Link href="/menu" className={styles.quickBtn}>View this week&apos;s menu →</Link>
             </div>
           </div>

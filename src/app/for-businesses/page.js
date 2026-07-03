@@ -111,7 +111,7 @@ export default function ForBusinesses() {
             for garages, warehouses, workshops, and other Small &amp; Medium Enterprises (SMEs).
           </p>
           <div className={styles.ctas}>
-            <Link href="/get-workspace-code" className={styles.ctaPrimary}>Get workspace code</Link>
+            <Link href="/get-workspace-code" className={styles.ctaPrimary}>Get your workspace code</Link>
             <Link href="/menu" className={styles.ctaSecondary}>View our menu</Link>
           </div>
         </div>
@@ -187,20 +187,29 @@ export default function ForBusinesses() {
       <section className={styles.deliverySection}>
         <div className={styles.deliveryInner}>
 
-          {/* Left — visual card */}
+          {/* Left — map visual */}
           <div className={styles.deliveryLeft}>
             <div className={styles.deliveryMapBg}>
-              <div className={styles.deliveryMapGlow} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&q=80"
+                alt="Delivery area map"
+                className={styles.deliveryMapImg}
+              />
+              <div className={styles.deliveryMapOverlay} />
+
+              {/* Pulse rings */}
               <div className={styles.deliveryMapRing} />
               <div className={styles.deliveryMapRing2} />
-              <div className={styles.deliveryCard}>
-                <div className={styles.deliveryPinIcon}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                  </svg>
+
+              {/* Pin with logo */}
+              <div className={styles.deliveryPin}>
+                <div className={styles.deliveryPinBadge}>
+                  <span className={styles.deliveryPinDash}>—</span>
+                  <span className={styles.deliveryPinName}>subtle<br/>KITCHEN</span>
                 </div>
-                <p className={styles.deliveryCardTitle}>Delivery Limit</p>
-                <p className={styles.deliveryCardSub}>We serve within a 15 km radius</p>
+                <div className={styles.deliveryPinTail} />
+                <div className={styles.deliveryPinDot} />
               </div>
             </div>
           </div>
@@ -219,7 +228,6 @@ export default function ForBusinesses() {
 
             <Link href="/contact" className={styles.deliveryBtn}>
               Contact Us
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
           </div>
 

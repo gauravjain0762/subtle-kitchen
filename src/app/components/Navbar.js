@@ -8,7 +8,7 @@ const NAV_LINKS = [
   { label: "How it works",              href: "/how-it-works" },
   { label: "Order now",                  href: "/menu" },
   { label: "Become a Delivery Location", href: "/for-businesses" },
-  { label: "Pricing",                   href: "/#pricing", disabled: true },
+  { label: "Pricing",                   href: "/pricing" },
   { label: "Contact us",                href: "/contact" },
 ];
 

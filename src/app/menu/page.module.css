@@ -1816,7 +1816,7 @@
 }
 .dishAddBtn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
 .dishAddBtnActive { background: #C5C6C7; color: var(--black); }
-.dishAddBtnActive:hover { background: #15803d; }
+.dishAddBtnActive:hover { background: #b0b1b2; }
 
 /* Addon price label */
 .addonPrice {
@@ -2066,8 +2066,8 @@
 }
 .dishDetailAddonItem:hover { border-color: rgba(0,0,0,0.2); transform: translateX(2px); }
 .dishDetailAddonItemActive {
-  background: #f0fdf4;
-  border-color: #16a34a;
+  background: #f5f5f5;
+  border-color: #C5C6C7;
 }
 .dishDetailAddonCheck {
   width: 18px; height: 18px;
@@ -2082,9 +2082,9 @@
   transition: all 0.18s ease;
 }
 .dishDetailAddonCheckActive {
-  background: #16a34a;
-  border-color: #16a34a;
-  color: var(--white);
+  background: #C5C6C7;
+  border-color: #C5C6C7;
+  color: var(--black);
 }
 .dishDetailAddonName {
   flex: 1;
@@ -2098,7 +2098,7 @@
   color: var(--text-muted);
   flex-shrink: 0;
 }
-.dishDetailAddonItemActive .dishDetailAddonPrice { color: #16a34a; }
+.dishDetailAddonItemActive .dishDetailAddonPrice { color: var(--black); }
 
 /* Portion row */
 .dishDetailPortionRow {
@@ -2165,10 +2165,14 @@
   font-family: 'Inter', sans-serif;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 .dishDetailAddBtn:hover { background: #222; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-.dishDetailAddBtnActive { background: #dc2626; color: var(--white); }
-.dishDetailAddBtnActive:hover { background: #b91c1c; }
+.dishDetailAddBtnActive { background: #C5C6C7; color: var(--black); }
+.dishDetailAddBtnActive:hover { background: #b0b1b2; }
 
 @media (max-width: 700px) {
   .dishDetailModal { flex-direction: column; max-height: 95vh; border-radius: 20px 20px 0 0; }

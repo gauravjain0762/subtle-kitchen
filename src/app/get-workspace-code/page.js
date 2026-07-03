@@ -382,7 +382,7 @@ export default function GetWorkspaceCodePage() {
             <div className={styles.formStep} key="step3">
               <div className={styles.successRing}>
                 <div className={styles.successIcon}>
-                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className={styles.tickSvg} width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                     <polyline className={styles.tickPath} points="20 6 9 17 4 12"/>
                   </svg>
                 </div>
@@ -403,7 +403,7 @@ export default function GetWorkspaceCodePage() {
                 <div className={styles.successDivider} />
                 <div className={styles.successRow}>
                   <span className={styles.successLabel}>Address</span>
-                  <span className={styles.successVal}>{workspace.address1 || "—"}, {workspace.town}, {workspace.city} {workspace.postcode}, UK</span>
+                  <span className={styles.successVal}>{[workspace.town, workspace.city, workspace.postcode].filter(Boolean).join(", ")}, UK</span>
                 </div>
                 <div className={styles.successDivider} />
                 <div className={styles.successRow}>

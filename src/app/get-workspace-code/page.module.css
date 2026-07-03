@@ -637,12 +637,26 @@
   100% { transform: perspective(400px) rotateY(0deg) scale(1); }
 }
 
+.tickSvg {
+  overflow: visible;
+  animation: tickPop 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.85s both;
+}
+@keyframes tickPop {
+  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
+  60%  { opacity: 1; transform: scale(1.25) rotate(8deg); }
+  80%  { transform: scale(0.9) rotate(-4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
 .tickPath {
   stroke-dasharray: 25;
   stroke-dashoffset: 25;
-  animation: drawTick 0.5s cubic-bezier(0.16,1,0.3,1) 0.85s forwards;
+  animation: drawTick 0.5s ease-out 0.95s both;
 }
-@keyframes drawTick { to { stroke-dashoffset: 0; } }
+@keyframes drawTick {
+  0%   { stroke-dashoffset: 25; }
+  100% { stroke-dashoffset: 0; }
+}
 
 .successHeading {
   text-align: center;

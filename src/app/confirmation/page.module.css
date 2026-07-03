@@ -8,23 +8,26 @@
 }
 .rootVisible { opacity: 1; }
 
-/* ── Two-column shell ── */
+/* ── Two-column shell — fixed height, only right scrolls ── */
 .twoCol {
   display: flex;
-  min-height: calc(100vh - 68px);
+  height: calc(100vh - 68px);
   margin-top: 68px;
+  overflow: hidden;
 }
 
-/* ── Left panel ── */
+/* ── Left panel — fixed, never scrolls ── */
 .leftPanel {
   width: 46%;
   flex-shrink: 0;
   border-right: 1.5px solid rgba(0,0,0,0.09);
-  padding: 48px 52px 60px;
+  padding: 40px 48px 60px;
   background: #fff;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .deliveryInfo {
@@ -36,22 +39,26 @@
   max-width: 340px;
 }
 
-.deliveryLogo {
-  height: 80px;
-  width: auto;
-  max-width: 260px;
-  object-fit: contain;
-  filter: brightness(0) contrast(2);
-  margin-bottom: 24px;
+/* Section title — matches review page style */
+.sectionTitle {
+  font-size: 12px; font-weight: 700;
+  color: rgba(10,10,10,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 20px 0 6px;
 }
 
-.deliveryInfoLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: rgba(10,10,10,0.42);
-  margin: 0 0 10px;
+/* Yellow badge pill — date / time */
+.metaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px; font-weight: 700;
+  color: var(--black, #0a0a0a);
+  background: var(--yellow, #fff39a);
+  padding: 8px 16px;
+  border-radius: 100px;
+  letter-spacing: 0.01em;
 }
 
 .deliveryAddrCard {
@@ -137,71 +144,117 @@
   padding: 0 4px;
 }
 
-/* ── Right panel ── */
+/* ── Right panel — scrollable ── */
 .rightPanel {
   flex: 1;
-  padding: 48px 52px 60px;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--cream, #fafaf6);
+}
+.rightInner {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding: 48px 52px 60px;
   max-width: 600px;
+  min-height: 100%;
 }
 
-/* Success header */
+/* ── Success header — centered ── */
 .successHeader {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
   margin-bottom: 4px;
 }
+
+/* 3D ring: flips in on X axis like a coin landing */
 .iconWrap {
   position: relative;
-  width: 56px; height: 56px;
-  margin-bottom: 8px;
+  width: 64px; height: 64px;
+  margin-bottom: 4px;
+  animation: ring3d 0.65s cubic-bezier(0.16,1,0.3,1) 0.05s both;
 }
+@keyframes ring3d {
+  0%   { opacity: 0; transform: perspective(500px) rotateX(90deg) scale(0.4); }
+  60%  { opacity: 1; transform: perspective(500px) rotateX(-12deg) scale(1.06); }
+  80%  { transform: perspective(500px) rotateX(5deg) scale(0.97); }
+  100% { transform: perspective(500px) rotateX(0deg) scale(1); }
+}
+
 .iconRing {
   position: absolute;
-  inset: -6px;
+  inset: -8px;
   border-radius: 50%;
-  border: 1.5px solid rgba(10,10,10,0.12);
-  animation: ringPop 0.6s 0.2s ease both;
+  border: 2px solid rgba(10,10,10,0.1);
+  animation: ringExpand 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
 }
-@keyframes ringPop {
-  from { transform: scale(0.6); opacity: 0; }
+@keyframes ringExpand {
+  from { transform: scale(0.5); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
 }
+
+/* 3D icon circle: spins in on Y axis (card-flip reveal) */
 .iconCircle {
-  width: 56px; height: 56px;
+  width: 64px; height: 64px;
   border-radius: 50%;
   background: var(--black, #0a0a0a);
   display: flex; align-items: center; justify-content: center;
-  animation: iconPop 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+  animation: icon3d 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
 }
-@keyframes iconPop {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+@keyframes icon3d {
+  0%   { opacity: 0; transform: perspective(400px) rotateY(180deg) scale(0.3); }
+  70%  { opacity: 1; transform: perspective(400px) rotateY(-8deg) scale(1.05); }
+  100% { transform: perspective(400px) rotateY(0deg) scale(1); }
 }
-.checkSvg {
-  width: 26px; height: 26px;
-  stroke: var(--yellow, #fff39a);
-  stroke-dasharray: 40;
-  stroke-dashoffset: 40;
-  animation: drawCheck 0.5s 0.5s ease forwards;
-}
-@keyframes drawCheck { to { stroke-dashoffset: 0; } }
 
+/* SVG pops in with spring, then tick draws itself */
+.checkSvg {
+  width: 28px; height: 28px;
+  stroke: var(--yellow, #fff39a);
+  animation: tickPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.75s both;
+}
+@keyframes tickPop {
+  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
+  60%  { opacity: 1; transform: scale(1.2) rotate(6deg); }
+  80%  { transform: scale(0.92) rotate(-3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.checkPath {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: drawTick 0.45s ease-out 0.9s both;
+}
+@keyframes drawTick {
+  0%   { stroke-dashoffset: 30; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Heading fades up */
 .heading {
   font-size: 28px;
   font-weight: 800;
   color: var(--black, #0a0a0a);
   margin: 0;
   letter-spacing: -0.02em;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.65s both;
 }
+/* Subtext fades up with slight delay */
 .subtext {
   font-size: 14px;
   color: rgba(10,10,10,0.55);
   margin: 0;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.82s both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Order card */
@@ -313,39 +366,26 @@
 @media (max-width: 768px) {
   .twoCol {
     flex-direction: column;
-    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 
-  /* Left panel — compact strip on mobile */
   .leftPanel {
     width: 100%;
     border-right: none;
     border-bottom: 1.5px solid rgba(0,0,0,0.08);
     padding: 20px 16px;
+    height: auto;
+    overflow-y: visible;
     justify-content: flex-start;
   }
 
-  .deliveryInfo {
-    max-width: 100%;
-    gap: 10px;
-  }
-
-  .deliveryLogo {
-    height: 48px;
-    margin-bottom: 10px;
-  }
-
+  .deliveryInfo { max-width: 100%; gap: 6px; }
   .deliveryAddrCard { padding: 16px; }
   .deliveryCompany { font-size: 18px; }
 
-  /* Stack date + time pills in a row */
-  .deliveryMeta { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .deliveryMetaItem { font-size: 12px; padding: 6px 12px; }
-
-  .subStatus { font-size: 11px; }
-
-  /* Right panel */
-  .rightPanel {
+  .rightPanel { overflow-y: visible; min-height: 0; }
+  .rightInner {
     padding: 24px 16px 100px;
     max-width: 100%;
     gap: 16px;

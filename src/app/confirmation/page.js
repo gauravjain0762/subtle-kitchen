@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
+import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 
 const ORDER = [
   { day: "MON", date: 30, name: "Chicken Katsu Curry",    portion: "Large Portion",   tags: ["High Protein"], price: 13.25, img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=80&q=80" },
@@ -17,7 +18,7 @@ const DELIVERY = {
   line1: "12 Business Park, Canary Wharf",
   line2: "London, E14 5AB",
   date: "Monday, 30 June 2026",
-  time: "12:00 PM – 1:00 PM",
+  time: "12:00 PM",
 };
 
 export default function ConfirmationPage() {
@@ -44,13 +45,13 @@ export default function ConfirmationPage() {
 
       <div className={styles.twoCol}>
 
-        {/* ── Left panel — mirrors review page ── */}
+        {/* ── Left panel — same as review page ── */}
         <div className={styles.leftPanel}>
           <div className={styles.deliveryInfo}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Subtle Kitchen" className={styles.deliveryLogo} />
-            <p className={styles.deliveryInfoLabel}>We delivered to</p>
 
+            <DeliveryVanAnimation />
+
+            <p className={styles.sectionTitle} style={{marginTop: 0}}>Preferred delivery address</p>
             <div className={styles.deliveryAddrCard}>
               <div className={styles.deliveryAddrTop}>
                 <div className={styles.deliveryAddrIcon}>
@@ -66,35 +67,32 @@ export default function ConfirmationPage() {
               <p className={styles.deliveryAddr}>{DELIVERY.line2}</p>
             </div>
 
-            <div className={styles.deliveryMeta}>
-              <div className={styles.deliveryMetaItem}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                {DELIVERY.date}
-              </div>
-              <div className={styles.deliveryMetaItem}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                {DELIVERY.time}
-              </div>
+            <p className={styles.sectionTitle}>Preferred delivery date</p>
+            <div className={styles.metaBadge}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              {DELIVERY.date}
             </div>
 
-            {/* Subscription status */}
-            <div className={styles.subStatus}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-              <span>Repeating every week · Mon · Wed</span>
+            <p className={styles.sectionTitle}>Preferred delivery time</p>
+            <div className={styles.metaBadge}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              {DELIVERY.time}
             </div>
+
           </div>
         </div>
 
         {/* ── Right panel — confirmation content ── */}
         <div className={styles.rightPanel}>
+          <div className={styles.rightInner}>
 
-          {/* Check + heading */}
+          {/* Animated tick + centered heading */}
           <div className={styles.successHeader}>
             <div className={styles.iconWrap}>
               <div className={styles.iconRing} />
               <div className={styles.iconCircle}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={styles.checkSvg}>
-                  <polyline points="20 6 9 17 4 12" />
+                  <polyline className={styles.checkPath} points="20 6 9 17 4 12" />
                 </svg>
               </div>
             </div>
@@ -129,10 +127,6 @@ export default function ConfirmationPage() {
               <span className={styles.totalLabel}>Total charged</span>
               <span className={styles.totalAmt}>£{count.toFixed(2)}</span>
             </div>
-            <div className={styles.repeatBox}>
-              <p className={styles.repeatNext}>Next charge: <strong>7 Jul · £{TOTAL.toFixed(2)}</strong></p>
-              <a href="#" className={styles.manageLink}>Manage subscription</a>
-            </div>
           </div>
 
           {/* Actions */}
@@ -140,6 +134,8 @@ export default function ConfirmationPage() {
             <Link href="/menu" className={styles.btnPrimary}>Order more</Link>
             <Link href="/" className={styles.btnOutline}>Back to home</Link>
           </div>
+
+          </div>{/* rightInner */}
         </div>
 
       </div>

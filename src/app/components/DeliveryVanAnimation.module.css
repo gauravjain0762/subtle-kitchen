@@ -1,0 +1,188 @@
+/*
+ * DeliveryVanAnimation.module.css
+ * Premium delivery van animation — brand: black body, #fff39a accent
+ * Pure CSS at 60 fps. Respects prefers-reduced-motion.
+ */
+
+/* ── Scene container ────────────────────────────────────────── */
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 108px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  /* Warm parchment-to-road gradient sky */
+  background: linear-gradient(
+    180deg,
+    #f3efe6 0%,
+    #e9e4d8 52%,
+    #d9d4c6 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.65),
+    0 2px 14px rgba(0,0,0,0.08);
+}
+
+/* ── Parallax city skyline silhouette ───────────────────────── */
+.skyline {
+  position: absolute;
+  bottom: 22px; /* sits just above the road strip */
+  left: 0;
+  right: 0;
+  height: 38px;
+  /* SVG buildings encoded inline — avoids external fetch */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 38'%3E%3Crect x='0'   y='22' width='20' height='16' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='5'   y='10' width='10' height='28' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='24'  y='16' width='16' height='22' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='44'  y='5'  width='10' height='33' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='41'  y='10' width='16' height='28' fill='rgba(0,0,0,0.05)'/%3E%3Crect x='60'  y='20' width='18' height='18' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='82'  y='12' width='10' height='26' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='96'  y='22' width='14' height='16' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='114' y='7'  width='10' height='31' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='111' y='13' width='16' height='25' fill='rgba(0,0,0,0.05)'/%3E%3Crect x='132' y='20' width='12' height='18' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='148' y='10' width='12' height='28' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='164' y='17' width='18' height='21' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='186' y='12' width='9'  height='26' fill='rgba(0,0,0,0.05)'/%3E%3Crect x='200' y='22' width='18' height='16' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='222' y='5'  width='14' height='33' fill='rgba(0,0,0,0.07)'/%3E%3Crect x='240' y='15' width='18' height='23' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='262' y='20' width='14' height='18' fill='rgba(0,0,0,0.06)'/%3E%3Crect x='280' y='11' width='12' height='27' fill='rgba(0,0,0,0.05)'/%3E%3Crect x='296' y='18' width='24' height='20' fill='rgba(0,0,0,0.06)'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  background-size: 320px 38px;
+  /* Scrolls at half the road speed = parallax depth */
+  animation: skylineScroll 5s linear infinite;
+  will-change: transform;
+  opacity: 0.9;
+}
+@keyframes skylineScroll {
+  from { background-position: bottom 0px left 0px; }
+  to   { background-position: bottom 0px left -320px; }
+}
+
+/* ── Road strip ─────────────────────────────────────────────── */
+.road {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 22px;
+  background: linear-gradient(180deg, #bbb8ae 0%, #a8a49a 100%);
+  border-top: 1.5px solid rgba(0,0,0,0.1);
+}
+
+/* Scrolling centre-dash markings */
+.roadDash {
+  position: absolute;
+  top: 50%; left: 0;
+  width: 400%;
+  height: 3px;
+  margin-top: -1.5px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(255,255,255,0.52) 0px,
+    rgba(255,255,255,0.52) 22px,
+    transparent 22px,
+    transparent 44px
+  );
+  animation: dashScroll 0.42s linear infinite;
+  will-change: transform;
+}
+@keyframes dashScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-88px); }
+}
+
+/* ── Van bounce wrapper ──────────────────────────────────────── */
+.vanBounce {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  /* slight suspension bob — 3 px max lift */
+  animation: vanBob 0.38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes vanBob {
+  from { transform: translateX(-50%) translateY(0px);  }
+  to   { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* ── Ground shadow ───────────────────────────────────────────── */
+/* Shrinks / fades as van lifts, grows as van lands */
+.groundShadow {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 240px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(0,0,0,0.3)  0%,
+    rgba(0,0,0,0.1) 42%,
+    transparent 70%
+  );
+  animation: shadowBreathe 0.38s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes shadowBreathe {
+  from { transform: translateX(-50%) scaleX(1);    opacity: 0.85; }
+  to   { transform: translateX(-50%) scaleX(0.91); opacity: 0.48; }
+}
+
+/* ── The van SVG itself ──────────────────────────────────────── */
+.van {
+  display: block;
+  width: 260px;
+  height: auto;
+  position: relative;
+  /* Subtle drop shadow on the van body */
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.28))
+          drop-shadow(0 2px 3px rgba(0,0,0,0.18));
+}
+
+/* ── Wheel lug-nut rotation ──────────────────────────────────── */
+.rearLugs,
+.frontLugs {
+  transform-box: fill-box;  /* origin relative to element bounding box */
+  transform-origin: center;
+  animation: wheelSpin 1.05s linear infinite;
+  will-change: transform;
+}
+@keyframes wheelSpin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Exhaust puffs ───────────────────────────────────────────── */
+.exhaustWrap {
+  position: absolute;
+  left: -2px;
+  bottom: 18px;
+  pointer-events: none;
+}
+/* Shared puff base */
+.puffA,
+.puffB,
+.puffC {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-radius: 50%;
+  background: rgba(155,152,140,0.52);
+  animation: puffFloat 1.5s ease-out infinite;
+  will-change: transform, opacity;
+}
+.puffA { width: 10px; height: 10px; animation-delay: 0s;    }
+.puffB { width: 7px;  height: 7px;  bottom: 5px;  left: -3px; animation-delay: 0.5s;  }
+.puffC { width: 5px;  height: 5px;  bottom: 10px; left: -5px; animation-delay: 1.0s; }
+
+@keyframes puffFloat {
+  0%   { opacity: 0.65; transform: translate(0px, 0px)     scale(1);   }
+  100% { opacity: 0;    transform: translate(-34px, -14px) scale(3.0); }
+}
+
+/* ── Accessibility: respect reduced-motion preference ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  .vanBounce      { animation: none; transform: translateX(-50%) translateY(0); }
+  .groundShadow   { animation: none; }
+  .roadDash       { animation: none; }
+  .skyline        { animation: none; }
+  .rearLugs,
+  .frontLugs      { animation: none; }
+  .puffA,
+  .puffB,
+  .puffC          { animation: none; opacity: 0; }
+}
+
+/* ── Responsive: slightly smaller on narrow screens ───────────── */
+@media (max-width: 480px) {
+  .scene    { max-width: 220px; height: 88px; }
+  .van      { width: 210px; }
+  .vanBounce { bottom: 14px; }
+  .groundShadow { width: 196px; }
+}

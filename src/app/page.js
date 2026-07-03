@@ -95,10 +95,9 @@ function MenuCard({ item, index }) {
       <div className={styles.menuCardImgWrap}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={item.img} alt={item.name} className={styles.menuCardImg} />
-        <span className={`${styles.menuCardDayBadge} ${item.active ? styles.menuCardDayBadgeToday : ""}`}>
+        <span className={styles.menuCardDayBadge}>
           {item.day}
         </span>
-        {item.active && <span className={styles.menuCardTodayBadge}>TODAY</span>}
       </div>
       <div className={styles.menuCardBody}>
         <h3 className={styles.menuCardName}>{item.name}</h3>
@@ -430,7 +429,7 @@ export default function Home() {
         <div className={styles.menuInner}>
           <div className={styles.menuHeader} data-animate="fade-up">
             <h2 className={styles.menuHeading}>{MENU_HEADING}</h2>
-            <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day.<br />Crafted by professional chefs for the modern worker.</p>
+            <p className={styles.menuSubtext}>Experience precision nutrition with our curated weekly selection. Fresh ingredients delivered daily to your office, optimized for performance and well-being.</p>
           </div>
 
           <div className={styles.menuCardGrid}>
@@ -501,7 +500,7 @@ export default function Home() {
           <div className={styles.subscribeContent} data-animate="slide-right">
             <h2 className={styles.subscribeHeading}>Subscribe and never think about lunch again.</h2>
             <ul className={styles.subscribePerks}>
-              {["Auto-orders based on your preferences", "Priority delivery window every day", "15% discount on all weekly orders"].map((p, i) => (
+              {["🍽️ One-Off & Weekly Orders", "📅 Choose Your Delivery Days", "⏸️ Pause or Update Anytime", "💰 Exclusive Subscription Savings"].map((p, i) => (
                 <li key={p} className={styles.subscribePerk} data-animate="slide-right" data-stagger-delay={i}>
                   <span className={styles.subscribeCheck}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
