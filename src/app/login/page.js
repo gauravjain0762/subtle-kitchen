@@ -112,14 +112,14 @@ export default function AuthPage() {
               {mode === "signup" && (
                 <div className={styles.field}>
                   <label className={styles.label}>Full name</label>
-                  <input className={`${styles.input} ${errors.name ? styles.inputErr : ""}`} placeholder="Jane Smith" value={form.name} onChange={e => set("name", e.target.value)} autoFocus />
+                  <input className={`${styles.input} ${errors.name ? styles.inputErr : ""}`} placeholder="Jane Smith" value={form.name} onChange={e => set("name", e.target.value)} />
                   {errors.name && <span className={styles.err}>{errors.name}</span>}
                 </div>
               )}
 
               <div className={styles.field}>
                 <label className={styles.label}>Work email</label>
-                <input className={`${styles.input} ${errors.email ? styles.inputErr : ""}`} type="email" placeholder="jane@company.com" value={form.email} onChange={e => set("email", e.target.value)} autoFocus={mode !== "signup"} />
+                <input className={`${styles.input} ${errors.email ? styles.inputErr : ""}`} type="email" placeholder="jane@company.com" value={form.email} onChange={e => set("email", e.target.value)} />
                 {errors.email && <span className={styles.err}>{errors.email}</span>}
               </div>
 
