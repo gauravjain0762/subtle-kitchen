@@ -522,7 +522,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <Link href="/get-workspace-code" className={styles.subscribeBtn}>Start your subscription</Link>
+            <Link href="/pricing" className={styles.subscribeBtn}>Start your subscription</Link>
           </div>
 
           <div className={styles.subscribeImgWrap} data-animate="slide-left">
