@@ -239,9 +239,11 @@
   .navInner { padding: 0 16px; }
 }
 @media (max-width: 600px) {
+  .hero { gap: 36px; padding: calc(68px + 36px) 20px 60px; }
   .heading { font-size: 36px; }
   .heroImg { height: 280px; }
   .heroFloatCard { left: 12px; bottom: -24px; }
+  .badge { font-size: 10px; letter-spacing: 0.06em; padding: 6px 12px; gap: 5px; }
 }
 
 /* ══════════════════════════════════════
