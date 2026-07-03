@@ -207,7 +207,7 @@ export default function GetCompanyCodeModal({ onClose }) {
         {step === 2 && (
           <form className={styles.step} key="step2" onSubmit={handleSubmit} noValidate>
             <h2 className={styles.heading}>Your <span className={styles.headingAccent}>contact</span> details</h2>
-            <p className={styles.subtext}>We'll send your workspace code and setup instructions here.</p>
+            <p className={styles.subtext}>We'll send your workspace code and setup instructions on your email.</p>
 
             <div className={styles.fields}>
               <div className={styles.row}>

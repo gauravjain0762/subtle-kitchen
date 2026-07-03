@@ -3,17 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
-import MarqueeBanner from "./components/MarqueeBanner";
 import GetStartedModal from "./components/GetStartedModal";
 import AuthPanel from "./components/AuthPanel";
 import Navbar from "./components/Navbar";
 
-const NAV_LINKS = [
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Menu",         href: "/menu" },
-  { label: "Become a Delivery Location", href: "/for-businesses" },
-  { label: "Pricing",     href: "#menu" },
-];
 const HERO_DISHES = [
   { img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&q=85", name: "Chicken Katsu Curry",    desc: "Crispy panko chicken, house curry sauce, jasmine rice, pickled radish.", kcal: "620 KCAL" },
   { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=85", name: "Sesame Ahi Poke Bowl",    desc: "Sushi-grade tuna, edamame, cucumber, pickled ginger, sesame dressing.", kcal: "480 KCAL" },
@@ -30,25 +23,25 @@ const HEADLINE_LINES = [
 const MENU_HEADING = "This week’s menu";
 
 const MENU_ITEMS = [
-  { day: "MON", date: 24, name: "Sesame Ahi Poke Bowl",       desc: "Sushi-grade tuna, edamame, cucumber, sesame dressing",  kcal: 480, protein: 32, tags: ["GLUTEN FREE", "OMEGA-3"],    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=160&q=80", active: true  },
-  { day: "TUE", date: 25, name: "Herby Falafel & Hummus Wrap", desc: "Crispy falafel, tahini, roasted peppers, flatbread",     kcal: 520, protein: 18, tags: ["VEGAN", "HIGH FIBER"],      img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=160&q=80", active: false },
-  { day: "WED", date: 26, name: "Chicken Katsu Curry",         desc: "Panko chicken, house curry, jasmine rice, pickled radish", kcal: 620, protein: 41, tags: ["TRENDING", "HIGH PROTEIN"], img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=160&q=80", active: false },
-  { day: "THU", date: 27, name: "Miso Salmon & Quinoa",        desc: "Atlantic salmon, white miso glaze, tri-colour quinoa",   kcal: 560, protein: 44, tags: ["DAIRY FREE"],               img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=160&q=80", active: false },
-  { day: "FRI", date: 28, name: "Roasted Pepper Burrito Bowl", desc: "Black beans, guacamole, pico de gallo, chipotle crema",  kcal: 490, protein: 22, tags: ["VEGETARIAN"],               img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=160&q=80", active: false },
+  { day: "MON", name: "Sesame Ahi Poke Bowl",        desc: "Sushi-grade tuna, edamame, cucumber, sesame dressing",       kcal: 480, protein: 32, carbs: 44, fat: 14, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",  active: true  },
+  { day: "TUE", name: "Herby Falafel & Hummus Wrap", desc: "Crispy falafel, tahini, roasted peppers, flatbread",          kcal: 520, protein: 18, carbs: 62, fat: 18, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",  active: false },
+  { day: "WED", name: "Chicken Katsu Curry",          desc: "Panko chicken, house curry, jasmine rice, pickled radish",   kcal: 620, protein: 41, carbs: 78, fat: 18, img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80",  active: false },
+  { day: "THU", name: "Miso Salmon & Quinoa",         desc: "Atlantic salmon, white miso glaze, tri-colour quinoa",        kcal: 560, protein: 44, carbs: 38, fat: 22, img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",  active: false },
+  { day: "FRI", name: "Roasted Pepper Burrito Bowl",  desc: "Black beans, guacamole, pico de gallo, chipotle crema",      kcal: 490, protein: 22, carbs: 58, fat: 16, img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",  active: false },
 ];
 
 const PERKS = [
   {
-    label: "NO MINIMUM ORDER",
-    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>,
+    label: "Freshly prepared meal everyday",
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 2 12"/><path d="M12 6v6l4 2"/><path d="M2 12a10 10 0 0 1 10-10"/></svg>,
   },
   {
-    label: "FREE DELIVERY",
+    label: "Delivered to your workspace",
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
   },
   {
-    label: "CANCEL ANYTIME",
-    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>,
+    label: "Flexible One-off and Weekly Orders",
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>,
   },
 ];
 
@@ -75,10 +68,62 @@ const HOW_STEPS = [
   },
 ];
 
+function MenuCard({ item, index }) {
+  const ref = useRef(null);
+  const handleMove = (e) => {
+    if (!ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width - 0.5) * 18;
+    const y = ((e.clientY - r.top) / r.height - 0.5) * -18;
+    ref.current.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) translateZ(14px)`;
+    ref.current.style.boxShadow = `${-x * 1.5}px ${-y * 1.5}px 48px rgba(0,0,0,0.14)`;
+  };
+  const handleLeave = () => {
+    if (!ref.current) return;
+    ref.current.style.transform = "";
+    ref.current.style.boxShadow = "";
+  };
+  return (
+    <div
+      ref={ref}
+      className={styles.menuCard3d}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      data-animate="fade-up"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <div className={styles.menuCardImgWrap}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={item.img} alt={item.name} className={styles.menuCardImg} />
+        <span className={`${styles.menuCardDayBadge} ${item.active ? styles.menuCardDayBadgeToday : ""}`}>
+          {item.day}
+        </span>
+        {item.active && <span className={styles.menuCardTodayBadge}>TODAY</span>}
+      </div>
+      <div className={styles.menuCardBody}>
+        <h3 className={styles.menuCardName}>{item.name}</h3>
+        <p className={styles.menuCardDesc}>{item.desc}</p>
+        <div className={styles.menuMacroGrid}>
+          {[
+            { label: "KCAL",  val: item.kcal },
+            { label: "PROT",  val: `${item.protein}g` },
+            { label: "CARBS", val: `${item.carbs}g` },
+            { label: "FAT",   val: `${item.fat}g` },
+          ].map(m => (
+            <div key={m.label} className={styles.menuMacroCell}>
+              <span className={styles.menuMacroLabel}>{m.label}</span>
+              <span className={styles.menuMacroVal}>{m.val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   useScrollAnimation();
   const [slide, setSlide] = useState(0);
-  const [tSlide, setTSlide] = useState(0);
   const [gsOpen, setGsOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const heroRef = useRef(null);
@@ -143,17 +188,6 @@ export default function Home() {
     const t = setInterval(() => setSlide(s => (s + 1) % HERO_DISHES.length), 3500);
     return () => clearInterval(t);
   }, []);
-
-  const TESTIMONIALS = [
-    { quote: "The quality of the food is incredible for a delivery service. It's become the highlight of our team's work day.", name: "Sarah M.", role: "Operations Lead at AeroScale", img: "https://i.pravatar.cc/40?img=47" },
-    { quote: "Subtle Kitchen solved our office lunch problem overnight. No more cold deliveries or missing items. It's flawless.", name: "James T.", role: "Founder at FlowState", img: "https://i.pravatar.cc/40?img=12" },
-    { quote: "The dashboard makes managing our weekly subsidy so easy. Our employees are healthier and happier.", name: "Priya K.", role: "HR Director at Veridian", img: "https://i.pravatar.cc/40?img=32" },
-  ];
-
-  useEffect(() => {
-    const t = setInterval(() => setTSlide(s => (s + 1) % TESTIMONIALS.length), 4500);
-    return () => clearInterval(t);
-  }, [TESTIMONIALS.length]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -349,8 +383,6 @@ export default function Home() {
         </div>
       </section>
 
-      <MarqueeBanner />
-
       {/* ── How It Works ── */}
       <section id="how-it-works" className={styles.how}>
         <div className={styles.howInner}>
@@ -400,34 +432,24 @@ export default function Home() {
             <h2 className={styles.menuHeading}>{MENU_HEADING}</h2>
             <p className={styles.menuSubtext}>A different, nutritionally balanced meal every single day.<br />Crafted by professional chefs for the modern worker.</p>
           </div>
-          <div className={styles.menuRight}>
-            {MENU_ITEMS.slice(0, 4).map((item, i) => (
-              <div key={i} className={`${styles.menuRow} ${item.active ? styles.menuRowActive : ""}`} data-cursor="true" data-animate="fade-up" data-stagger-delay={i}>
-                <div className={styles.dayPill}>
-                  {item.active ? (
-                    <span className={styles.todayLabel}>TODAY</span>
-                  ) : (
-                    <><span className={styles.dayName}>{item.day}</span><span className={styles.dayNum}>{item.date}</span></>
-                  )}
-                </div>
-                <div className={styles.menuThumbWrap}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.img} alt={item.name} className={styles.menuThumb} />
-                </div>
-                <div className={styles.menuInfo}>
-                  <span className={styles.menuItemName}>{item.name}</span>
-                  <span className={styles.menuItemDesc}>{item.desc}</span>
-                </div>
-                <div className={styles.macros}>
-                  <span className={styles.macroPill}>{item.kcal} KCAL</span>
-                  <span className={styles.macroPill}>{item.protein}G PRO</span>
-                </div>
-                <Link href="/menu" className={styles.orderNowBtn}>Order now</Link>
-              </div>
+
+          <div className={styles.menuCardGrid}>
+            {MENU_ITEMS.map((item, i) => (
+              <MenuCard key={i} item={item} index={i} />
             ))}
           </div>
-          <div className={styles.menuFooter} data-animate="fade-up">
-            <Link href="/menu" className={styles.menuBtn}>See full menu</Link>
+
+          <div className={styles.menuDeliveryBanner} data-animate="fade-up">
+            <div className={styles.menuDeliveryLeft}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+              <div>
+                <p className={styles.menuDeliveryTitle}>Daily Delivery Included</p>
+                <p className={styles.menuDeliveryNote}>All orders include next-morning delivery to your workspace.</p>
+              </div>
+            </div>
+            <Link href="/menu" className={styles.menuDeliveryBtn}>Order Now</Link>
           </div>
         </div>
       </section>
@@ -446,7 +468,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className={styles.bizCardTitle}>One code per workplace</h3>
-              <p className={styles.bizCardDesc}>Distribute a single invite code. No individual account creation needed for employees to browse.</p>
+              <p className={styles.bizCardDesc}>Enter your workplace's unique company code to access the menu created for your location.</p>
             </div>
             <div className={`${styles.bizCard} ${styles.bizCardDark}`} data-cursor="true" data-animate="scale-in" data-stagger-delay="1">
               <div className={styles.bizIcon}>
@@ -469,7 +491,7 @@ export default function Home() {
               <p className={styles.bizCardDesc}>Choose between full company subsidy, partial employee contribution, or direct payment.</p>
             </div>
           </div>
-          <Link href="/get-workspace-code" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a workspace code</Link>
+          <Link href="/get-workspace-code" className={styles.bizLink} data-animate="fade-up" data-stagger-delay="3">Get a workspace code now</Link>
         </div>
       </section>
 
@@ -512,53 +534,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className={styles.testimonials}>
-        <div className={styles.testimonialSlider} data-animate="fade-up">
-          <div className={styles.testimonialViewport}>
-          <div className={styles.testimonialTrack} style={{ transform: "translateX(-" + (tSlide * 100) + "%)" }}>
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className={styles.testimonialCard}
-                onMouseMove={(e) => {
-                  const r = e.currentTarget.getBoundingClientRect();
-                  const x = (e.clientX - r.left) / r.width - 0.5;
-                  const y = (e.clientY - r.top) / r.height - 0.5;
-                  e.currentTarget.style.transition = "transform 0.15s ease";
-                  e.currentTarget.style.transform = "perspective(800px) rotateX(" + (-y * 7) + "deg) rotateY(" + (x * 7) + "deg)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transition = "transform 0.4s ease-out";
-                  e.currentTarget.style.transform = "perspective(800px) rotateX(0) rotateY(0)";
-                }}
-              >
-                <div className={styles.stars}>
-                  {"★★★★★".split("").map((s, si) => (
-                    <span key={si} className={styles.star} style={{ animationDelay: (si * 0.08) + "s" }}>{s}</span>
-                  ))}
-                </div>
-                <p className={styles.testimonialQuote}>{t.quote}</p>
-                <div className={styles.testimonialDivider} />
-                <div className={styles.testimonialAuthor}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.img} alt={t.name} className={styles.avatar} />
-                  <div>
-                    <p className={styles.authorName}>{t.name}</p>
-                    <p className={styles.authorRole}>{t.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          </div>{/* testimonialViewport */}
-
-          <div className={styles.tDots}>
-            {TESTIMONIALS.map((_, i) => (
-              <button key={i} className={`${styles.tDot} ${i === tSlide ? styles.tDotActive : ""}`} onClick={() => setTSlide(i)} aria-label={"Testimonial " + (i + 1)} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Final CTA ── */}
       <section className={styles.finalCta} ref={ctaRef}>
         <div ref={eatBetterRef} className={styles.eatBetter} aria-hidden="true">EAT BETTER</div>
@@ -566,9 +541,6 @@ export default function Home() {
         <div className={styles.finalCtaBtns} data-animate="fade-up" data-stagger-delay="1">
           <Link href="/get-workspace-code" className={styles.finalCtaPrimary}>
             Get a workspace code
-            <svg className={styles.ctaArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-            </svg>
           </Link>
           <a href="#" className={styles.finalCtaSecondary}>Contact us</a>
         </div>

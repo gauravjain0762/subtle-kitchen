@@ -243,10 +243,10 @@
 }
 
 .label {
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   color: #9b9b88;
 }
 .req { color: #dc2626; }
@@ -325,18 +325,6 @@
   color: #0a0a0a;
 }
 .addressPlaceholder { color: #c0c0ad; font-weight: 400; }
-.addressOpenBadge {
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(10,10,10,0.4);
-  background: #f0f0ed;
-  border-radius: 6px;
-  padding: 3px 8px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background 0.18s, color 0.18s;
-}
-.addressWrap:hover .addressOpenBadge { background: #fff39a; color: #0a0a0a; }
 
 /* ── Country static badge ── */
 .countryStatic {
@@ -516,17 +504,28 @@
 /* ── Summary pill ── */
 .summaryPill {
   display: flex;
-  align-items: center;
-  gap: 9px;
+  flex-direction: column;
+  gap: 8px;
   background: #0a0a0a;
   color: #fff39a;
   border-radius: 12px;
-  padding: 13px 18px;
+  padding: 14px 18px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   animation: fieldIn 0.4s calc(0.06s + 4 * 0.05s) cubic-bezier(0.16,1,0.3,1) both;
+  text-transform: capitalize;
 }
-.summaryPill svg { opacity: 0.6; flex-shrink: 0; }
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.summaryIcon {
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
 
 /* ── Buttons ── */
 .btnPrimary {
@@ -584,47 +583,82 @@
 
 /* ── Success ── */
 .successRing {
-  width: 84px;
-  height: 84px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
-  background: rgba(255,243,154,0.15);
+  background: rgba(255,243,154,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: ringPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   position: relative;
+  margin: 0 auto 8px;
+  transform-style: preserve-3d;
+  animation: ring3d 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .successRing::before {
   content: '';
   position: absolute;
-  inset: -7px;
+  inset: -8px;
   border-radius: 50%;
-  border: 2px solid rgba(255,243,154,0.35);
-  animation: pulse 1.8s ease-out 0.4s infinite;
+  border: 2px solid rgba(255,243,154,0.3);
+  animation: pulse 2s ease-out 0.9s infinite;
 }
 .successRing::after {
   content: '';
   position: absolute;
-  inset: -16px;
+  inset: -18px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,243,154,0.15);
-  animation: pulse 1.8s ease-out 0.65s infinite;
+  border: 1.5px solid rgba(255,243,154,0.12);
+  animation: pulse 2s ease-out 1.15s infinite;
 }
-@keyframes ringPop { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
-@keyframes pulse { 0% { transform:scale(1); opacity:.8; } 100% { transform:scale(1.4); opacity:0; } }
+@keyframes ring3d {
+  0%   { opacity: 0; transform: perspective(500px) rotateX(90deg) scale(0.4); }
+  60%  { opacity: 1; transform: perspective(500px) rotateX(-12deg) scale(1.06); }
+  80%  { transform: perspective(500px) rotateX(5deg) scale(0.97); }
+  100% { transform: perspective(500px) rotateX(0deg) scale(1); }
+}
+@keyframes pulse { 0% { transform:scale(1); opacity:.8; } 100% { transform:scale(1.45); opacity:0; } }
 
 .successIcon {
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #0a0a0a;
   color: #fff39a;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: iconIn 0.4s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
+  transform-style: preserve-3d;
+  animation: icon3d 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
 }
-@keyframes iconIn { from { transform: scale(0) rotate(-30deg); opacity:0; } to { transform: scale(1) rotate(0); opacity:1; } }
+@keyframes icon3d {
+  0%   { opacity: 0; transform: perspective(400px) rotateY(180deg) scale(0.3); }
+  70%  { opacity: 1; transform: perspective(400px) rotateY(-8deg) scale(1.05); }
+  100% { transform: perspective(400px) rotateY(0deg) scale(1); }
+}
+
+.tickPath {
+  stroke-dasharray: 25;
+  stroke-dashoffset: 25;
+  animation: drawTick 0.5s cubic-bezier(0.16,1,0.3,1) 0.85s forwards;
+}
+@keyframes drawTick { to { stroke-dashoffset: 0; } }
+
+.successHeading {
+  text-align: center;
+  margin-top: 24px;
+  opacity: 0;
+  animation: successFadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.7s forwards;
+}
+.successSub {
+  text-align: center;
+  opacity: 0;
+  animation: successFadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.85s forwards;
+}
+@keyframes successFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .successCard {
   background: #fff;

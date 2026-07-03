@@ -86,11 +86,21 @@ export default function ContactPage() {
                     required
                   >
                     <option value="">Select a topic</option>
-                    <option value="workspace">Set up workspace delivery</option>
-                    <option value="menu">Menu enquiry</option>
-                    <option value="commercial">Commercial meal prep</option>
-                    <option value="partner">Become a delivery partner</option>
-                    <option value="other">Other</option>
+                    <option value="office">Office</option>
+                    <option value="warehouse">Warehouse</option>
+                    <option value="factory">Factory</option>
+                    <option value="garage">Garage</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="depot">Depot</option>
+                    <option value="construction">Construction site office</option>
+                    <option value="industrial">Industrial unit</option>
+                    <option value="business-park">Business park</option>
+                    <option value="call-centre">Call centre</option>
+                    <option value="clinic">Clinic</option>
+                    <option value="school">School</option>
+                    <option value="college">College</option>
+                    <option value="gym">Gym</option>
+                    <option value="studio">Commercial studio</option>
                   </select>
                 </div>
 

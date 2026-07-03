@@ -4,7 +4,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 
 const EMPLOYEE_OPTIONS = ["1 – 10", "11 – 25", "26 – 50", "51 – 100", "101 – 250", "250+"];
-const PREMISE_OPTIONS  = ["Office", "Warehouse", "Garage / Workshop", "School", "Retail", "Other"];
+const PREMISE_OPTIONS  = ["Office", "Warehouse", "Factory", "Garage", "Workshop", "Depot", "Construction site office", "Industrial unit", "Business park", "Call centre", "Clinic", "School", "College", "Gym", "Commercial studio"];
 const DELIVERY_TIMES   = [
   "10:00 AM", "10:30 AM",
   "11:00 AM", "11:30 AM",
@@ -26,7 +26,6 @@ const BENEFITS = [
   { icon: "⚡", text: "Setup in under 5 minutes" },
   { icon: "🚚", text: "Free delivery to your door" },
   { icon: "🍱", text: "Fresh chef-prepared meals daily" },
-  { icon: "📊", text: "Full team dashboard included" },
 ];
 
 export default function GetWorkspaceCodePage() {
@@ -64,6 +63,7 @@ export default function GetWorkspaceCodePage() {
     if (!workspace.deliveryTimes[0].trim())     e.deliveryTimes = "At least one delivery time is required";
     if (!workspace.mealType)                    e.mealType      = "Required";
     if (!workspace.employees)                   e.employees     = "Required";
+    if (!workspace.premiseType)                 e.premiseType   = "Required";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -102,10 +102,6 @@ export default function GetWorkspaceCodePage() {
         </Link>
 
         <div className={styles.leftContent}>
-          <div className={styles.logo}>
-            <span className={styles.logoDash}>—</span>
-            <span className={styles.logoText}>Subtle Kitchen</span>
-          </div>
           <h1 className={styles.leftHeading}>
             Get your<br />
             <span className={styles.leftAccent}>workspace</span><br />
@@ -167,16 +163,12 @@ export default function GetWorkspaceCodePage() {
                 <div className={styles.field} style={{ "--fi": 1 }}>
                   <label className={styles.label}>Address <span className={styles.req}>*</span></label>
                   <div className={styles.addressWrap}
-                    onClick={() => window.open("https://maps.google.com", "_blank")}
+                    onClick={() => window.open("https://www.google.com/maps?output=svembed&action=loc:-0.1278,51.5074", "_blank")}
                     role="button" tabIndex={0}
-                    onKeyDown={e => e.key === "Enter" && window.open("https://maps.google.com", "_blank")}>
-                    <svg className={styles.addressMapIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                    </svg>
+                    onKeyDown={e => e.key === "Enter" && window.open("https://www.google.com/maps", "_blank")}>
                     <span className={styles.addressText}>
-                      {workspace.address1 || <span className={styles.addressPlaceholder}>Enter your address or Click to pick address</span>}
+                      {workspace.address1 || <span className={styles.addressPlaceholder}>Click to select location on map</span>}
                     </span>
-                    <span className={styles.addressOpenBadge}>Open Maps ↗</span>
                   </div>
                   {errors.address1 && <p className={styles.errMsg}>{errors.address1}</p>}
                 </div>
@@ -209,7 +201,6 @@ export default function GetWorkspaceCodePage() {
                   <div className={styles.field} style={{ "--fi": 5 }}>
                     <label className={styles.label}>Country</label>
                     <div className={styles.countryStatic}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                       United Kingdom
                     </div>
                   </div>
@@ -289,21 +280,19 @@ export default function GetWorkspaceCodePage() {
                     {errors.employees && <p className={styles.errMsg}>{errors.employees}</p>}
                   </div>
                   <div className={styles.field} style={{ "--fi": 10 }}>
-                    <label className={styles.label}>Premise type <span className={styles.opt}>(optional)</span></label>
-                    <select className={`${styles.input} ${styles.select}`}
+                    <label className={styles.label}>Business type <span className={styles.req}>*</span></label>
+                    <select className={`${styles.input} ${styles.select} ${errors.premiseType ? styles.inputError : ""}`}
                       value={workspace.premiseType} onChange={e => setW("premiseType", e.target.value)}>
                       <option value="">Select…</option>
                       {PREMISE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
+                    {errors.premiseType && <p className={styles.errMsg}>{errors.premiseType}</p>}
                   </div>
                 </div>
               </div>
 
               <button className={styles.btnPrimary} onClick={handleNext}>
                 Continue
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
               </button>
             </div>
           )}
@@ -314,7 +303,7 @@ export default function GetWorkspaceCodePage() {
               <h2 className={styles.formHeading}>
                 Your <span className={styles.formAccent}>contact</span> details
               </h2>
-              <p className={styles.formSub}>We'll send your workspace code and setup instructions here.</p>
+              <p className={styles.formSub}>We'll send your workspace code and setup instructions on your email.</p>
 
               <div className={styles.fields}>
                 <div className={styles.row}>
@@ -351,17 +340,37 @@ export default function GetWorkspaceCodePage() {
                 </div>
 
                 <div className={styles.summaryPill} style={{ "--fi": 4 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                  </svg>
-                  {workspace.name} · {workspace.town}, {workspace.city} · {filledTimes.map((t, i) => `Break ${i + 1}: ${t}`).join(" / ")} · {workspace.mealType}
+                  <div className={styles.summaryRow}>
+                    <span className={styles.summaryIcon}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </span>
+                    {workspace.name}
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span className={styles.summaryIcon}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </span>
+                    {workspace.town}, {workspace.city}
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span className={styles.summaryIcon}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </span>
+                    {filledTimes.map((t, i) => `Break ${i + 1}: ${t}`).join("  ·  ")}
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span className={styles.summaryIcon}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13"/></svg>
+                    </span>
+                    {workspace.mealType}
+                  </div>
                 </div>
               </div>
 
               <button type="submit" className={styles.btnPrimary} disabled={loading}>
                 {loading
                   ? <span className={styles.spinner} />
-                  : <>Get my workspace code <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></>
+                  : <>Get my workspace code </>
                 }
               </button>
               <button type="button" className={styles.btnGhost} onClick={() => setStep(1)}>← Back to workspace details</button>
@@ -374,15 +383,15 @@ export default function GetWorkspaceCodePage() {
               <div className={styles.successRing}>
                 <div className={styles.successIcon}>
                   <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
+                    <polyline className={styles.tickPath} points="20 6 9 17 4 12"/>
                   </svg>
                 </div>
               </div>
 
-              <h2 className={styles.formHeading} style={{ marginTop: 28 }}>
+              <h2 className={`${styles.formHeading} ${styles.successHeading}`}>
                 You&apos;re all set, <span className={styles.formAccent}>{contact.firstName}!</span>
               </h2>
-              <p className={styles.formSub}>
+              <p className={`${styles.formSub} ${styles.successSub}`}>
                 We'll send your unique workspace code to <strong>{contact.email}</strong> within 1–2 business days.
               </p>
 

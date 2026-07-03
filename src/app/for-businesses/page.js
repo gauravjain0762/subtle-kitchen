@@ -111,7 +111,7 @@ export default function ForBusinesses() {
             for garages, warehouses, workshops, and other Small &amp; Medium Enterprises (SMEs).
           </p>
           <div className={styles.ctas}>
-            <Link href="/get-workspace-code" className={styles.ctaPrimary}>Start order</Link>
+            <Link href="/get-workspace-code" className={styles.ctaPrimary}>Get workspace code</Link>
             <Link href="/menu" className={styles.ctaSecondary}>View our menu</Link>
           </div>
         </div>
