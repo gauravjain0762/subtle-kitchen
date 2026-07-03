@@ -153,7 +153,6 @@ export default function ContactPage() {
               <span className={styles.cardLabel}>DELIVERY HOURS</span>
               <p className={styles.cardText}>
                 Monday – Friday<br />
-                11:00 AM – 2:00 PM<br />
                 <span className={styles.cardNote}>Order by 10 PM the night before</span>
               </p>
             </div>

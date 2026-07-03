@@ -1326,8 +1326,9 @@
   .howGrid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .hero { flex-direction: column; padding-top: 48px; gap: 48px; }
-  .heroRight { width: 100%; }
+  .hero { flex-direction: column; padding-top: 48px; gap: 24px; min-height: unset; }
+  .heroLeft { flex: none; width: 100%; }
+  .heroRight { width: 100%; padding-top: 0; }
   .menuCardGrid { grid-template-columns: repeat(2, 1fr); }
   .bizGrid { grid-template-columns: 1fr; }
   .subscribeInner { flex-direction: column; gap: 48px; }
@@ -1341,13 +1342,15 @@
   .navLinks { display: none; }
 
   /* Hero */
-  .hero { padding: 32px 20px 40px; gap: 28px; }
+  .hero { padding: 32px 20px 40px; gap: 16px; min-height: unset; }
+  .heroLeft { flex: none; width: 100%; }
   .headlineLine { white-space: normal; }
   .subtext { font-size: 15px; }
   .ctas { flex-direction: column; align-items: stretch; margin-bottom: 16px; }
   .ctaPrimary { text-align: center; }
   .ctaSecondary { text-align: center; }
   .heroImgClip { width: 100%; margin: 0; height: 260px; }
+  .menuCardWrap { left: 12px; bottom: -20px; }
   .divider { margin-bottom: 12px; }
 
   /* Perks */
@@ -1360,8 +1363,20 @@
   .howGrid { grid-template-columns: 1fr; }
 
   /* Menu section */
-  .menu { padding: 60px 20px; }
-  .menuCardGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .menu { padding: 48px 20px; }
+  .menuCardGrid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Horizontal card on mobile */
+  .menuCard3d { display: flex; flex-direction: row; border-radius: 16px; }
+  .menuCardImgWrap { width: 120px; min-width: 120px; height: auto; min-height: 130px; border-radius: 0; flex-shrink: 0; }
+  .menuCardImg { height: 100%; }
+  .menuCardBody { flex: 1; padding: 14px 14px 14px; gap: 6px; }
+  .menuCardName { font-size: 13px; }
+  .menuCardDesc { font-size: 11px; -webkit-line-clamp: 2; line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .menuMacroGrid { gap: 4px; }
+  .menuMacroCell { padding: 6px 8px; }
+  .menuMacroVal { font-size: 13px; }
+
   .menuDeliveryBanner { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
   .menuDeliveryBtn { width: 100%; text-align: center; }
 

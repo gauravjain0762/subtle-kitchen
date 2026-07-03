@@ -134,7 +134,7 @@
 }
 .ctaPrimary {
   font-size: 15px; font-weight: 700;
-  background: var(--black); color: var(--yellow);
+  background: var(--black); color: #fff;
   padding: 14px 28px; border-radius: 10px;
   text-decoration: none;
   border: none; cursor: pointer; font-family: inherit;
@@ -160,7 +160,7 @@
   font-weight: 700;
   font-family: inherit;
   background: var(--black, #0a0a0a);
-  color: var(--yellow, #fff39a);
+  color: #fff;
   border: none;
   border-radius: 10px;
   padding: 14px 28px;
