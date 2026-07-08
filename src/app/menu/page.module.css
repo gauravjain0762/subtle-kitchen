@@ -2088,12 +2088,41 @@
   background: var(--white);
   border: 1.5px solid rgba(0,0,0,0.08);
   border-radius: 10px;
-  cursor: pointer;
   font-family: 'Inter', sans-serif;
   transition: all 0.18s ease;
   text-align: left;
 }
-.dishDetailAddonItem:hover { border-color: rgba(0,0,0,0.2); transform: translateX(2px); }
+.dishDetailAddonItem:hover { border-color: rgba(0,0,0,0.2); }
+.addonQtyCtrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+.addonQtyBtn {
+  width: 22px; height: 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.addonQtyBtn:hover { background: rgba(0,0,0,0.06); }
+.addonQtyVal {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
 .dishDetailAddonItemActive {
   background: #f5f5f5;
   border-color: #C5C6C7;

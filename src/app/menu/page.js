@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
@@ -13,24 +13,21 @@ import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 const COMPANY = "ACME2024";
 const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
 
-const MONTH_IDX = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
-function isClosed(dateStr) {
+function isDateClosed(date) {
+  if (!date) return false;
   const now = new Date();
-  const [dayNum, monthStr] = dateStr.split(" ");
-  const mealDate = new Date(2026, MONTH_IDX[monthStr], parseInt(dayNum));
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  // Delivery day is today or already past
-  if (mealDate <= todayMidnight) return true;
-  // It's the evening before — past 10pm cut-off
-  const prevDay = new Date(mealDate);
-  prevDay.setDate(mealDate.getDate() - 1);
+  const dateMidnight  = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (dateMidnight <= todayMidnight) return true;
+  const prevDay = new Date(dateMidnight);
+  prevDay.setDate(dateMidnight.getDate() - 1);
   if (prevDay.getTime() === todayMidnight.getTime() && now.getHours() >= 22) return true;
   return false;
 }
 
 const WEEKLY_MENU = [
   {
-    day: "MON", date: "30 Jun", closed: isClosed("30 Jun"), theme: "Asian Kitchen",
+    day: "MON", date: "30 Jun", closed: false, theme: "Asian Kitchen",
     dishes: [
       {
         name: "Chicken Katsu Curry", price: 8.50,
@@ -83,7 +80,7 @@ const WEEKLY_MENU = [
     ],
   },
   {
-    day: "TUE", date: "1 Jul", closed: isClosed("1 Jul"), theme: "Mediterranean",
+    day: "TUE", date: "1 Jul", closed: false, theme: "Mediterranean",
     dishes: [
       {
         name: "Peri Peri Chicken Rice", price: 8.50,
@@ -136,7 +133,7 @@ const WEEKLY_MENU = [
     ],
   },
   {
-    day: "WED", date: "2 Jul", closed: isClosed("2 Jul"), theme: "Italian Kitchen",
+    day: "WED", date: "2 Jul", closed: false, theme: "Italian Kitchen",
     dishes: [
       {
         name: "Chicken Pasta", price: 8.00,
@@ -204,7 +201,7 @@ const WEEKLY_MENU = [
     ],
   },
   {
-    day: "THU", date: "3 Jul", closed: isClosed("3 Jul"), theme: "Street Food",
+    day: "THU", date: "3 Jul", closed: false, theme: "Street Food",
     dishes: [
       {
         name: "Beef Burrito Bowl", price: 9.00,
@@ -257,7 +254,7 @@ const WEEKLY_MENU = [
     ],
   },
   {
-    day: "FRI", date: "4 Jul", closed: isClosed("4 Jul"), theme: "Comfort Classics",
+    day: "FRI", date: "4 Jul", closed: false, theme: "Comfort Classics",
     dishes: [
       {
         name: "Chicken Tikka Rice Bowl", price: 8.50,
@@ -433,6 +430,24 @@ function CalendarPicker({ selectedDate, onChange, hasItemsForDow }) {
   );
 }
 
+function restoreCartState(cartItems, days) {
+  const sel = {}, pts = {}, qtys = {}, adns = {};
+  cartItems.forEach(item => {
+    days.forEach((day, d) => {
+      (day.dishes || []).forEach((dish, di) => {
+        if (String(dish._id) === String(item.dishId)) {
+          const k = `${d}_${di}`;
+          sel[k]  = true;
+          pts[k]  = item.portionSize?.toLowerCase() === "large" ? "large" : "regular";
+          qtys[k] = item.qty || 1;
+          adns[k] = new Set(item.addons || []);
+        }
+      });
+    });
+  });
+  return { sel, pts, qtys, adns };
+}
+
 function readReorderItems() {
   if (typeof window === "undefined") return [];
   try { return JSON.parse(sessionStorage.getItem("reorder_items") || "[]"); }
@@ -475,7 +490,8 @@ export default function MenuPage() {
     const items = readReorderItems();
     return items.length > 0 ? items.map(i => i.name).join(", ") : null;
   });
-  const [addons, setAddons] = useState({});
+  const [addons, setAddons]       = useState({});
+  const [addonQtys, setAddonQtys] = useState({});
   const [expandedDish, setExpandedDish] = useState(null);
   const [detailDish, setDetailDish] = useState(null);
   const [detailTab, setDetailTab] = useState("overview");
@@ -496,6 +512,8 @@ export default function MenuPage() {
   const router = useRouter();
   const [menuDays, setMenuDays] = useState([]);
   const [menuLoading, setMenuLoading] = useState(true);
+  const [cartLoaded, setCartLoaded] = useState(false);
+  const saveTimerRef = useRef(null);
 
   useEffect(() => { sessionStorage.removeItem("reorder_items"); }, []);
 
@@ -509,13 +527,37 @@ export default function MenuPage() {
           return {
             day: day.day,
             date: dateStr,
-            closed: isClosed(dateStr),
+            closed: false,
             theme: day.theme,
-            dishes: day.dishes.map(d => ({
-              ...d,
-              img:  d.img || (Array.isArray(d.images) ? d.images[0] : null) || "",
-              imgs: Array.isArray(d.images) ? d.images : (d.img ? [d.img] : []),
-            })),
+            dishes: day.dishes.map(d => {
+              // Normalize nutrition — API may use top-level fields OR nutritionalIngredients[]
+              let kcal = d.kcal, protein = d.protein, carbs = d.carbs, fat = d.fat;
+              if (kcal == null || protein == null) {
+                (d.nutritionalIngredients || []).forEach(ni => {
+                  if (ni.kcal           != null) kcal    = Number(ni.kcal)           || kcal;
+                  if (ni.protein        != null) protein = Number(ni.protein)        || protein;
+                  if (ni.carbs          != null) carbs   = Number(ni.carbs)          || carbs;
+                  if (ni.carbohydrates  != null) carbs   = Number(ni.carbohydrates)  || carbs;
+                  if (ni.fat            != null) fat     = Number(ni.fat)            || fat;
+                });
+              }
+              // Normalize portions — cast prices to numbers
+              const portions = (d.portions || []).map(p => ({ ...p, price: Number(p.price) || 0 }));
+              // Base price: use Regular portion price if available, else flat price
+              const basePrice = portions.find(p => p.size === "Regular")?.price ?? Number(d.price) ?? 0;
+              return {
+                ...d,
+                kcal, protein, carbs, fat,
+                price:   basePrice,
+                portions,
+                img:   d.img || (Array.isArray(d.images) ? d.images[0] : null) || "",
+                imgs:  Array.isArray(d.images) ? d.images : (d.img ? [d.img] : []),
+                addons: (d.addons?.length
+                  ? d.addons
+                  : (d.ingredients || [])
+                ).map(a => ({ ...a, price: Number(a.price) || 0 })),
+              };
+            }),
           };
         });
         setMenuDays(transformed);
@@ -523,6 +565,63 @@ export default function MenuPage() {
       .catch(() => {})
       .finally(() => setMenuLoading(false));
   }, []);
+
+  // Load cart from API once menu is ready and user is logged in
+  // Skip if reorder items exist in sessionStorage (reorder takes priority)
+  useEffect(() => {
+    if (!user || menuLoading) return;
+    if (readReorderItems().length > 0) {
+      const t = setTimeout(() => setCartLoaded(true), 0);
+      return () => clearTimeout(t);
+    }
+    api.get("/api/cart")
+      .then(data => {
+        if (!data.cart?.items?.length) return;
+        const { sel, pts, qtys, adns } = restoreCartState(data.cart.items, menuDays);
+        setSelected(sel);
+        setPortions(pts);
+        setQuantities(qtys);
+        setAddons(adns);
+        if (data.cart.deliveryDate) {
+          const [y, m, d] = data.cart.deliveryDate.split("-").map(Number);
+          setSelectedDate(new Date(y, m - 1, d));
+        }
+        if (data.cart.lunchTime) setLunchTime(data.cart.lunchTime);
+        if (typeof data.cart.isWeeklySubscription === "boolean") setWeekly(data.cart.isWeeklySubscription);
+      })
+      .catch(() => {})
+      .finally(() => setCartLoaded(true));
+  }, [user, menuLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Debounced cart save — fires 800ms after any cart state change
+  useEffect(() => {
+    if (!user || !cartLoaded || Object.keys(selected).length === 0) return;
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      const items = Object.keys(selected).reduce((acc, k) => {
+        const [d, di] = k.split("_").map(Number);
+        const dish = menuDays[d]?.dishes[di];
+        if (!dish?._id) return acc;
+        acc.push({
+          dishId:      dish._id,
+          dishName:    dish.name,
+          portionSize: portions[k] === "large" ? "Large" : "Regular",
+          qty:         quantities[k] || 1,
+          addons:      [...(addons[k] || new Set())].map(name => ({ name, qty: addonQtys[k]?.[name] || 1 })),
+        });
+        return acc;
+      }, []);
+      if (!items.length) return;
+      api.put("/api/cart", {
+        workspaceCode:        user.workspaceCode || "",
+        deliveryDate:         selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}-${String(selectedDate.getDate()).padStart(2,"0")}` : "",
+        lunchTime,
+        isWeeklySubscription: weekly,
+        items,
+      }).catch(() => {});
+    }, 800);
+    return () => clearTimeout(saveTimerRef.current);
+  }, [selected, portions, quantities, addons, selectedDate, lunchTime, weekly]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setA = (k, v) => { setAuthForm(f => ({ ...f, [k]: v })); if (k === "email") { setOtpSent(false); setOtp(["","","",""]); setOtpError(""); } };
 
@@ -570,7 +669,7 @@ export default function MenuPage() {
 
   const toggleDish = (d, di) => {
     if (!user) { setAuthOpen(true); return; }
-    if (menuDays[d]?.closed) return;
+    if (isDateClosed(selectedDate)) return;
     const k = getKey(d, di);
     setSelected(s => {
       const next = { ...s };
@@ -591,6 +690,21 @@ export default function MenuPage() {
       s.has(name) ? s.delete(name) : s.add(name);
       return { ...a, [k]: s };
     });
+    setAddonQtys(q => {
+      const kq = { ...(q[k] || {}) };
+      if (kq[name]) { delete kq[name]; } else { kq[name] = 1; }
+      return { ...q, [k]: kq };
+    });
+  };
+
+  const getAddonQty   = (d, di, name) => addonQtys[getKey(d, di)]?.[name] || 1;
+  const incrAddonQty  = (d, di, name) => {
+    const k = getKey(d, di);
+    setAddonQtys(q => ({ ...q, [k]: { ...(q[k] || {}), [name]: (q[k]?.[name] || 1) + 1 } }));
+  };
+  const decrAddonQty  = (d, di, name) => {
+    const k = getKey(d, di);
+    setAddonQtys(q => ({ ...q, [k]: { ...(q[k] || {}), [name]: Math.max(1, (q[k]?.[name] || 1) - 1) } }));
   };
 
   const incrQty = (d, di) => setQuantities(q => ({ ...q, [getKey(d, di)]: getQty(d, di) + 1 }));
@@ -603,9 +717,18 @@ export default function MenuPage() {
 
   const getDishPrice = (d, di) => {
     const dish = menuDays[d]?.dishes[di];
+    const portion = getPortion(d, di);
     const addonSet = getAddonSet(d, di);
-    const addonTotal = [...addonSet].reduce((s, name) => s + (dish.addons.find(a => a.name === name)?.price || 0), 0);
-    return dish.price + (getPortion(d, di) === "large" ? 1.50 : 0) + addonTotal;
+    const addonTotal = [...addonSet].reduce((s, name) => {
+      const price = (dish.addons || []).find(a => a.name === name)?.price || 0;
+      const qty   = addonQtys[getKey(d, di)]?.[name] || 1;
+      return s + price * qty;
+    }, 0);
+    if (dish.portions?.length) {
+      const match = dish.portions.find(p => p.size?.toLowerCase() === portion);
+      return (match ? match.price : dish.price) + addonTotal;
+    }
+    return dish.price + (portion === "large" ? 1.50 : 0) + addonTotal;
   };
 
   const orderItems = Object.keys(selected).map(k => {
@@ -704,7 +827,7 @@ export default function MenuPage() {
           <div className={styles.dishGrid}>
             {(menuDays[selectedDay]?.dishes || []).map((dish, di) => {
               const sel = isSelectedDish(selectedDay, di);
-              const closed = menuDays[selectedDay]?.closed;
+              const closed = isDateClosed(selectedDate);
 
               return (
                 <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
@@ -736,10 +859,10 @@ export default function MenuPage() {
                     {/* Macros */}
                     <div className={styles.dishMacros}>
                       {[
-                        { label: "kcal", val: dish.kcal },
-                        { label: "protein", val: `${dish.protein}g` },
-                        { label: "carbs", val: `${dish.carbs}g` },
-                        { label: "fat", val: `${dish.fat}g` },
+                        { label: "kcal",    val: dish.kcal    ?? "N/A" },
+                        { label: "protein", val: dish.protein != null ? `${dish.protein}g` : "N/A" },
+                        { label: "carbs",   val: dish.carbs   != null ? `${dish.carbs}g`   : "N/A" },
+                        { label: "fat",     val: dish.fat     != null ? `${dish.fat}g`     : "N/A" },
                       ].map(m => (
                         <div key={m.label} className={styles.dishMacro}>
                           <span className={styles.dishMacroVal}>{m.val}</span>
@@ -854,7 +977,7 @@ export default function MenuPage() {
                   if (!orderItems.length) return;
                   const payload = {
                     workspaceCode: user?.workspaceCode || "",
-                    deliveryDate: selectedDate ? selectedDate.toISOString().split("T")[0] : "",
+                    deliveryDate: selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}-${String(selectedDate.getDate()).padStart(2,"0")}` : "",
                     deliveryDateDisplay: selectedDate ? selectedDate.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "",
                     lunchTime,
                     isWeeklySubscription: weekly,
@@ -863,9 +986,9 @@ export default function MenuPage() {
                       dishName: dish?.name,
                       img:      dish?.img,
                       price:    getDishPrice(d, di),
-                      portion,
+                      portionSize: portion === "large" ? "Large" : "Regular",
                       qty,
-                      addons: [...(addons[`${d}_${di}`] || new Set())],
+                      addons: [...(addons[`${d}_${di}`] || new Set())].map(name => ({ name, qty: addonQtys[`${d}_${di}`]?.[name] || 1 })),
                     })),
                   };
                   sessionStorage.setItem("sk_order", JSON.stringify(payload));
@@ -939,10 +1062,10 @@ export default function MenuPage() {
                   {detailTab === "nutritional" && (
                     <div className={styles.dishDetailNutrition}>
                       {[
-                        { label: "Calories", val: dish.kcal, unit: "kcal" },
-                        { label: "Protein",  val: dish.protein, unit: "g" },
-                        { label: "Carbohydrates", val: dish.carbs, unit: "g" },
-                        { label: "Fat",      val: dish.fat, unit: "g" },
+                        { label: "Calories",      val: dish.kcal    ?? "N/A", unit: dish.kcal    != null ? "kcal" : "" },
+                        { label: "Protein",       val: dish.protein ?? "N/A", unit: dish.protein != null ? "g"    : "" },
+                        { label: "Carbohydrates", val: dish.carbs   ?? "N/A", unit: dish.carbs   != null ? "g"    : "" },
+                        { label: "Fat",           val: dish.fat     ?? "N/A", unit: dish.fat     != null ? "g"    : "" },
                       ].map(n => (
                         <div key={n.label} className={styles.nutritionRow}>
                           <span className={styles.nutritionRowLabel}>{n.label}</span>
@@ -959,35 +1082,69 @@ export default function MenuPage() {
                   )}
                 </div>
 
-                {/* Portion selector */}
-                <div className={styles.dishDetailPortionRow}>
-                  <span className={styles.dishDetailPortionLabel}>Portion</span>
-                  <div className={styles.optionBtns}>
-                    <button className={`${styles.optionBtn} ${portion === "regular" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "regular")}>Regular</button>
-                    <button className={`${styles.optionBtn} ${portion === "large" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "large")}>Large <span className={styles.optionExtra}>(+£1.50)</span></button>
-                  </div>
-                </div>
+                {/* Portion selector — only show if dish has multiple portions */}
+                {dish.portions?.length > 1 && (() => {
+                  const reg = dish.portions.find(p => p.size === "Regular")?.price ?? dish.price;
+                  const lrg = dish.portions.find(p => p.size === "Large")?.price;
+                  const diff = lrg != null ? (lrg - reg).toFixed(2) : null;
+                  return (
+                    <div className={styles.dishDetailPortionRow}>
+                      <span className={styles.dishDetailPortionLabel}>Portion</span>
+                      <div className={styles.optionBtns}>
+                        <button className={`${styles.optionBtn} ${portion === "regular" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "regular")}>Regular</button>
+                        <button className={`${styles.optionBtn} ${portion === "large" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "large")}>
+                          Large {diff != null && <span className={styles.optionExtra}>(+£{diff})</span>}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Add-ons */}
-                {dish.addons.length > 0 && (
+                {dish.addons?.length > 0 && (
                   <div className={styles.dishDetailAddonsSection}>
                     <p className={styles.dishDetailAddonsTitle}>Add-ons <span className={styles.optionalTag}>Optional</span></p>
                     <div className={styles.dishDetailAddonList}>
                       {dish.addons.map(a => {
                         const addonSet = getAddonSet(d, di);
-                        const active = addonSet.has(a.name);
+                        const active   = addonSet.has(a.name);
+                        const aqty     = getAddonQty(d, di, a.name);
                         return (
-                          <button
+                          <div
                             key={a.name}
                             className={`${styles.dishDetailAddonItem} ${active ? styles.dishDetailAddonItemActive : ""}`}
-                            onClick={() => toggleAddon(d, di, a.name)}
                           >
-                            <div className={`${styles.dishDetailAddonCheck} ${active ? styles.dishDetailAddonCheckActive : ""}`}>
+                            {/* Checkbox toggle */}
+                            <button
+                              className={`${styles.dishDetailAddonCheck} ${active ? styles.dishDetailAddonCheckActive : ""}`}
+                              onClick={() => toggleAddon(d, di, a.name)}
+                            >
                               {active && "✓"}
-                            </div>
-                            <span className={styles.dishDetailAddonName}>{a.name}</span>
-                            <span className={styles.dishDetailAddonPrice}>+£{a.price.toFixed(2)}</span>
-                          </button>
+                            </button>
+
+                            {/* Name + grams */}
+                            <span className={styles.dishDetailAddonName} onClick={() => toggleAddon(d, di, a.name)} style={{ cursor: "pointer", flex: 1 }}>
+                              {a.name}
+                              {a.gramsPerMeal != null && (
+                                <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 11, marginLeft: 6 }}>{a.gramsPerMeal}g</span>
+                              )}
+                            </span>
+
+                            {/* Qty controls — only when selected */}
+                            {active && (
+                              <div className={styles.addonQtyCtrl}>
+                                <button className={styles.addonQtyBtn} onClick={() => decrAddonQty(d, di, a.name)}>−</button>
+                                <span className={styles.addonQtyVal}>{aqty}</span>
+                                <button className={styles.addonQtyBtn} onClick={() => incrAddonQty(d, di, a.name)}>+</button>
+                              </div>
+                            )}
+
+                            {/* Price */}
+                            {a.price > 0
+                              ? <span className={styles.dishDetailAddonPrice}>+£{(a.price * (active ? aqty : 1)).toFixed(2)}</span>
+                              : <span className={styles.dishDetailAddonPrice} style={{ opacity: 0.35 }}>Free</span>
+                            }
+                          </div>
                         );
                       })}
                     </div>
@@ -995,7 +1152,7 @@ export default function MenuPage() {
                 )}
 
                 {/* Footer */}
-                {menuDays[d]?.closed ? (
+                {isDateClosed(selectedDate) ? (
                   <div className={styles.dishDetailClosedFooter}>
                     <strong>Ordering Closed</strong>
                     <p>This meal can no longer be ordered. Please place orders by 10:00 PM the day before delivery.</p>

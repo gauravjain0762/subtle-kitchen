@@ -330,7 +330,7 @@ export default function ProfilePage() {
 
   const displayName  = user?.name  || user?.email?.split("@")[0] || "Account";
   const displayEmail = user?.email || "";
-  const companyCode  = user?.companyCode || "SK-2024-ARPIT";
+  const companyCode  = user?.workspaceCode || user?.companyCode || "";
 
   return (
     <>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
@@ -9,15 +9,10 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 
-const COUPONS = [
-  { code: "SAVE15",    title: "15% off your order",   desc: "Save 15% on your total bill. Valid for all meals.",  savings: "Save £2.55+" },
-  { code: "WELCOME10", title: "10% welcome discount",  desc: "For new subscribers. One-time use on first order.", savings: "Save £1.70+" },
-  { code: "LUNCH20",   title: "£2 off lunch orders",   desc: "Flat £2 off on any lunch order above £8.",          savings: "Save £2.00"  },
-];
 
 export default function ReviewPage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
 
   // ── Order from sessionStorage ──
@@ -31,23 +26,46 @@ export default function ReviewPage() {
   const removeItem = (i) => setItems(prev => prev.filter((_, idx) => idx !== i));
 
   // ── Promo ──
-  const [promo, setPromo]               = useState("");
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [promoError, setPromoError]     = useState("");
-  const [checking, setChecking]         = useState(false);
-  const [promoOpen, setPromoOpen]       = useState(false);
-  const [promoInput, setPromoInput]     = useState("");
+  const [promo, setPromo]                   = useState("");
+  const [promoApplied, setPromoApplied]     = useState(false);
+  const [promoDiscount, setPromoDiscount]   = useState(null); // { type, value, label }
+  const [promoError, setPromoError]         = useState("");
+  const [checking, setChecking]             = useState(false);
+  const [promoOpen, setPromoOpen]           = useState(false);
+  const [promoInput, setPromoInput]         = useState("");
+  const [availableCodes, setAvailableCodes] = useState([]);
 
-  const applyPromo = (code) => {
+  useEffect(() => {
+    const wc = order?.workspaceCode || user?.workspaceCode || "";
+    api.get(`/api/promo${wc ? `?workspaceCode=${encodeURIComponent(wc)}` : ""}`)
+      .then(data => { if (data.promoCodes) setAvailableCodes(data.promoCodes); })
+      .catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const applyPromo = async (code) => {
     const val = (code || promoInput).trim().toUpperCase();
     if (!val) return;
-    setPromo(val);
     setChecking(true);
-    setTimeout(() => {
-      if (val === "SAVE15") { setPromoApplied(true); setPromoError(""); setPromoOpen(false); }
-      else { setPromoError("Invalid code. Try SAVE15."); setPromoApplied(false); }
+    setPromoError("");
+    try {
+      const data = await api.post("/api/promo/validate", {
+        code: val,
+        workspaceCode: order?.workspaceCode || user?.workspaceCode || "",
+      });
+      if (data.valid) {
+        setPromo(val);
+        setPromoDiscount(data.discount);
+        setPromoApplied(true);
+        setPromoOpen(false);
+      } else {
+        setPromoError(data.error || "Invalid or expired promo code");
+        setPromoApplied(false);
+      }
+    } catch {
+      setPromoError("Could not validate code. Please try again.");
+    } finally {
       setChecking(false);
-    }, 600);
+    }
   };
 
   // ── Payment ──
@@ -58,8 +76,12 @@ export default function ReviewPage() {
   const [submitError, setSubmitError] = useState("");
 
   const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
-  const discount = promoApplied ? subtotal * 0.15 : 0;
-  const total    = subtotal - discount;
+  const discount = promoApplied && promoDiscount
+    ? promoDiscount.type === "percentage"
+      ? subtotal * (promoDiscount.value / 100)
+      : Math.min(promoDiscount.value, subtotal)
+    : 0;
+  const total = subtotal - discount;
 
   const handlePlaceOrder = async () => {
     if (!user) { setAuthOpen(true); return; }
@@ -72,15 +94,34 @@ export default function ReviewPage() {
         deliveryDate:        order.deliveryDate,
         lunchTime:           order.lunchTime,
         isWeeklySubscription: order.isWeeklySubscription || false,
+        ...(promoApplied && promo ? { promoCode: promo } : {}),
         items: items.map(item => ({
-          dishId:  item.dishId,
-          portion: item.portion,
-          qty:     item.qty || 1,
+          dishId:      item.dishId,
+          portionSize: item.portionSize || (item.portion === "large" ? "Large" : "Regular"),
+          qty:         item.qty || 1,
           addons:  item.addons || [],
         })),
       });
+      // Enrich API order items with local image/name data before clearing sk_order
+      const localItems = order?.items || [];
+      const enrichedOrder = {
+        ...data.order,
+        items: (data.order.items || localItems).map(apiItem => {
+          const local = localItems.find(li => String(li.dishId) === String(apiItem.dishId));
+          return {
+            dishId:      apiItem.dishId      || local?.dishId      || "",
+            dishName:    apiItem.dishName    || local?.dishName    || "",
+            portionSize: apiItem.portionSize || local?.portionSize || "",
+            qty:         apiItem.qty         ?? local?.qty         ?? 1,
+            addons:      apiItem.addons      || local?.addons      || [],
+            price:       apiItem.price       ?? local?.price       ?? 0,
+            img:         apiItem.img         || local?.img         || "",
+            tags:        local?.tags         || [],
+          };
+        }),
+      };
       sessionStorage.removeItem("sk_order");
-      sessionStorage.setItem("sk_confirmation", JSON.stringify(data.order));
+      sessionStorage.setItem("sk_confirmation", JSON.stringify(enrichedOrder));
       router.push("/confirmation");
     } catch (err) {
       setSubmitError(err.error || "Failed to place order. Please try again.");
@@ -91,7 +132,7 @@ export default function ReviewPage() {
 
   return (
     <>
-    <div className={styles.root}>
+    <div className={styles.root} suppressHydrationWarning>
       <Navbar onSignIn={() => setAuthOpen(true)} />
 
       <div className={styles.twoCol}>
@@ -144,7 +185,6 @@ export default function ReviewPage() {
             ) : (
               <div className={styles.orderCard}>
                 {items.map((item, i) => {
-                  const [datePart, monthPart] = (item.dishName ? "" : "").split(" ");
                   return (
                     <div key={i} className={styles.orderItem} style={{ animationDelay: (i * 0.1) + "s" }}>
                       <div className={styles.orderItemLeft}>
@@ -152,9 +192,11 @@ export default function ReviewPage() {
                         {item.img && <img src={item.img} alt={item.dishName} className={styles.itemImg} />}
                         <div className={styles.itemInfo}>
                           <span className={styles.itemName}>{item.dishName}</span>
-                          <span className={styles.portionTag}>{item.portion} · x{item.qty}</span>
+                          <span className={styles.portionTag}>{item.portionSize || item.portion} · x{item.qty}</span>
                           {item.addons?.length > 0 && (
-                            <span className={styles.portionTag} style={{ opacity: 0.6 }}>+ {item.addons.join(", ")}</span>
+                            <span className={styles.portionTag} style={{ opacity: 0.6 }}>
+                              + {item.addons.map(a => typeof a === "string" ? a : `${a.name}${a.qty > 1 ? ` ×${a.qty}` : ""}`).join(", ")}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -176,9 +218,9 @@ export default function ReviewPage() {
                     <span className={styles.totalLabel}>Subtotal</span>
                     <span className={styles.totalVal}>£{subtotal.toFixed(2)}</span>
                   </div>
-                  {promoApplied && (
+                  {promoApplied && promoDiscount && (
                     <div className={`${styles.totalRow} ${styles.discountRow}`}>
-                      <span className={styles.totalLabel}>Discount (15%)</span>
+                      <span className={styles.totalLabel}>Discount ({promoDiscount.label})</span>
                       <span className={styles.discountVal}>−£{discount.toFixed(2)}</span>
                     </div>
                   )}
@@ -198,10 +240,10 @@ export default function ReviewPage() {
             <div className={styles.promoTrigger} role="button" tabIndex={0} onClick={() => { setPromoOpen(true); setPromoInput(""); setPromoError(""); }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
               {promoApplied
-                ? <span className={styles.promoTriggerApplied}>✓ {promo} applied — 15% off!</span>
+                ? <span className={styles.promoTriggerApplied}>✓ {promo} applied — {promoDiscount?.label}!</span>
                 : <span>Have a promo code?</span>}
               {promoApplied
-                ? <button className={styles.promoRemoveBtn} onClick={e => { e.stopPropagation(); setPromoApplied(false); setPromo(""); }}>Remove</button>
+                ? <button className={styles.promoRemoveBtn} onClick={e => { e.stopPropagation(); setPromoApplied(false); setPromo(""); setPromoDiscount(null); }}>Remove</button>
                 : <span className={styles.promoTriggerArrow}>›</span>}
             </div>
 
@@ -226,20 +268,22 @@ export default function ReviewPage() {
                     </button>
                   </div>
                   {promoError && <p className={styles.promoModalError}>{promoError}</p>}
-                  <p className={styles.promoModalSectionLabel}>Available Coupons</p>
-                  <div className={styles.promoModalList}>
-                    {COUPONS.map(c => (
-                      <div key={c.code} className={styles.promoCouponCard}>
-                        <div className={styles.promoCouponLeft}>
-                          <div className={styles.promoCouponCode}>{c.code}</div>
-                          <div className={styles.promoCouponTitle}>{c.title}</div>
-                          <div className={styles.promoCouponDesc}>{c.desc}</div>
-                          <div className={styles.promoCouponSavings}>{c.savings}</div>
-                        </div>
-                        <button className={styles.promoCouponApply} onClick={() => { setPromoInput(c.code); applyPromo(c.code); }}>Apply</button>
+                  {availableCodes.length > 0 && (
+                    <>
+                      <p className={styles.promoModalSectionLabel}>Available Coupons</p>
+                      <div className={styles.promoModalList}>
+                        {availableCodes.map(c => (
+                          <div key={c.code} className={styles.promoCouponCard}>
+                            <div className={styles.promoCouponLeft}>
+                              <div className={styles.promoCouponCode}>{c.code}</div>
+                              <div className={styles.promoCouponTitle}>{c.label}</div>
+                            </div>
+                            <button className={styles.promoCouponApply} onClick={() => { setPromoInput(c.code); applyPromo(c.code); }}>Apply</button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
