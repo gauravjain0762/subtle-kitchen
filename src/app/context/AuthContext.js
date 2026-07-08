@@ -1,28 +1,30 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+import { api } from "../lib/api";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser]   = useState(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("sk_user");
-      if (stored) setUser(JSON.parse(stored));
-    } catch {}
-    setReady(true);
+    const token = localStorage.getItem("sk_token");
+    if (!token) { setReady(true); return; }
+    api.get("/api/auth/me")
+      .then(data => setUser(data.user))
+      .catch(() => localStorage.removeItem("sk_token"))
+      .finally(() => setReady(true));
   }, []);
 
-  const login = (userData) => {
+  const login = (token, userData) => {
+    localStorage.setItem("sk_token", token);
     setUser(userData);
-    localStorage.setItem("sk_user", JSON.stringify(userData));
   };
 
   const logout = () => {
+    localStorage.removeItem("sk_token");
     setUser(null);
-    localStorage.removeItem("sk_user");
   };
 
   return (

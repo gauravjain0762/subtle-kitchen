@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { api } from "../lib/api";
 import styles from "./page.module.css";
 
 const EMPLOYEE_OPTIONS = ["1 – 10", "11 – 25", "26 – 50", "51 – 100", "101 – 250", "250+"];
@@ -25,9 +26,11 @@ const BENEFITS = [
 ];
 
 export default function GetWorkspaceCodePage() {
-  const [step, setStep]       = useState(1);
-  const [errors, setErrors]   = useState({});
-  const [loading, setLoading] = useState(false);
+  const [step, setStep]         = useState(1);
+  const [errors, setErrors]     = useState({});
+  const [loading, setLoading]   = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [referenceId, setReferenceId] = useState("");
 
   const [workspace, setWorkspace] = useState({
     name: "", address1: "",
@@ -73,11 +76,42 @@ export default function GetWorkspaceCodePage() {
   };
 
   const handleNext = () => { if (validateStep1()) setStep(2); };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep2()) return;
     setLoading(true);
-    setTimeout(() => { setLoading(false); setStep(3); }, 1000);
+    setSubmitError("");
+    try {
+      const data = await api.post("/api/workspace-code", {
+        workspace: {
+          name:          workspace.name,
+          address1:      workspace.address1,
+          town:          workspace.town,
+          city:          workspace.city,
+          postcode:      workspace.postcode,
+          country:       "GB",
+          deliveryTimes: workspace.deliveryTimes.filter(t => t.trim()),
+          employees:     workspace.employees,
+          premiseType:   workspace.premiseType,
+        },
+        contact: {
+          firstName: contact.firstName,
+          lastName:  contact.lastName,
+          email:     contact.email,
+          phone:     contact.phone,
+        },
+      });
+      setReferenceId(data.referenceId || "");
+      setStep(3);
+    } catch (err) {
+      if (err.errors) {
+        setErrors(err.errors);
+      } else {
+        setSubmitError(err.error || "Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const progress = step === 3 ? 100 : step === 2 ? 66 : 33;
@@ -331,10 +365,11 @@ export default function GetWorkspaceCodePage() {
                 </div>
               </div>
 
+              {submitError && <p className={styles.errMsg} style={{ textAlign: "center" }}>{submitError}</p>}
               <button type="submit" className={styles.btnPrimary} disabled={loading}>
                 {loading
                   ? <span className={styles.spinner} />
-                  : <>Get my workspace code </>
+                  : <>Get my workspace code</>
                 }
               </button>
               <button type="button" className={styles.btnGhost} onClick={() => setStep(1)}>← Back to workspace details</button>
@@ -356,8 +391,13 @@ export default function GetWorkspaceCodePage() {
                 You&apos;re all set, <span className={styles.formAccent}>{contact.firstName}!</span>
               </h2>
               <p className={`${styles.formSub} ${styles.successSub}`}>
-                We'll send your unique workspace code to <strong>{contact.email}</strong> within 1–2 business days.
+                Your application is under review. We&apos;ll email your workspace code to <strong>{contact.email}</strong> within 1–2 business days once approved.
               </p>
+              {referenceId && (
+                <p className={`${styles.formSub} ${styles.successSub}`} style={{ marginTop: -8, fontSize: 13, opacity: 0.6 }}>
+                  Reference: <strong>{referenceId}</strong>
+                </p>
+              )}
 
               <div className={styles.successCard}>
                 <div className={styles.successRow}>

@@ -3,10 +3,12 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import { api } from "../lib/api";
 import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
+import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 
 const COMPANY = "ACME2024";
 const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
@@ -492,8 +494,35 @@ export default function MenuPage() {
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpError, setOtpError] = useState("");
   const router = useRouter();
+  const [menuDays, setMenuDays] = useState([]);
+  const [menuLoading, setMenuLoading] = useState(true);
 
   useEffect(() => { sessionStorage.removeItem("reorder_items"); }, []);
+
+  useEffect(() => {
+    api.get("/api/menu/current")
+      .then(data => {
+        if (!data.days?.length) return;
+        const transformed = data.days.map(day => {
+          const date = new Date(day.date);
+          const dateStr = date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+          return {
+            day: day.day,
+            date: dateStr,
+            closed: isClosed(dateStr),
+            theme: day.theme,
+            dishes: day.dishes.map(d => ({
+              ...d,
+              img:  d.img || (Array.isArray(d.images) ? d.images[0] : null) || "",
+              imgs: Array.isArray(d.images) ? d.images : (d.img ? [d.img] : []),
+            })),
+          };
+        });
+        setMenuDays(transformed);
+      })
+      .catch(() => {})
+      .finally(() => setMenuLoading(false));
+  }, []);
 
   const setA = (k, v) => { setAuthForm(f => ({ ...f, [k]: v })); if (k === "email") { setOtpSent(false); setOtp(["","","",""]); setOtpError(""); } };
 
@@ -541,7 +570,7 @@ export default function MenuPage() {
 
   const toggleDish = (d, di) => {
     if (!user) { setAuthOpen(true); return; }
-    if (WEEKLY_MENU[d].closed) return;
+    if (menuDays[d]?.closed) return;
     const k = getKey(d, di);
     setSelected(s => {
       const next = { ...s };
@@ -567,13 +596,13 @@ export default function MenuPage() {
   const incrQty = (d, di) => setQuantities(q => ({ ...q, [getKey(d, di)]: getQty(d, di) + 1 }));
   const decrQty = (d, di) => setQuantities(q => ({ ...q, [getKey(d, di)]: Math.max(1, getQty(d, di) - 1) }));
 
-  const dayHasItems = (d) => WEEKLY_MENU[d].dishes.some((_, di) => isSelectedDish(d, di));
+  const dayHasItems = (d) => menuDays[d]?.dishes.some((_, di) => isSelectedDish(d, di));
 
   const openDetail = (d, di) => { setDetailDish({ d, di }); setDetailTab("overview"); };
   const closeDetail = () => setDetailDish(null);
 
   const getDishPrice = (d, di) => {
-    const dish = WEEKLY_MENU[d].dishes[di];
+    const dish = menuDays[d]?.dishes[di];
     const addonSet = getAddonSet(d, di);
     const addonTotal = [...addonSet].reduce((s, name) => s + (dish.addons.find(a => a.name === name)?.price || 0), 0);
     return dish.price + (getPortion(d, di) === "large" ? 1.50 : 0) + addonTotal;
@@ -581,7 +610,7 @@ export default function MenuPage() {
 
   const orderItems = Object.keys(selected).map(k => {
     const [d, di] = k.split("_").map(Number);
-    const dish = WEEKLY_MENU[d].dishes[di];
+    const dish = menuDays[d]?.dishes[di];
     return { k, d, di, dish, portion: getPortion(d, di), qty: getQty(d, di), price: getDishPrice(d, di) };
   });
 
@@ -654,16 +683,28 @@ export default function MenuPage() {
           <span className={styles.dayThemeLabel}>
             {selectedDate ? selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : ""}
           </span>
-          <span className={styles.dayThemeDate}>{WEEKLY_MENU[selectedDay].dishes.length} dishes</span>
+          <span className={styles.dayThemeDate}>{menuDays[selectedDay]?.dishes.length ?? 0} dishes</span>
         </div>
 
       <div className={styles.main}>
         <div className={styles.menuList}>
           {/* Dish cards */}
+          {menuLoading && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 0 32px", gap: 16 }}>
+              <DeliveryVanAnimation />
+              <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em", marginTop: 8 }}>Preparing today&apos;s menu…</p>
+            </div>
+          )}
+          {!menuLoading && !menuDays[selectedDay]?.dishes?.length && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "56px 0", gap: 12, opacity: 0.45 }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+              <p style={{ fontSize: 14 }}>No dishes available for this day.</p>
+            </div>
+          )}
           <div className={styles.dishGrid}>
-            {WEEKLY_MENU[selectedDay].dishes.map((dish, di) => {
+            {(menuDays[selectedDay]?.dishes || []).map((dish, di) => {
               const sel = isSelectedDish(selectedDay, di);
-              const closed = WEEKLY_MENU[selectedDay].closed;
+              const closed = menuDays[selectedDay]?.closed;
 
               return (
                 <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
@@ -755,8 +796,8 @@ export default function MenuPage() {
                     <div key={k} className={styles.basketItem}>
                       <div className={styles.basketItemLeft}>
                         <div className={styles.basketDay}>
-                          <span className={styles.basketDayNum}>{WEEKLY_MENU[d].date.split(" ")[0]}</span>
-                          <span className={styles.basketDayMon}>{WEEKLY_MENU[d].date.split(" ")[1]}</span>
+                          <span className={styles.basketDayNum}>{menuDays[d]?.date.split(" ")[0]}</span>
+                          <span className={styles.basketDayMon}>{menuDays[d]?.date.split(" ")[1]}</span>
                         </div>
                         <div className={styles.basketDetails}>
                           <p className={styles.basketName}>{dish.name}</p>
@@ -809,7 +850,27 @@ export default function MenuPage() {
               <button
                 className={`${styles.reviewBtn} ${orderItems.length === 0 ? styles.reviewBtnDisabled : ""}`}
                 disabled={orderItems.length === 0}
-                onClick={() => orderItems.length > 0 && router.push("/review")}
+                onClick={() => {
+                  if (!orderItems.length) return;
+                  const payload = {
+                    workspaceCode: user?.workspaceCode || "",
+                    deliveryDate: selectedDate ? selectedDate.toISOString().split("T")[0] : "",
+                    deliveryDateDisplay: selectedDate ? selectedDate.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "",
+                    lunchTime,
+                    isWeeklySubscription: weekly,
+                    items: orderItems.map(({ d, di, dish, portion, qty }) => ({
+                      dishId:   dish?._id,
+                      dishName: dish?.name,
+                      img:      dish?.img,
+                      price:    getDishPrice(d, di),
+                      portion,
+                      qty,
+                      addons: [...(addons[`${d}_${di}`] || new Set())],
+                    })),
+                  };
+                  sessionStorage.setItem("sk_order", JSON.stringify(payload));
+                  router.push("/review");
+                }}
               >
                 Review order
               </button>
@@ -824,7 +885,7 @@ export default function MenuPage() {
       {/* ── Dish Detail Modal ── */}
       {detailDish && (() => {
         const { d, di } = detailDish;
-        const dish = WEEKLY_MENU[d].dishes[di];
+        const dish = menuDays[d]?.dishes[di];
         const sel = isSelectedDish(d, di);
         const portion = getPortion(d, di);
         const qty = getQty(d, di);
@@ -934,7 +995,7 @@ export default function MenuPage() {
                 )}
 
                 {/* Footer */}
-                {WEEKLY_MENU[d].closed ? (
+                {menuDays[d]?.closed ? (
                   <div className={styles.dishDetailClosedFooter}>
                     <strong>Ordering Closed</strong>
                     <p>This meal can no longer be ordered. Please place orders by 10:00 PM the day before delivery.</p>
