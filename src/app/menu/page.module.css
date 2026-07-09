@@ -2471,3 +2471,28 @@
   width: 280px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
+
+/* ── Logo loader ── */
+.logoLoaderWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0 32px;
+  gap: 16px;
+}
+.logoLoader {
+  height: 56px;
+  width: auto;
+  animation: logoPulse 1.3s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(0.88); opacity: 0.55; }
+}
+.logoLoaderText {
+  opacity: 0.5;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+}

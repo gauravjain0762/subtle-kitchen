@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 import styles from "./AuthPanel.module.css";
@@ -29,6 +30,7 @@ export default function AuthPanel({ onClose }) {
     firstName: "", lastName: "", email: "", workspaceCode: "", password: "", confirmPassword: "",
   });
   const { login } = useAuth();
+  const router = useRouter();
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(""); };
 
@@ -91,31 +93,35 @@ export default function AuthPanel({ onClose }) {
           </svg>
         </button>
 
-        <div className={styles.header}>
-          <div className={styles.headerText}>
-            <h2 className={styles.heading}>
-              {step === "success"
-                ? "You're all set!"
-                : (mode === "signin" ? "Sign in" : "Create account")}
-            </h2>
-            {step === "form" && (
+        {step === "success" ? (
+          <div className={styles.successHeader}>
+            <div className={styles.logoImgWrap}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="" className={styles.logoImg} />
+            </div>
+            <h2 className={styles.heading}>You&apos;re all set!</h2>
+          </div>
+        ) : (
+          <div className={styles.header}>
+            <div className={styles.headerText}>
+              <h2 className={styles.heading}>{mode === "signin" ? "Sign in" : "Create account"}</h2>
               <p className={styles.toggle}>
                 {mode === "signin" ? "New here? " : "Already have an account? "}
                 <button className={styles.toggleLink} onClick={() => switchMode(mode === "signin" ? "signup" : "signin")}>
                   {mode === "signin" ? "Create an account" : "Sign in"}
                 </button>
               </p>
-            )}
+            </div>
+            <div className={styles.logoImgWrap}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt=""
+                className={styles.logoImg}
+              />
+            </div>
           </div>
-          <div className={styles.foodImgWrap}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=85"
-              alt=""
-              className={styles.foodImg}
-            />
-          </div>
-        </div>
+        )}
 
         {/* ── Form step ── */}
         {step === "form" && (
@@ -258,15 +264,15 @@ export default function AuthPanel({ onClose }) {
             <div className={styles.resetSuccess}>
               <div className={styles.resetSuccessIcon}>
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
+                  <polyline className={styles.resetSuccessTick} points="20 6 9 17 4 12" />
                 </svg>
               </div>
               <h3 className={styles.resetSuccessTitle}>Account created</h3>
               <p className={styles.resetSuccessDesc}>
-                Welcome, {form.firstName}! You&apos;re signed in and ready to go.
+                Welcome 👋 {form.firstName}! You&apos;re signed in — make your first order.
               </p>
             </div>
-            <button type="button" className={styles.submitBtn} onClick={onClose}>
+            <button type="button" className={styles.submitBtn} onClick={() => { onClose(); router.push("/menu"); }}>
               Continue
             </button>
           </div>

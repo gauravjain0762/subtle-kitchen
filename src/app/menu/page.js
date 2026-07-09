@@ -8,7 +8,6 @@ import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
-import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 
 const COMPANY = "ACME2024";
 const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
@@ -530,15 +529,21 @@ export default function MenuPage() {
             closed: false,
             theme: day.theme,
             dishes: day.dishes.map(d => {
-              // Normalize nutrition — API may use top-level fields OR nutritionalIngredients[]
+              // Normalize nutrition — API may use top-level fields OR nutritionalIngredients[],
+              // where each entry is a single { Key: value } pair with an arbitrarily-cased key.
               let kcal = d.kcal, protein = d.protein, carbs = d.carbs, fat = d.fat;
               if (kcal == null || protein == null) {
                 (d.nutritionalIngredients || []).forEach(ni => {
-                  if (ni.kcal           != null) kcal    = Number(ni.kcal)           || kcal;
-                  if (ni.protein        != null) protein = Number(ni.protein)        || protein;
-                  if (ni.carbs          != null) carbs   = Number(ni.carbs)          || carbs;
-                  if (ni.carbohydrates  != null) carbs   = Number(ni.carbohydrates)  || carbs;
-                  if (ni.fat            != null) fat     = Number(ni.fat)            || fat;
+                  Object.entries(ni || {}).forEach(([key, val]) => {
+                    if (val == null) return;
+                    const num = Number(val);
+                    if (Number.isNaN(num)) return;
+                    const k = key.toLowerCase();
+                    if (k === "kcal" || k === "calories")               kcal    = num;
+                    else if (k === "protein")                           protein = num;
+                    else if (k === "carbs" || k === "carbohydrates")    carbs   = num;
+                    else if (k === "fat")                               fat     = num;
+                  });
                 });
               }
               // Normalize portions — cast prices to numbers
@@ -738,6 +743,7 @@ export default function MenuPage() {
   });
 
   const subtotal = orderItems.reduce((s, x) => s + x.price * x.qty, 0);
+  const hasDishesToday = (menuDays[selectedDay]?.dishes?.length ?? 0) > 0;
 
   return (
     <div className={styles.root}>
@@ -802,20 +808,23 @@ export default function MenuPage() {
         </div>
 
         {/* Day date label — full width above flex row */}
-        <div className={styles.dayTheme}>
-          <span className={styles.dayThemeLabel}>
-            {selectedDate ? selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : ""}
-          </span>
-          <span className={styles.dayThemeDate}>{menuDays[selectedDay]?.dishes.length ?? 0} dishes</span>
-        </div>
+        {hasDishesToday && (
+          <div className={styles.dayTheme}>
+            <span className={styles.dayThemeLabel}>
+              {selectedDate ? selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : ""}
+            </span>
+            <span className={styles.dayThemeDate}>{menuDays[selectedDay]?.dishes.length ?? 0} dishes</span>
+          </div>
+        )}
 
       <div className={styles.main}>
         <div className={styles.menuList}>
           {/* Dish cards */}
           {menuLoading && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 0 32px", gap: 16 }}>
-              <DeliveryVanAnimation />
-              <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em", marginTop: 8 }}>Preparing today&apos;s menu…</p>
+            <div className={styles.logoLoaderWrap}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="" className={styles.logoLoader} />
+              <p className={styles.logoLoaderText}>Preparing today&apos;s menu…</p>
             </div>
           )}
           {!menuLoading && !menuDays[selectedDay]?.dishes?.length && (
@@ -887,6 +896,7 @@ export default function MenuPage() {
         </div>
 
         {/* Right: Premium sidebar */}
+        {hasDishesToday && (
         <div className={styles.sidebar}>
           <div className={styles.sidebarCard}>
             {/* Black header */}
@@ -1002,6 +1012,7 @@ export default function MenuPage() {
             </div>
           </div>
         </div>
+        )}
       </div>
       </div>{/* /mainWrap */}
 
