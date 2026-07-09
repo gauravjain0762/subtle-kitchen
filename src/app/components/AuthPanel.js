@@ -1,69 +1,38 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 import styles from "./AuthPanel.module.css";
 
-function OtpInput({ value, onChange, digits = 4 }) {
-  const refs = Array.from({ length: digits }, () => useRef());
-  const arr  = value.split("").concat(Array(digits).fill("")).slice(0, digits);
-
-  const handleKey = (i, e) => {
-    if (e.key === "Backspace") {
-      const next = arr.slice();
-      if (next[i]) { next[i] = ""; onChange(next.join("")); }
-      else if (i > 0) { next[i - 1] = ""; onChange(next.join("")); refs[i - 1].current?.focus(); }
-      return;
-    }
-    if (e.key === "ArrowLeft"  && i > 0)          { refs[i - 1].current?.focus(); return; }
-    if (e.key === "ArrowRight" && i < digits - 1) { refs[i + 1].current?.focus(); return; }
-    if (!/^\d$/.test(e.key)) return;
-    const next = arr.slice();
-    next[i] = e.key;
-    onChange(next.join(""));
-    if (i < digits - 1) refs[i + 1].current?.focus();
-  };
-
-  const handlePaste = (e) => {
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, digits);
-    if (pasted) { onChange(pasted.padEnd(digits, "").slice(0, digits)); refs[Math.min(pasted.length, digits - 1)].current?.focus(); }
-    e.preventDefault();
-  };
-
-  return (
-    <div className={styles.otpRow}>
-      {arr.map((d, i) => (
-        <input
-          key={i}
-          ref={refs[i]}
-          className={`${styles.otpBox} ${d ? styles.otpBoxFilled : ""}`}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={d}
-          onChange={() => {}}
-          onKeyDown={e => handleKey(i, e)}
-          onPaste={handlePaste}
-        />
-      ))}
-    </div>
+function EyeIcon({ open }) {
+  return open ? (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ) : (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.3 21.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.3 21.3 0 0 1-4.22 5.19M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
   );
 }
 
 export default function AuthPanel({ onClose }) {
   const [mode, setMode]   = useState("signin"); // "signin" | "signup"
-  const [step, setStep]   = useState("form");   // "form" | "otp"
-  const [otp, setOtp]     = useState("");
+  const [step, setStep]   = useState("form");   // "form" | "success"
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [form, setForm]   = useState({
-    firstName: "", lastName: "", email: "", workspaceCode: "",
+    firstName: "", lastName: "", email: "", workspaceCode: "", password: "", confirmPassword: "",
   });
   const { login } = useAuth();
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(""); };
 
-  const switchMode = (m) => { setMode(m); setStep("form"); setOtp(""); setError(""); };
+  const switchMode = (m) => { setMode(m); setStep("form"); setError(""); };
 
   const validate = () => {
     if (mode === "signup") {
@@ -74,45 +43,39 @@ export default function AuthPanel({ onClose }) {
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
       setError("Enter a valid email address"); return false;
     }
+    if (mode === "signup") {
+      if (!form.password || form.password.length < 6) { setError("Password must be at least 6 characters"); return false; }
+      if (form.password !== form.confirmPassword) { setError("Passwords do not match"); return false; }
+    } else {
+      if (!form.password) { setError("Password is required"); return false; }
+    }
     return true;
   };
 
-  const handleSendOtp = async (e) => {
+  const handleSubmit = async (e) => {
     e?.preventDefault();
     if (!validate()) return;
     setLoading(true);
     setError("");
     try {
       if (mode === "signup") {
-        await api.post("/api/auth/register", {
-          firstName:     form.firstName.trim(),
-          lastName:      form.lastName.trim(),
-          email:         form.email.trim(),
-          workspaceCode: form.workspaceCode.trim().toUpperCase(),
+        const data = await api.post("/api/auth/register", {
+          firstName:       form.firstName.trim(),
+          lastName:        form.lastName.trim(),
+          email:           form.email.trim(),
+          workspaceCode:   form.workspaceCode.trim().toUpperCase(),
+          password:        form.password,
+          confirmPassword: form.confirmPassword,
         });
+        login(data.token, data.user);
+        setStep("success");
       } else {
-        await api.post("/api/auth/send-otp", { email: form.email.trim() });
+        const data = await api.post("/api/auth/login", { email: form.email.trim(), password: form.password });
+        login(data.token, data.user);
+        onClose();
       }
-      setStep("otp");
-      setOtp("");
     } catch (err) {
       setError(err.error || "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    if (otp.length < 4) { setError("Enter all 4 digits"); return; }
-    setLoading(true);
-    setError("");
-    try {
-      const data = await api.post("/api/auth/verify-otp", { email: form.email.trim(), otp });
-      login(data.token, data.user);
-      onClose();
-    } catch (err) {
-      setError(err.error || "Invalid or expired code. Try again.");
     } finally {
       setLoading(false);
     }
@@ -130,15 +93,10 @@ export default function AuthPanel({ onClose }) {
 
         <div className={styles.header}>
           <div className={styles.headerText}>
-            {step === "otp" && (
-              <button className={styles.backLink} onClick={() => { setStep("form"); setOtp(""); setError(""); }}>
-                ← Back
-              </button>
-            )}
             <h2 className={styles.heading}>
-              {step === "form"
-                ? (mode === "signin" ? "Sign in" : "Create account")
-                : "Check your email"}
+              {step === "success"
+                ? "You're all set!"
+                : (mode === "signin" ? "Sign in" : "Create account")}
             </h2>
             {step === "form" && (
               <p className={styles.toggle}>
@@ -146,11 +104,6 @@ export default function AuthPanel({ onClose }) {
                 <button className={styles.toggleLink} onClick={() => switchMode(mode === "signin" ? "signup" : "signin")}>
                   {mode === "signin" ? "Create an account" : "Sign in"}
                 </button>
-              </p>
-            )}
-            {step === "otp" && (
-              <p className={styles.toggle}>
-                We sent a 4-digit code to <strong>{form.email}</strong>
               </p>
             )}
           </div>
@@ -166,7 +119,7 @@ export default function AuthPanel({ onClose }) {
 
         {/* ── Form step ── */}
         {step === "form" && (
-          <form className={styles.form} onSubmit={handleSendOtp} noValidate>
+          <form className={styles.form} onSubmit={handleSubmit} noValidate>
 
             {mode === "signup" && (
               <>
@@ -204,6 +157,29 @@ export default function AuthPanel({ onClose }) {
               />
             </div>
 
+            {mode === "signin" && (
+              <div className={styles.field}>
+                <label className={styles.label}>Password</label>
+                <div className={styles.passWrap}>
+                  <input
+                    className={`${styles.input} ${error && !form.password ? styles.inputError : ""}`}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={form.password}
+                    onChange={e => set("password", e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className={styles.eyeBtn}
+                    onClick={() => setShowPassword(s => !s)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    <EyeIcon open={showPassword} />
+                  </button>
+                </div>
+              </div>
+            )}
+
             {mode === "signup" && (
               <div className={styles.field}>
                 <label className={styles.label}>Workspace code</label>
@@ -216,10 +192,57 @@ export default function AuthPanel({ onClose }) {
               </div>
             )}
 
+            {mode === "signup" && (
+              <>
+                <div className={styles.field}>
+                  <label className={styles.label}>Password</label>
+                  <div className={styles.passWrap}>
+                    <input
+                      className={`${styles.input} ${error && !form.password ? styles.inputError : ""}`}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Min 6 characters"
+                      value={form.password}
+                      onChange={e => set("password", e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className={styles.eyeBtn}
+                      onClick={() => setShowPassword(s => !s)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      <EyeIcon open={showPassword} />
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Confirm password</label>
+                  <div className={styles.passWrap}>
+                    <input
+                      className={`${styles.input} ${error && !form.confirmPassword ? styles.inputError : ""}`}
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Repeat password"
+                      value={form.confirmPassword}
+                      onChange={e => set("confirmPassword", e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className={styles.eyeBtn}
+                      onClick={() => setShowConfirmPassword(s => !s)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      <EyeIcon open={showConfirmPassword} />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
             {error && <p className={styles.errorMsg}>{error}</p>}
 
             <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? "Sending…" : "Send code"}
+              {loading
+                ? (mode === "signup" ? "Creating account…" : "Signing in…")
+                : (mode === "signup" ? "Create account" : "Sign in")}
             </button>
 
             <p className={styles.terms}>
@@ -229,24 +252,24 @@ export default function AuthPanel({ onClose }) {
           </form>
         )}
 
-        {/* ── OTP step ── */}
-        {step === "otp" && (
-          <form className={styles.form} onSubmit={handleVerifyOtp} noValidate>
-            <div className={styles.field}>
-              <label className={styles.label}>4-digit code</label>
-              <OtpInput digits={4} value={otp} onChange={v => { setOtp(v); setError(""); }} />
-              {error && <p className={styles.errorMsg}>{error}</p>}
+        {/* ── Success step ── */}
+        {step === "success" && (
+          <div className={styles.form}>
+            <div className={styles.resetSuccess}>
+              <div className={styles.resetSuccessIcon}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h3 className={styles.resetSuccessTitle}>Account created</h3>
+              <p className={styles.resetSuccessDesc}>
+                Welcome, {form.firstName}! You&apos;re signed in and ready to go.
+              </p>
             </div>
-            <button type="submit" className={styles.submitBtn} disabled={loading || otp.length < 4}>
-              {loading ? "Verifying…" : mode === "signin" ? "Sign in" : "Create account"}
+            <button type="button" className={styles.submitBtn} onClick={onClose}>
+              Continue
             </button>
-            <p className={styles.resendRow}>
-              Didn&apos;t receive it?{" "}
-              <button type="button" className={styles.forgotLink} onClick={handleSendOtp} disabled={loading}>
-                Resend code
-              </button>
-            </p>
-          </form>
+          </div>
         )}
       </div>
     </>
