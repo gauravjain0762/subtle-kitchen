@@ -1641,6 +1641,26 @@
   flex-wrap: wrap;
   z-index: 3;
 }
+.dishFavBtn {
+  position: absolute;
+  top: 10px; left: 10px;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  transition: background 0.18s, transform 0.18s, color 0.18s;
+}
+.dishFavBtn:hover { background: rgba(0,0,0,0.6); transform: scale(1.08); }
+.dishFavBtnActive { color: #ff4d5e; background: rgba(255,255,255,0.92); }
+.dishFavBtnActive:hover { background: #fff; }
 .dishTag {
   font-size: 9px;
   font-weight: 700;

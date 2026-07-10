@@ -512,9 +512,42 @@ export default function MenuPage() {
   const [menuDays, setMenuDays] = useState([]);
   const [menuLoading, setMenuLoading] = useState(true);
   const [cartLoaded, setCartLoaded] = useState(false);
+  const [favorites, setFavorites] = useState(new Set());
   const saveTimerRef = useRef(null);
 
   useEffect(() => { sessionStorage.removeItem("reorder_items"); }, []);
+
+  useEffect(() => {
+    if (!user) { setFavorites(new Set()); return; }
+    api.get("/api/favorites")
+      .then(data => {
+        const ids = (data.favorites || []).map(f => f.dishId || f._id || f);
+        setFavorites(new Set(ids));
+      })
+      .catch(() => {});
+  }, [user]);
+
+  const toggleFavorite = async (e, dish) => {
+    e.stopPropagation();
+    if (!user) { setAuthOpen(true); return; }
+    if (!dish?._id) return;
+    const isFav = favorites.has(dish._id);
+    setFavorites(prev => {
+      const next = new Set(prev);
+      isFav ? next.delete(dish._id) : next.add(dish._id);
+      return next;
+    });
+    try {
+      if (isFav) await api.delete(`/api/favorites/${dish._id}`);
+      else await api.post("/api/favorites", { dishId: dish._id });
+    } catch {
+      setFavorites(prev => {
+        const next = new Set(prev);
+        isFav ? next.add(dish._id) : next.delete(dish._id);
+        return next;
+      });
+    }
+  };
 
   useEffect(() => {
     api.get("/api/menu/current")
@@ -837,6 +870,7 @@ export default function MenuPage() {
             {(menuDays[selectedDay]?.dishes || []).map((dish, di) => {
               const sel = isSelectedDish(selectedDay, di);
               const closed = isDateClosed(selectedDate);
+              const isFav = !!dish._id && favorites.has(dish._id);
 
               return (
                 <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
@@ -850,6 +884,16 @@ export default function MenuPage() {
                     )}
                     <div className={styles.dishImgOverlay} />
                     <div className={styles.dishImgViewHint}>View details</div>
+                    <button
+                      type="button"
+                      className={`${styles.dishFavBtn} ${isFav ? styles.dishFavBtnActive : ""}`}
+                      onClick={(e) => toggleFavorite(e, dish)}
+                      aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill={isFav ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                      </svg>
+                    </button>
                     <div className={styles.dishTagsWrap}>
                       {dish.tags.map(t => <span key={t} className={styles.dishTag}>{t}</span>)}
                     </div>

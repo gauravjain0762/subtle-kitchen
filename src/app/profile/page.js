@@ -283,6 +283,73 @@ function SubscriptionsPanel() {
   );
 }
 
+function FavoritesPanel() {
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    api.get("/api/favorites")
+      .then(data => setFavorites(data.favorites || []))
+      .catch(() => setError("Failed to load favorites."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const removeFavorite = async (dishId) => {
+    setFavorites(f => f.filter(d => (d.dishId || d._id) !== dishId));
+    try { await api.delete(`/api/favorites/${dishId}`); } catch {}
+  };
+
+  const handleOrder = (fav) => {
+    sessionStorage.setItem("reorder_items", JSON.stringify([{ name: fav.dishName || fav.name, qty: 1 }]));
+    router.push("/menu");
+  };
+
+  return (
+    <div className={styles.panel}>
+      <h2 className={styles.panelHeading}>Favorites</h2>
+      {loading ? (
+        <div className={styles.emptyOrders}><p style={{ opacity: 0.5 }}>Loading favorites…</p></div>
+      ) : error ? (
+        <div className={styles.emptyOrders}><p style={{ opacity: 0.5 }}>{error}</p></div>
+      ) : favorites.length === 0 ? (
+        <div className={styles.emptyOrders}>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.25 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <p>No favorites yet. <Link href="/menu" className={styles.emptyLink}>Browse the menu →</Link></p>
+        </div>
+      ) : (
+        <div className={styles.favGrid}>
+          {favorites.map((fav) => {
+            const dishId = fav.dishId || fav._id;
+            const name   = fav.dishName || fav.name;
+            const img    = fav.img || fav.images?.[0];
+            const price  = Number(fav.price) || 0;
+            return (
+              <div key={dishId} className={styles.favCard}>
+                {img && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={img} alt={name} className={styles.favImg} />
+                )}
+                <div className={styles.favBody}>
+                  <p className={styles.favName}>{name}</p>
+                  <p className={styles.favPrice}>£{price.toFixed(2)}</p>
+                  <div className={styles.favActions}>
+                    <button className={styles.reorderBtn} onClick={() => handleOrder(fav)}>Order now</button>
+                    <button className={styles.favRemoveBtn} onClick={() => removeFavorite(dishId)} aria-label="Remove from favorites">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SettingsPanel() {
   const [marketing, setMarketing] = useState(true);
   return (
@@ -322,6 +389,10 @@ export default function ProfilePage() {
     {
       id: "orders", label: "Orders",
       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>,
+    },
+    {
+      id: "favorites", label: "Favorites",
+      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
     },
     {
       id: "subscriptions", label: "Plans & Subscriptions",
@@ -387,6 +458,7 @@ export default function ProfilePage() {
         {/* Content */}
         <main className={styles.content}>
           {tab === "orders"        && <OrdersPanel />}
+          {tab === "favorites"     && <FavoritesPanel />}
           {tab === "subscriptions" && <SubscriptionsPanel />}
           {tab === "settings"      && <SettingsPanel />}
         </main>
