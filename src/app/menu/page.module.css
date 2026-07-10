@@ -2484,6 +2484,7 @@
 .logoLoader {
   height: 56px;
   width: auto;
+  filter: brightness(0) contrast(2);
   animation: logoPulse 1.3s ease-in-out infinite;
 }
 @keyframes logoPulse {

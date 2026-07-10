@@ -12,7 +12,17 @@ const NAV_LINKS = [
   { label: "Contact us",                href: "/contact" },
 ];
 
+function getFirstName(user) {
+  if (user?.name) return user.name.split(" ")[0];
+  if (user?.email) {
+    const local = user.email.split("@")[0];
+    return local.charAt(0).toUpperCase() + local.slice(1);
+  }
+  return "there";
+}
+
 function ProfileMenu({ user, logout }) {
+  const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const closeTimer = useRef(null);
@@ -48,7 +58,7 @@ function ProfileMenu({ user, logout }) {
           {(user?.name || user?.email || "A")[0].toUpperCase()}
         </span>
         <span className={styles.profileName}>
-          {(user?.name || user?.email || "Account").split(" ")[0]}
+          Welcome {firstName}
         </span>
         <svg className={`${styles.profileChevron} ${open ? styles.profileChevronOpen : ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="6 9 12 15 18 9"/>
@@ -62,29 +72,16 @@ function ProfileMenu({ user, logout }) {
             {(user?.name || user?.email || "A")[0].toUpperCase()}
           </div>
           <div className={styles.dropdownIdentity}>
-            <span className={styles.dropdownFullName}>{user?.name || "Account"}</span>
+            <span className={styles.dropdownFullName}>Hii {firstName}</span>
             <span className={styles.dropdownEmail}>{user?.email}</span>
           </div>
         </div>
-
-        {/* Workspace / company details */}
-        {(user?.companyCode || user?.workspaceName || user?.company) && (
-          <div className={styles.dropdownWorkspace}>
-            <div className={styles.dropdownWorkspaceRow}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-              <span className={styles.dropdownWorkspaceName}>{user?.workspaceName || user?.company || "Workspace"}</span>
-            </div>
-            {user?.companyCode && (
-              <span className={styles.dropdownCodeBadge}>{user.companyCode}</span>
-            )}
-          </div>
-        )}
 
         <div className={styles.dropdownDivider} />
 
         <Link href="/profile" className={styles.dropdownItem} onClick={() => setOpen(false)}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-          My orders
+          My account
         </Link>
 
         <div className={styles.dropdownDivider} />
@@ -196,7 +193,7 @@ export default function Navbar({ onSignIn }) {
             </button>
             {mobileProfileOpen && (
               <div className={styles.mobileProfileItems}>
-                <Link href="/profile" className={styles.mobileLink} onClick={close}>My orders</Link>
+                <Link href="/profile" className={styles.mobileLink} onClick={close}>My account</Link>
                 <button className={styles.mobileSignOut} onClick={() => { logout(); close(); }}>Sign out</button>
               </div>
             )}

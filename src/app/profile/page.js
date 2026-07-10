@@ -309,9 +309,14 @@ function SettingsPanel() {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
   const [tab, setTab]           = useState("orders");
   const [authOpen, setAuthOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (ready && !user) router.push("/");
+  }, [ready, user, router]);
 
   const NAV_TABS = [
     {
@@ -331,6 +336,8 @@ export default function ProfilePage() {
   const displayName  = user?.name  || user?.email?.split("@")[0] || "Account";
   const displayEmail = user?.email || "";
   const companyCode  = user?.workspaceCode || user?.companyCode || "";
+
+  if (!ready || !user) return null;
 
   return (
     <>

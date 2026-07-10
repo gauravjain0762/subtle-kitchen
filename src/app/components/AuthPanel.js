@@ -99,7 +99,7 @@ export default function AuthPanel({ onClose }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.png" alt="" className={styles.logoImg} />
             </div>
-            <h2 className={styles.heading}>You&apos;re all set!</h2>
+            <h2 className={styles.heading}>You&apos;re all set! 🎉</h2>
           </div>
         ) : (
           <div className={styles.header}>
@@ -269,7 +269,7 @@ export default function AuthPanel({ onClose }) {
               </div>
               <h3 className={styles.resetSuccessTitle}>Account created</h3>
               <p className={styles.resetSuccessDesc}>
-                Welcome 👋 {form.firstName}! You&apos;re signed in — make your first order.
+                Welcome 👋 {form.firstName}! You&apos;re signed in<br />make your first order.
               </p>
             </div>
             <button type="button" className={styles.submitBtn} onClick={() => { onClose(); router.push("/menu"); }}>
