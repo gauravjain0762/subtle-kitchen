@@ -104,9 +104,9 @@ function MenuCard({ item, index }) {
         <div className={styles.menuMacroGrid}>
           {[
             { label: "KCAL",  val: item.kcal },
-            { label: "PROT",  val: `${item.protein}g` },
-            { label: "CARBS", val: `${item.carbs}g` },
-            { label: "FAT",   val: `${item.fat}g` },
+            { label: "PROT",  val: `${item.protein} g` },
+            { label: "CARBS", val: `${item.carbs} g` },
+            { label: "FAT",   val: `${item.fat} g` },
           ].map(m => (
             <div key={m.label} className={styles.menuMacroCell}>
               <span className={styles.menuMacroLabel}>{m.label}</span>

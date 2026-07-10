@@ -84,7 +84,11 @@ export default function ConfirmationPage() {
               </div>
               <h2 className={styles.deliveryCompany}>{workspaceName}</h2>
               <div className={styles.deliveryDivider} />
-              <p className={styles.deliveryAddr}>{user?.email || "—"}</p>
+              <p className={styles.deliveryAddr}>
+                {[user?.workspaceAddress, user?.workspaceCity, user?.workspaceCounty, user?.workspacePostcode]
+                  .filter(Boolean)
+                  .join(", ") || user?.email || "—"}
+              </p>
             </div>
 
             <p className={styles.sectionTitle}>Preferred delivery date</p>

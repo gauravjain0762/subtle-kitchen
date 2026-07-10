@@ -79,7 +79,7 @@ function OrdersPanel() {
   };
 
   const formatDate = (iso) =>
-    new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
+    new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12: true });
 
   return (
     <div className={styles.panel}>
@@ -98,7 +98,7 @@ function OrdersPanel() {
           <div className={styles.orderList}>
             {orders.map((order, i) => (
               <div key={order._id} className={styles.orderCard}>
-                <div className={styles.orderCardTop}>
+                <div className={`${styles.orderCardTop} ${expanded === i ? styles.orderCardTopExpanded : ""}`}>
                   <div className={styles.orderImgStack}>
                     {order.items.slice(0, 2).map((item, j) => (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -132,9 +132,10 @@ function OrdersPanel() {
                       <div key={j} className={styles.orderDetailItem}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={item.img || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80"} alt={item.dishName} className={styles.orderDetailImg} />
-                        <span className={styles.orderDetailName}>{item.dishName}</span>
-                        <span className={styles.orderDetailPortion}>{item.portion}</span>
-                        <span className={styles.orderDetailQty}>x{item.qty}</span>
+                        <span className={styles.orderDetailName}>
+                          {item.dishName} <span className={styles.orderDetailQty}>x{item.qty}</span>
+                        </span>
+                        {item.portion && <span className={styles.orderDetailPortion}>{item.portion}</span>}
                       </div>
                     ))}
                   </div>
@@ -404,7 +405,7 @@ export default function ProfilePage() {
     },
   ];
 
-  const displayName  = user?.name  || user?.email?.split("@")[0] || "Account";
+  const displayName  = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.name || user?.email?.split("@")[0] || "Account";
   const displayEmail = user?.email || "";
   const companyCode  = user?.workspaceCode || user?.companyCode || "";
 

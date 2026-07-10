@@ -13,6 +13,7 @@ const NAV_LINKS = [
 ];
 
 function getFirstName(user) {
+  if (user?.firstName) return user.firstName;
   if (user?.name) return user.name.split(" ")[0];
   if (user?.email) {
     const local = user.email.split("@")[0];
@@ -55,7 +56,7 @@ function ProfileMenu({ user, logout }) {
     >
       <button className={styles.profileBtn} aria-label="Profile menu">
         <span className={styles.profileAvatar}>
-          {(user?.name || user?.email || "A")[0].toUpperCase()}
+          {firstName[0].toUpperCase()}
         </span>
         <span className={styles.profileName}>
           Welcome {firstName}
@@ -69,7 +70,7 @@ function ProfileMenu({ user, logout }) {
         {/* User identity block */}
         <div className={styles.dropdownHeader}>
           <div className={styles.dropdownAvatarLg}>
-            {(user?.name || user?.email || "A")[0].toUpperCase()}
+            {firstName[0].toUpperCase()}
           </div>
           <div className={styles.dropdownIdentity}>
             <span className={styles.dropdownFullName}>Hii {firstName}</span>
@@ -179,9 +180,9 @@ export default function Navbar({ onSignIn }) {
               onClick={() => setMobileProfileOpen(v => !v)}
               aria-expanded={mobileProfileOpen}
             >
-              <span className={styles.mobileUserAvatar}>{(user?.name || user?.email || "A")[0].toUpperCase()}</span>
+              <span className={styles.mobileUserAvatar}>{getFirstName(user)[0].toUpperCase()}</span>
               <div className={styles.mobileUserText}>
-                <p className={styles.mobileUserName}>{user?.name || user?.email}</p>
+                <p className={styles.mobileUserName}>{[user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.name || user?.email}</p>
                 {user?.companyCode && <p className={styles.mobileUserCode}>{user.companyCode}</p>}
               </div>
               <svg

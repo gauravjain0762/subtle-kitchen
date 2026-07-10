@@ -429,22 +429,34 @@ function CalendarPicker({ selectedDate, onChange, hasItemsForDow }) {
   );
 }
 
-function restoreCartState(cartItems, days) {
-  const sel = {}, pts = {}, qtys = {}, adns = {};
+function restoreCartState(cartItems, days, fallbackDate) {
+  const sel = {}, pts = {}, qtys = {}, adns = {}, aqtys = {};
   cartItems.forEach(item => {
+    // Match a saved item back to the exact day it was added for — not every day
+    // that happens to serve a dish with the same id (dishes often repeat across days).
+    const itemDate = item.date || fallbackDate;
+    // Addons round-trip as { name, qty } objects, but may still arrive as plain
+    // strings from older carts — normalize both shapes.
+    const addonNames = (item.addons || []).map(a => (typeof a === "string" ? a : a?.name)).filter(Boolean);
+    const addonQtyMap = {};
+    (item.addons || []).forEach(a => {
+      if (a && typeof a === "object" && a.name) addonQtyMap[a.name] = a.qty || 1;
+    });
     days.forEach((day, d) => {
+      if (itemDate && day.isoDate && itemDate !== day.isoDate) return;
       (day.dishes || []).forEach((dish, di) => {
         if (String(dish._id) === String(item.dishId)) {
           const k = `${d}_${di}`;
-          sel[k]  = true;
-          pts[k]  = item.portionSize?.toLowerCase() === "large" ? "large" : "regular";
-          qtys[k] = item.qty || 1;
-          adns[k] = new Set(item.addons || []);
+          sel[k]   = true;
+          pts[k]   = item.portionSize?.toLowerCase() === "large" ? "large" : "regular";
+          qtys[k]  = item.qty || 1;
+          adns[k]  = new Set(addonNames);
+          aqtys[k] = addonQtyMap;
         }
       });
     });
   });
-  return { sel, pts, qtys, adns };
+  return { sel, pts, qtys, adns, aqtys };
 }
 
 function readReorderItems() {
@@ -527,6 +539,22 @@ export default function MenuPage() {
       .catch(() => {});
   }, [user]);
 
+  // Clear the previous user's cart from local state on sign-out — otherwise
+  // their selections stay visible in "Your order" after logging out.
+  const prevUserRef = useRef(user);
+  useEffect(() => {
+    const wasLoggedIn = !!prevUserRef.current;
+    prevUserRef.current = user;
+    if (wasLoggedIn && !user) {
+      setSelected({});
+      setPortions({});
+      setQuantities({});
+      setAddons({});
+      setAddonQtys({});
+      setCartLoaded(false);
+    }
+  }, [user]);
+
   const toggleFavorite = async (e, dish) => {
     e.stopPropagation();
     if (!user) { setAuthOpen(true); return; }
@@ -559,6 +587,7 @@ export default function MenuPage() {
           return {
             day: day.day,
             date: dateStr,
+            isoDate: day.date,
             closed: false,
             theme: day.theme,
             dishes: day.dishes.map(d => {
@@ -615,11 +644,12 @@ export default function MenuPage() {
     api.get("/api/cart")
       .then(data => {
         if (!data.cart?.items?.length) return;
-        const { sel, pts, qtys, adns } = restoreCartState(data.cart.items, menuDays);
+        const { sel, pts, qtys, adns, aqtys } = restoreCartState(data.cart.items, menuDays, data.cart.deliveryDate);
         setSelected(sel);
         setPortions(pts);
         setQuantities(qtys);
         setAddons(adns);
+        setAddonQtys(aqtys);
         if (data.cart.deliveryDate) {
           const [y, m, d] = data.cart.deliveryDate.split("-").map(Number);
           setSelectedDate(new Date(y, m - 1, d));
@@ -643,6 +673,7 @@ export default function MenuPage() {
         acc.push({
           dishId:      dish._id,
           dishName:    dish.name,
+          date:        menuDays[d]?.isoDate || "",
           portionSize: portions[k] === "large" ? "Large" : "Regular",
           qty:         quantities[k] || 1,
           addons:      [...(addons[k] || new Set())].map(name => ({ name, qty: addonQtys[k]?.[name] || 1 })),
@@ -913,9 +944,9 @@ export default function MenuPage() {
                     <div className={styles.dishMacros}>
                       {[
                         { label: "kcal",    val: dish.kcal    ?? "N/A" },
-                        { label: "protein", val: dish.protein != null ? `${dish.protein}g` : "N/A" },
-                        { label: "carbs",   val: dish.carbs   != null ? `${dish.carbs}g`   : "N/A" },
-                        { label: "fat",     val: dish.fat     != null ? `${dish.fat}g`     : "N/A" },
+                        { label: "protein", val: dish.protein != null ? `${dish.protein} g` : "N/A" },
+                        { label: "carbs",   val: dish.carbs   != null ? `${dish.carbs} g`   : "N/A" },
+                        { label: "fat",     val: dish.fat     != null ? `${dish.fat} g`     : "N/A" },
                       ].map(m => (
                         <div key={m.label} className={styles.dishMacro}>
                           <span className={styles.dishMacroVal}>{m.val}</span>
@@ -978,10 +1009,29 @@ export default function MenuPage() {
                         </div>
                         <div className={styles.basketDetails}>
                           <p className={styles.basketName}>{dish.name}</p>
-                          <p className={styles.basketMeta}>
-                            {portion.charAt(0).toUpperCase() + portion.slice(1)}
-                            {qty > 1 && ` · ×${qty}`}
-                          </p>
+                          <div className={styles.basketMetaRow}>
+                            <p className={styles.basketMeta}>{portion.charAt(0).toUpperCase() + portion.slice(1)}</p>
+                            <div className={styles.basketQtyStepper}>
+                              <button
+                                type="button"
+                                className={styles.basketQtyBtn}
+                                onClick={() => decrQty(d, di)}
+                                disabled={qty <= 1}
+                                aria-label="Decrease quantity"
+                              >
+                                −
+                              </button>
+                              <span className={styles.basketQtyVal}>{qty}</span>
+                              <button
+                                type="button"
+                                className={styles.basketQtyBtn}
+                                onClick={() => incrQty(d, di)}
+                                aria-label="Increase quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
                           {addonNames.length > 0 && (
                             <div className={styles.basketAddons}>
                               {addonNames.map(name => (
@@ -1039,6 +1089,7 @@ export default function MenuPage() {
                       dishId:   dish?._id,
                       dishName: dish?.name,
                       img:      dish?.img,
+                      date:     menuDays[d]?.isoDate || "",
                       price:    getDishPrice(d, di),
                       portionSize: portion === "large" ? "Large" : "Regular",
                       qty,
@@ -1124,7 +1175,7 @@ export default function MenuPage() {
                       ].map(n => (
                         <div key={n.label} className={styles.nutritionRow}>
                           <span className={styles.nutritionRowLabel}>{n.label}</span>
-                          <span className={styles.nutritionRowVal}>{n.val}{n.unit}</span>
+                          <span className={styles.nutritionRowVal}>{n.val}{n.unit && ` ${n.unit}`}</span>
                         </div>
                       ))}
                     </div>
@@ -1181,7 +1232,7 @@ export default function MenuPage() {
                             <span className={styles.dishDetailAddonName} onClick={() => toggleAddon(d, di, a.name)} style={{ cursor: "pointer", flex: 1 }}>
                               {a.name}
                               {a.gramsPerMeal != null && (
-                                <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 11, marginLeft: 6 }}>{a.gramsPerMeal}g</span>
+                                <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 11, marginLeft: 6 }}>{a.gramsPerMeal} g</span>
                               )}
                             </span>
 

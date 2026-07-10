@@ -34,7 +34,7 @@ export default function GetWorkspaceCodePage() {
 
   const [workspace, setWorkspace] = useState({
     name: "", address1: "",
-    town: "", city: "", postcode: "",
+    town: "", city: "", county: "", postcode: "",
     deliveryTimes: [""],   // index 0 = main, 1+ = Break 1, Break 2…
     employees: "", premiseType: "",
   });
@@ -88,6 +88,7 @@ export default function GetWorkspaceCodePage() {
           address1:      workspace.address1,
           town:          workspace.town,
           city:          workspace.city,
+          county:        workspace.county,
           postcode:      workspace.postcode,
           country:       "GB",
           deliveryTimes: workspace.deliveryTimes.filter(t => t.trim()),
@@ -218,17 +219,24 @@ export default function GetWorkspaceCodePage() {
 
                 <div className={styles.row}>
                   <div className={styles.field} style={{ "--fi": 4 }}>
+                    <label className={styles.label}>County</label>
+                    <input className={styles.input}
+                      placeholder="e.g. Yorkshire" value={workspace.county}
+                      onChange={e => setW("county", e.target.value)} />
+                  </div>
+                  <div className={styles.field} style={{ "--fi": 5 }}>
                     <label className={styles.label}>Postcode <span className={styles.req}>*</span></label>
                     <input className={`${styles.input} ${errors.postcode ? styles.inputError : ""}`}
                       placeholder="e.g. E14 5AB" value={workspace.postcode}
                       onChange={e => setW("postcode", e.target.value.toUpperCase())} />
                     {errors.postcode && <p className={styles.errMsg}>{errors.postcode}</p>}
                   </div>
-                  <div className={styles.field} style={{ "--fi": 5 }}>
-                    <label className={styles.label}>Country</label>
-                    <div className={styles.countryStatic}>
-                      United Kingdom
-                    </div>
+                </div>
+
+                <div className={styles.field} style={{ "--fi": 6 }}>
+                  <label className={styles.label}>Country</label>
+                  <div className={styles.countryStatic}>
+                    United Kingdom
                   </div>
                 </div>
 
@@ -354,7 +362,7 @@ export default function GetWorkspaceCodePage() {
                     <span className={styles.summaryIcon}>
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     </span>
-                    {workspace.town}, {workspace.city}
+                    {[workspace.town, workspace.city, workspace.county].filter(Boolean).join(", ")}
                   </div>
                   <div className={styles.summaryRow}>
                     <span className={styles.summaryIcon}>
@@ -407,7 +415,7 @@ export default function GetWorkspaceCodePage() {
                 <div className={styles.successDivider} />
                 <div className={styles.successRow}>
                   <span className={styles.successLabel}>Address</span>
-                  <span className={styles.successVal}>{[workspace.town, workspace.city, workspace.postcode].filter(Boolean).join(", ")}, UK</span>
+                  <span className={styles.successVal}>{[workspace.town, workspace.city, workspace.county, workspace.postcode].filter(Boolean).join(", ")}, UK</span>
                 </div>
                 <div className={styles.successDivider} />
                 <div className={styles.successRow}>
