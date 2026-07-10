@@ -612,8 +612,32 @@
 @media (max-width: 768px) {
   .profileHeader { padding: 24px 20px; }
   .body { flex-direction: column; }
-  .sidebar { width: 100%; border-right: none; border-bottom: 1.5px solid rgba(0,0,0,0.07); padding: 12px 0; display: flex; flex-direction: row; }
-  .sidebarItem { flex: 1; justify-content: center; padding: 12px 8px; }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1.5px solid rgba(0,0,0,0.07);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+  .sidebarItem {
+    flex: 0 0 auto;
+    width: auto;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .sidebarIconCircle { width: 24px; height: 24px; }
+  .sidebarIconCircle svg { width: 12px; height: 12px; }
+  .sidebarLabel { white-space: nowrap; font-size: 12.5px; }
   .content { padding: 24px 20px; }
   .orderScroll { height: auto; max-height: 60vh; }
   .subInfoGrid { grid-template-columns: 1fr 1fr; }
