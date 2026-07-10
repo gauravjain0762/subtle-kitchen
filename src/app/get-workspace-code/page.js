@@ -148,11 +148,6 @@ export default function GetWorkspaceCodePage() {
             ))}
           </ul>
         </div>
-
-        <p className={styles.leftFooter}>
-          Already have a code?{" "}
-          <Link href="/get-started" className={styles.leftFooterLink}>Sign in here</Link>
-        </p>
       </div>
 
       {/* ── Right panel ── */}
