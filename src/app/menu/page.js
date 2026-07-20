@@ -448,7 +448,7 @@ function restoreCartState(cartItems, days, fallbackDate) {
         if (String(dish._id) === String(item.dishId)) {
           const k = `${d}_${di}`;
           sel[k]   = true;
-          pts[k]   = item.portionSize?.toLowerCase() === "large" ? "large" : "regular";
+          pts[k]   = item.portionSize || "Regular";
           qtys[k]  = item.qty || 1;
           adns[k]  = new Set(addonNames);
           aqtys[k] = addonQtyMap;
@@ -482,7 +482,7 @@ export default function MenuPage() {
     readReorderItems().forEach(({ name, portion }) => {
       WEEKLY_MENU.forEach((day, d) => {
         day.dishes.forEach((dish, di) => {
-          if (dish.name === name) pts[`${d}_${di}`] = portion?.toLowerCase() === "large" ? "large" : "regular";
+          if (dish.name === name) pts[`${d}_${di}`] = portion || "Regular";
         });
       });
     });
@@ -681,7 +681,7 @@ export default function MenuPage() {
           dishId:      dish._id,
           dishName:    dish.name,
           date:        menuDays[d]?.isoDate || "",
-          portionSize: portions[k] === "large" ? "Large" : "Regular",
+          portionSize: portions[k] || "Regular",
           qty:         quantities[k] || 1,
           addons:      [...(addons[k] || new Set())].map(name => ({ name, qty: addonQtys[k]?.[name] || 1 })),
         });
@@ -739,7 +739,12 @@ export default function MenuPage() {
   // Composite key helpers
   const getKey = (d, di) => `${d}_${di}`;
   const isSelectedDish = (d, di) => !!selected[getKey(d, di)];
-  const getPortion = (d, di) => portions[getKey(d, di)] || "regular";
+  const getDefaultPortion = (d, di) => {
+    const dishPortions = menuDays[d]?.dishes[di]?.portions;
+    if (!dishPortions?.length) return "Regular";
+    return dishPortions.find(p => p.size === "Regular")?.size || dishPortions[0].size;
+  };
+  const getPortion = (d, di) => portions[getKey(d, di)] || getDefaultPortion(d, di);
   const getQty = (d, di) => quantities[getKey(d, di)] || 1;
   const getAddonSet = (d, di) => addons[getKey(d, di)] || new Set();
 
@@ -752,7 +757,7 @@ export default function MenuPage() {
       next[k] ? delete next[k] : (next[k] = true);
       return next;
     });
-    if (!portions[k]) setPortions(p => ({ ...p, [k]: "regular" }));
+    if (!portions[k]) setPortions(p => ({ ...p, [k]: getDefaultPortion(d, di) }));
     if (!quantities[k]) setQuantities(q => ({ ...q, [k]: 1 }));
     setExpandedDish(null);
   };
@@ -801,10 +806,10 @@ export default function MenuPage() {
       return s + price * qty;
     }, 0);
     if (dish.portions?.length) {
-      const match = dish.portions.find(p => p.size?.toLowerCase() === portion);
+      const match = dish.portions.find(p => p.size === portion);
       return (match ? match.price : dish.price) + addonTotal;
     }
-    return dish.price + (portion === "large" ? 1.50 : 0) + addonTotal;
+    return dish.price + (portion === "Large" ? 1.50 : 0) + addonTotal;
   };
 
   const orderItems = Object.keys(selected).map(k => {
@@ -1017,7 +1022,7 @@ export default function MenuPage() {
                         <div className={styles.basketDetails}>
                           <p className={styles.basketName}>{dish.name}</p>
                           <div className={styles.basketMetaRow}>
-                            <p className={styles.basketMeta}>{portion.charAt(0).toUpperCase() + portion.slice(1)}</p>
+                            <p className={styles.basketMeta}>{portion}</p>
                             <div className={styles.basketQtyStepper}>
                               <button
                                 type="button"
@@ -1098,7 +1103,7 @@ export default function MenuPage() {
                       img:      dish?.img,
                       date:     menuDays[d]?.isoDate || "",
                       price:    getDishPrice(d, di),
-                      portionSize: portion === "large" ? "Large" : "Regular",
+                      portionSize: portion || "Regular",
                       qty,
                       addons: [...(addons[`${d}_${di}`] || new Set())].map(name => ({ name, qty: addonQtys[`${d}_${di}`]?.[name] || 1 })),
                     })),
@@ -1197,17 +1202,24 @@ export default function MenuPage() {
 
                 {/* Portion selector — only show if dish has multiple portions */}
                 {dish.portions?.length > 1 && (() => {
-                  const reg = dish.portions.find(p => p.size === "Regular")?.price ?? dish.price;
-                  const lrg = dish.portions.find(p => p.size === "Large")?.price;
-                  const diff = lrg != null ? (lrg - reg).toFixed(2) : null;
+                  const basePrice = dish.portions.find(p => p.size === "Regular")?.price ?? dish.price;
+                  const sortedPortions = [...dish.portions].sort((a, b) => a.price - b.price);
                   return (
                     <div className={styles.dishDetailPortionRow}>
                       <span className={styles.dishDetailPortionLabel}>Portion</span>
                       <div className={styles.optionBtns}>
-                        <button className={`${styles.optionBtn} ${portion === "regular" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "regular")}>Regular</button>
-                        <button className={`${styles.optionBtn} ${portion === "large" ? styles.optionBtnActive : ""}`} onClick={() => setPortion(d, di, "large")}>
-                          Large {diff != null && <span className={styles.optionExtra}>(+£{diff})</span>}
-                        </button>
+                        {sortedPortions.map(p => {
+                          const diff = p.price - basePrice;
+                          return (
+                            <button
+                              key={p.size}
+                              className={`${styles.optionBtn} ${portion === p.size ? styles.optionBtnActive : ""}`}
+                              onClick={() => setPortion(d, di, p.size)}
+                            >
+                              {p.size} {diff > 0 && <span className={styles.optionExtra}>(+£{diff.toFixed(2)})</span>}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   );
