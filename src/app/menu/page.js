@@ -507,6 +507,7 @@ export default function MenuPage() {
   const [detailDish, setDetailDish] = useState(null);
   const [detailTab, setDetailTab] = useState("overview");
   const [lunchTime, setLunchTime] = useState("12:00 PM");
+  const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
@@ -528,6 +529,12 @@ export default function MenuPage() {
   const saveTimerRef = useRef(null);
 
   useEffect(() => { sessionStorage.removeItem("reorder_items"); }, []);
+
+  // Keep the selected lunch time valid for this workspace's actual delivery
+  // slots — the default/previous value may not be one they offer.
+  useEffect(() => {
+    if (!availableLunchTimes.includes(lunchTime)) setLunchTime(availableLunchTimes[0]);
+  }, [availableLunchTimes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!user) { setFavorites(new Set()); return; }
@@ -856,7 +863,7 @@ export default function MenuPage() {
               Choose lunch time
             </span>
             <div className={styles.timeChips}>
-              {LUNCH_TIMES.map(t => (
+              {availableLunchTimes.map(t => (
                 <button
                   key={t}
                   type="button"
