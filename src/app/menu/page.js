@@ -314,15 +314,14 @@ function getAvailableDates() {
   const available = [];
   const now = new Date();
   const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let cursor = new Date(todayMid); // start from today
+  // Same-day ordering is never allowed (see isDateClosed) — earliest deliverable
+  // day is always tomorrow, so the picker starts there, not today.
+  let cursor = new Date(todayMid);
+  cursor.setDate(cursor.getDate() + 1);
   while (available.length < 10) {
     const dow = cursor.getDay(); // 0=Sun … 6=Sat
     if (dow >= 1 && dow <= 5) {
-      // Skip today if past 10 PM cutoff
-      const isToday = cursor.getTime() === todayMid.getTime();
-      if (!(isToday && now.getHours() >= 22)) {
-        available.push(new Date(cursor));
-      }
+      available.push(new Date(cursor));
     }
     cursor.setDate(cursor.getDate() + 1);
   }
@@ -1022,7 +1021,7 @@ export default function MenuPage() {
                         <div className={styles.basketDetails}>
                           <p className={styles.basketName}>{dish.name}</p>
                           <div className={styles.basketMetaRow}>
-                            <p className={styles.basketMeta}>{portion}</p>
+
                             <div className={styles.basketQtyStepper}>
                               <button
                                 type="button"

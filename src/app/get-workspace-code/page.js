@@ -39,7 +39,7 @@ export default function GetWorkspaceCodePage() {
     employees: "", premiseType: "",
   });
   const [contact, setContact] = useState({
-    firstName: "", lastName: "", email: "", phone: "",
+    firstName: "", lastName: "", email: "", phone: "", notes: "",
   });
 
   const setW  = (k, v) => { setWorkspace(p => ({ ...p, [k]: v })); setErrors(e => ({ ...e, [k]: "" })); };
@@ -100,6 +100,7 @@ export default function GetWorkspaceCodePage() {
           lastName:  contact.lastName,
           email:     contact.email,
           phone:     contact.phone,
+          notes:     contact.notes,
         },
       });
       setReferenceId(data.referenceId || "");
@@ -308,7 +309,7 @@ export default function GetWorkspaceCodePage() {
           {step === 2 && (
             <form className={styles.formStep} key="step2" onSubmit={handleSubmit} noValidate>
               <h2 className={styles.formHeading}>
-                Your <span className={styles.formAccent}>contact</span> details
+                <span className={styles.formAccent}>Designated</span> contact details
               </h2>
               <p className={styles.formSub}>We'll send your workspace code and setup instructions on your email.</p>
 
@@ -331,7 +332,7 @@ export default function GetWorkspaceCodePage() {
                 </div>
 
                 <div className={styles.field} style={{ "--fi": 2 }}>
-                  <label className={styles.label}>Work email <span className={styles.req}>*</span></label>
+                  <label className={styles.label}>Designated person email <span className={styles.req}>*</span></label>
                   <input type="email" className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
                     placeholder="jane@workspace.com" value={contact.email}
                     onChange={e => setCt("email", e.target.value)} />
@@ -339,14 +340,26 @@ export default function GetWorkspaceCodePage() {
                 </div>
 
                 <div className={styles.field} style={{ "--fi": 3 }}>
-                  <label className={styles.label}>Phone number <span className={styles.req}>*</span></label>
+                  <label className={styles.label}>Designated phone number <span className={styles.req}>*</span></label>
                   <input type="tel" className={`${styles.input} ${errors.phone ? styles.inputError : ""}`}
                     placeholder="+44 7700 000000" value={contact.phone}
                     onChange={e => setCt("phone", e.target.value)} />
                   {errors.phone && <p className={styles.errMsg}>{errors.phone}</p>}
                 </div>
 
-                <div className={styles.summaryPill} style={{ "--fi": 4 }}>
+                <div className={styles.field} style={{ "--fi": 4 }}>
+                  <label className={styles.label}>Additional notes</label>
+                  <textarea
+                    className={styles.input}
+                    style={{ resize: "vertical", minHeight: 80, fontFamily: "inherit" }}
+                    placeholder="e.g. cutlery required, spice preference, allergy notes…"
+                    value={contact.notes}
+                    onChange={e => setCt("notes", e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                <div className={styles.summaryPill} style={{ "--fi": 5 }}>
                   <div className={styles.summaryRow}>
                     <span className={styles.summaryIcon}>
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
