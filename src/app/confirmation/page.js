@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
@@ -28,6 +28,19 @@ function getDayLabel(iso) {
 }
 
 export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", gap: 16 }}>
+        <DeliveryVanAnimation />
+        <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em" }}>Confirming your order…</p>
+      </div>
+    }>
+      <ConfirmationPageInner />
+    </Suspense>
+  );
+}
+
+function ConfirmationPageInner() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const [authOpen, setAuthOpen] = useState(false);
