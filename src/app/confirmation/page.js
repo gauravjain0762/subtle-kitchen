@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
 import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
 import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
 
 function formatDeliveryDate(iso) {
   if (!iso) return "—";
@@ -27,15 +29,59 @@ function getDayLabel(iso) {
 
 export default function ConfirmationPage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [authOpen, setAuthOpen] = useState(false);
   const [visible, setVisible]   = useState(false);
   const [count, setCount]       = useState(0);
+  const [order, setOrder]       = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-  const [order] = useState(() => {
-    if (typeof window === "undefined") return null;
-    try { return JSON.parse(sessionStorage.getItem("sk_confirmation") || "null"); }
-    catch { return null; }
-  });
+  // Read order data after mount, not in a useState initializer — sessionStorage
+  // is client-only, so reading it during render would make the client's first
+  // hydration pass diverge from the server-rendered markup.
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+
+    let pending = null;
+    try { pending = JSON.parse(sessionStorage.getItem("sk_pending_order") || "null"); }
+    catch { pending = null; }
+    const localItems = pending?.items || [];
+
+    const enrichItems = (apiItems) => (apiItems?.length ? apiItems : localItems).map(apiItem => {
+      const local = localItems.find(li => String(li.dishId) === String(apiItem.dishId));
+      return {
+        dishId:      apiItem.dishId      || local?.dishId      || "",
+        dishName:    apiItem.dishName    || local?.dishName    || "",
+        portionSize: apiItem.portionSize || local?.portionSize || "",
+        qty:         apiItem.qty         ?? local?.qty         ?? 1,
+        addons:      apiItem.addons      || local?.addons      || [],
+        price:       apiItem.price       ?? local?.price       ?? 0,
+        img:         apiItem.img         || local?.img         || "",
+        tags:        local?.tags         || [],
+      };
+    });
+
+    if (sessionId) {
+      // Paid via Stripe Checkout — re-fetch the real, server-confirmed order
+      // by session id rather than trusting whatever was stored before redirect.
+      api.get(`/api/orders/by-session/${sessionId}`)
+        .then(data => {
+          setOrder({ ...data.order, items: enrichItems(data.order.items) });
+          sessionStorage.removeItem("sk_pending_order");
+          sessionStorage.removeItem("sk_confirmation");
+        })
+        .catch(err => setLoadError(err.error || "Could not load your order."))
+        .finally(() => setLoading(false));
+    } else {
+      // No Stripe checkout — /review already stored the confirmed order.
+      let stored = null;
+      try { stored = JSON.parse(sessionStorage.getItem("sk_confirmation") || "null"); }
+      catch { stored = null; }
+      setOrder(stored);
+      setLoading(false);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const items    = order?.items    || [];
   const total    = Number(order?.total)    || items.reduce((s, i) => s + (Number(i.price) || 0) * (i.qty || 1), 0);
@@ -58,6 +104,24 @@ export default function ConfirmationPage() {
     }, 28);
     return () => { clearTimeout(t); clearInterval(timer); };
   }, [total]);
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", gap: 16 }}>
+        <DeliveryVanAnimation />
+        <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em" }}>Confirming your order…</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", gap: 12, textAlign: "center", padding: 20 }}>
+        <p style={{ fontSize: 15, fontWeight: 600 }}>{loadError}</p>
+        <Link href="/menu" style={{ textDecoration: "underline" }}>Back to menu</Link>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -15,11 +15,6 @@ function formatCouponHeadline(c) {
   return `Get £${c.value} off`;
 }
 
-const PAY_METHODS = [
-  { id: "apple", label: "Apple Pay", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> },
-  { id: "google", label: "Google Pay", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.4v3.2h4.57c-.19 1.07-.76 1.98-1.62 2.59v2.15h2.62c1.53-1.41 2.41-3.49 2.41-5.96 0-.57-.05-1.12-.14-1.65H12v-.33zM12 21c2.43 0 4.47-.8 5.96-2.18l-2.62-2.04c-.91.61-2.07.97-3.34.97-2.57 0-4.74-1.73-5.52-4.07H3.76v2.12C5.24 18.91 8.4 21 12 21zM6.48 13.68A5.5 5.5 0 0 1 6.18 12c0-.58.1-1.14.3-1.68V8.2H3.76A9 9 0 0 0 3 12c0 1.45.35 2.82.96 4.04l2.52-2.36zM12 6.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58C16.46 3.89 14.43 3 12 3 8.4 3 5.24 5.09 3.76 8.2l2.72 2.12C7.26 8.31 9.43 6.58 12 6.58z"/></svg> },
-];
-
 export default function ReviewPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -95,9 +90,6 @@ export default function ReviewPage() {
     }
   };
 
-  // ── Payment ──
-  const [payMethod, setPayMethod] = useState("");
-
   // ── Order submission ──
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -113,7 +105,6 @@ export default function ReviewPage() {
   const handlePlaceOrder = async () => {
     if (!user) { setAuthOpen(true); return; }
     if (!order) return;
-    if (!payMethod) { setSubmitError("Please select a payment method to continue."); return; }
     setSubmitting(true);
     setSubmitError("");
     try {
@@ -129,31 +120,42 @@ export default function ReviewPage() {
           qty:         item.qty || 1,
           addons:  item.addons || [],
         })),
+        useStripeCheckout: true,
       });
-      // Enrich API order items with local image/name data before clearing sk_order
+
       const localItems = order?.items || [];
-      const enrichedOrder = {
-        ...data.order,
-        items: (data.order.items || localItems).map(apiItem => {
-          const local = localItems.find(li => String(li.dishId) === String(apiItem.dishId));
-          return {
-            dishId:      apiItem.dishId      || local?.dishId      || "",
-            dishName:    apiItem.dishName    || local?.dishName    || "",
-            portionSize: apiItem.portionSize || local?.portionSize || "",
-            qty:         apiItem.qty         ?? local?.qty         ?? 1,
-            addons:      apiItem.addons      || local?.addons      || [],
-            price:       apiItem.price       ?? local?.price       ?? 0,
-            img:         apiItem.img         || local?.img         || "",
-            tags:        local?.tags         || [],
-          };
-        }),
-      };
+      const enrichItems = (apiItems) => (apiItems?.length ? apiItems : localItems).map(apiItem => {
+        const local = localItems.find(li => String(li.dishId) === String(apiItem.dishId));
+        return {
+          dishId:      apiItem.dishId      || local?.dishId      || "",
+          dishName:    apiItem.dishName    || local?.dishName    || "",
+          portionSize: apiItem.portionSize || local?.portionSize || "",
+          qty:         apiItem.qty         ?? local?.qty         ?? 1,
+          addons:      apiItem.addons      || local?.addons      || [],
+          price:       apiItem.price       ?? local?.price       ?? 0,
+          img:         apiItem.img         || local?.img         || "",
+          tags:        local?.tags         || [],
+        };
+      });
+
       sessionStorage.removeItem("sk_order");
-      sessionStorage.setItem("sk_confirmation", JSON.stringify(enrichedOrder));
+
+      if (data.checkoutUrl) {
+        // Stash local image/name data so /confirmation can enrich the order
+        // it re-fetches by Stripe session id once payment completes.
+        sessionStorage.setItem("sk_pending_order", JSON.stringify({ items: localItems }));
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
+      // No Stripe checkout — order is already confirmed, go straight there.
+      sessionStorage.setItem("sk_confirmation", JSON.stringify({
+        ...data.order,
+        items: enrichItems(data.order.items),
+      }));
       router.push("/confirmation");
     } catch (err) {
       setSubmitError(err.error || "Failed to place order. Please try again.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -362,27 +364,6 @@ export default function ReviewPage() {
               </div>
             )}
 
-            {/* Payment */}
-            <div className={`${styles.payCard} ${items.length === 0 ? styles.payCardDisabled : ""}`}>
-              <p className={styles.payLabel}>Pay with</p>
-              {PAY_METHODS.map(opt => (
-                <label key={opt.id} className={`${styles.payOption} ${payMethod === opt.id ? styles.payOptionSelected : ""}`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value={opt.id}
-                    checked={payMethod === opt.id}
-                    onChange={() => { setPayMethod(opt.id); setSubmitError(""); }}
-                    className={styles.payRadio}
-                    disabled={items.length === 0}
-                  />
-                  <span className={styles.payOptionIcon}>{opt.icon}</span>
-                  <span className={styles.payOptionLabel}>{opt.label}</span>
-                  <span className={`${styles.payRadioCustom} ${payMethod === opt.id ? styles.payRadioCustomOn : ""}`} />
-                </label>
-              ))}
-            </div>
-
             {submitError && (
               <p style={{ color: "#c0392b", fontSize: 13, marginBottom: 12 }}>{submitError}</p>
             )}
@@ -394,11 +375,6 @@ export default function ReviewPage() {
                 disabled={submitting || items.length === 0}
               >
                 <span className={styles.checkoutBtnLeft}>
-                  {!submitting && payMethod && (
-                    <span className={styles.checkoutBtnPayIcon}>
-                      {PAY_METHODS.find(m => m.id === payMethod)?.icon}
-                    </span>
-                  )}
                   {submitting ? "Placing order…" : "Place order"}
                 </span>
                 <span className={styles.checkoutBtnPrice}>£{total.toFixed(2)}</span>
