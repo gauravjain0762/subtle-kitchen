@@ -107,26 +107,7 @@ export default function ReviewPage() {
   };
 
   // ── Plan selection ──
-  const getInitialPlan = () => {
-    if (typeof window === "undefined") return "one-time";
-    try {
-      const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
-      return stored?.selectedPlan || "one-time";
-    } catch {
-      return "one-time";
-    }
-  };
-  const getInitialPattern = () => {
-    if (typeof window === "undefined") return "";
-    try {
-      const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
-      return stored?.selectedPattern || "";
-    } catch {
-      return "";
-    }
-  };
-
-  const [selectedPlan, setSelectedPlan] = useState(getInitialPlan());
+  const [selectedPlan, setSelectedPlan] = useState("one-time");
   const [startDate, setStartDate] = useState(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -135,7 +116,8 @@ export default function ReviewPage() {
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     return nextMonday.toISOString().split('T')[0];
   });
-  const [selectedPattern, setSelectedPattern] = useState(getInitialPattern());
+  const [selectedPattern, setSelectedPattern] = useState("");
+  const [allPlansData, setAllPlansData] = useState([]);
   const [deliveryDates, setDeliveryDates] = useState([]);
   const [calculatedCharge, setCalculatedCharge] = useState(0);
   const [selectPlanLoading, setSelectPlanLoading] = useState(false);
@@ -149,11 +131,26 @@ export default function ReviewPage() {
     "one-time": { name: "One-Time Order", description: "Single delivery only. No recurring charges." },
   });
 
+  // Initialize plan selection from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
+      if (stored?.selectedPlan) {
+        setSelectedPlan(stored.selectedPlan);
+      }
+      if (stored?.selectedPattern) {
+        setSelectedPattern(stored.selectedPattern);
+      }
+    } catch {}
+  }, []);
+
   // Fetch plans and patterns on mount
   useEffect(() => {
     api.get("/api/subscriptions/available-plans")
       .then(data => {
         if (data.plans && Array.isArray(data.plans)) {
+          setAllPlansData(data.plans);
+
           // Collect all patterns from all one-off plans by type
           const allPatterns = [];
           data.plans.forEach(p => {
@@ -185,11 +182,30 @@ export default function ReviewPage() {
       return;
     }
 
+    // Find the correct plan ID based on type and pattern
+    let planId;
+    if (selectedPlan === "weekly") {
+      const weeklyPlan = allPlansData.find(p => p.type === "weekly");
+      planId = weeklyPlan?._id;
+    } else if (selectedPlan === "one-off") {
+      // Find the plan that contains the selected pattern
+      const oneOffPlan = allPlansData.find(p =>
+        p.type === "one-off" &&
+        p.patterns?.some(pat => pat.id === selectedPattern)
+      );
+      planId = oneOffPlan?._id;
+    }
+
+    if (!planId) {
+      setSelectPlanError("Plan not found");
+      return;
+    }
+
     setSelectPlanLoading(true);
     setSelectPlanError("");
 
     api.post("/api/subscriptions/select-plan", {
-      planType: selectedPlan,
+      planId: planId,
       items: items.map(item => ({
         mealId: item.dishId,
         mealPrice: item.price,
@@ -223,7 +239,7 @@ export default function ReviewPage() {
         setCheckoutSessionId("");
       })
       .finally(() => setSelectPlanLoading(false));
-  }, [selectedPlan, startDate, selectedPattern, items]);
+  }, [selectedPlan, startDate, selectedPattern, items, allPlansData]);
 
   // ── Order submission ──
   const [submitting, setSubmitting] = useState(false);
