@@ -696,11 +696,6 @@ export default function ReviewPage() {
                       </span>
                     ))}
                   </div>
-                  {selectedPlan === "one-off" && (
-                    <p style={{ fontSize: "11px", color: "#f57f17", marginTop: "8px" }}>
-                      ⚠️ BACKEND BUG: For one-off plans, filter delivery dates by patternId. Currently returns consecutive dates instead of selected pattern days (e.g., should show Mon-Wed-Fri, not Mon-Tue-Wed).
-                    </p>
-                  )}
                   <p className={styles.chargeSummary}>
                     Charge: £{calculatedCharge.toFixed(2)}
                   </p>
