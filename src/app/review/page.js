@@ -107,7 +107,26 @@ export default function ReviewPage() {
   };
 
   // ── Plan selection ──
-  const [selectedPlan, setSelectedPlan] = useState("one-time");
+  const getInitialPlan = () => {
+    if (typeof window === "undefined") return "one-time";
+    try {
+      const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
+      return stored?.selectedPlan || "one-time";
+    } catch {
+      return "one-time";
+    }
+  };
+  const getInitialPattern = () => {
+    if (typeof window === "undefined") return "";
+    try {
+      const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
+      return stored?.selectedPattern || "";
+    } catch {
+      return "";
+    }
+  };
+
+  const [selectedPlan, setSelectedPlan] = useState(getInitialPlan());
   const [startDate, setStartDate] = useState(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -116,7 +135,7 @@ export default function ReviewPage() {
     nextMonday.setDate(today.getDate() + daysUntilNextMonday);
     return nextMonday.toISOString().split('T')[0];
   });
-  const [selectedPattern, setSelectedPattern] = useState("");
+  const [selectedPattern, setSelectedPattern] = useState(getInitialPattern());
   const [deliveryDates, setDeliveryDates] = useState([]);
   const [calculatedCharge, setCalculatedCharge] = useState(0);
   const [selectPlanLoading, setSelectPlanLoading] = useState(false);
