@@ -660,7 +660,9 @@ export default function ReviewPage() {
                       <select
                         value={selectedPattern}
                         onChange={(e) => setSelectedPattern(e.target.value)}
+                        disabled={true}
                         className={styles.patternSelect}
+                        style={{ opacity: 1, cursor: "default", backgroundColor: "#f5f5f0" }}
                       >
                         <option value="">Select a pattern...</option>
                         {oneOffPatterns.map(p => (
