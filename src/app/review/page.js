@@ -204,6 +204,10 @@ export default function ReviewPage() {
     setSelectPlanLoading(true);
     setSelectPlanError("");
 
+    // NOTE FOR BACKEND: For one-off plans, the patternId is sent to filter delivery dates
+    // by the selected pattern (e.g., Mon-Wed-Fri). Backend must filter deliveryDates
+    // array to only include dates matching the pattern's days. Currently returns
+    // consecutive dates instead of pattern-filtered dates.
     api.post("/api/subscriptions/select-plan", {
       planId: planId,
       items: items.map(item => ({
@@ -692,6 +696,11 @@ export default function ReviewPage() {
                       </span>
                     ))}
                   </div>
+                  {selectedPlan === "one-off" && (
+                    <p style={{ fontSize: "11px", color: "#f57f17", marginTop: "8px" }}>
+                      ⚠️ BACKEND BUG: For one-off plans, filter delivery dates by patternId. Currently returns consecutive dates instead of selected pattern days (e.g., should show Mon-Wed-Fri, not Mon-Tue-Wed).
+                    </p>
+                  )}
                   <p className={styles.chargeSummary}>
                     Charge: £{calculatedCharge.toFixed(2)}
                   </p>
