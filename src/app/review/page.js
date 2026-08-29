@@ -144,6 +144,46 @@ export default function ReviewPage() {
     } catch {}
   }, []);
 
+  // Calculate first delivery date based on pattern for one-off plans
+  const getFirstDeliveryDate = () => {
+    if (selectedPlan === "one-off" && selectedPattern && allPlansData.length > 0) {
+      // Find the pattern object
+      const pattern = oneOffPatterns.find(p => p.id === selectedPattern);
+      if (pattern && pattern.days && pattern.days.length > 0) {
+        // Get the first day in the pattern
+        const firstDay = pattern.days[0];
+        const dayMap = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 0 };
+        const targetDayOfWeek = dayMap[firstDay];
+
+        // Calculate date for that day
+        const today = new Date();
+        const currentDay = today.getDay();
+        const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+        const nextMonday = new Date(today);
+        nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+
+        const dayOffset = (targetDayOfWeek === 0 ? 7 : targetDayOfWeek) - 1;
+        const firstDeliveryDate = new Date(nextMonday);
+        firstDeliveryDate.setDate(nextMonday.getDate() + dayOffset);
+
+        return firstDeliveryDate.toLocaleDateString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+    }
+    // For weekly and one-time, use the startDate
+    const startDateObj = new Date(startDate + "T00:00:00");
+    return startDateObj.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   // Fetch plans and patterns on mount
   useEffect(() => {
     api.get("/api/subscriptions/available-plans")
@@ -442,7 +482,7 @@ export default function ReviewPage() {
             <p className={styles.sectionTitle}>Delivery date</p>
             <div className={styles.deliveryInfoEtaBadge}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              {order?.deliveryDateDisplay || order?.deliveryDate || "—"}
+              {selectedPlan === "one-off" ? getFirstDeliveryDate() : (order?.deliveryDateDisplay || order?.deliveryDate || "—")}
             </div>
 
             <p className={styles.sectionTitle}>Delivery time</p>
