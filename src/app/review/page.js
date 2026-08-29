@@ -141,6 +141,7 @@ export default function ReviewPage() {
   const [selectPlanLoading, setSelectPlanLoading] = useState(false);
   const [selectPlanError, setSelectPlanError] = useState("");
   const [planIds, setPlanIds] = useState({ weekly: null, "one-off": null });
+  const [allPlans, setAllPlans] = useState([]);
   const [oneOffPatterns, setOneOffPatterns] = useState([]);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const [checkoutSessionId, setCheckoutSessionId] = useState("");
@@ -155,6 +156,8 @@ export default function ReviewPage() {
     api.get("/api/subscriptions/available-plans")
       .then(data => {
         if (data.plans && Array.isArray(data.plans)) {
+          setAllPlans(data.plans);
+
           const weeklyPlan = data.plans.find(p => p.type === "weekly");
           const oneOffPlan = data.plans.find(p => p.type === "one-off");
 
@@ -163,7 +166,7 @@ export default function ReviewPage() {
             "one-off": oneOffPlan?._id || null,
           });
 
-          // Extract one-off patterns
+          // Extract one-off patterns from the first one-off plan, or use all patterns
           if (oneOffPlan?.patterns && Array.isArray(oneOffPlan.patterns)) {
             setOneOffPatterns(oneOffPlan.patterns);
             // Set default pattern to first available
@@ -193,7 +196,20 @@ export default function ReviewPage() {
     }
 
     // Don't call if plan IDs aren't loaded yet
-    const planId = selectedPlan === "weekly" ? planIds.weekly : planIds["one-off"];
+    let planId;
+    if (selectedPlan === "weekly") {
+      planId = planIds.weekly;
+    } else if (selectedPlan === "one-off" && selectedPattern) {
+      // Find the plan that contains this pattern
+      const planWithPattern = allPlans.find(p =>
+        p.type === "one-off" &&
+        p.patterns?.some(pat => pat.id === selectedPattern)
+      );
+      planId = planWithPattern?._id || planIds["one-off"];
+    } else {
+      planId = planIds["one-off"];
+    }
+
     if (!planId) return;
 
     setSelectPlanLoading(true);
@@ -234,7 +250,7 @@ export default function ReviewPage() {
         setCheckoutSessionId("");
       })
       .finally(() => setSelectPlanLoading(false));
-  }, [selectedPlan, startDate, selectedPattern, items, planIds]);
+  }, [selectedPlan, startDate, selectedPattern, items, planIds, allPlans]);
 
   // ── Order submission ──
   const [submitting, setSubmitting] = useState(false);
