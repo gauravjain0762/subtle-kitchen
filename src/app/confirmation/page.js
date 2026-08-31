@@ -272,8 +272,8 @@ function ConfirmationPageInner() {
                     <span className={styles.totalAmt}>£{(Number(order?.subscription?.totalCharge) || 0).toFixed(2)}</span>
                   </div>
                   <div className={styles.totalRow} style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
-                    <span className={styles.totalLabel}>Next billing date</span>
-                    <span className={styles.totalAmt}>{order?.subscription?.nextChargeDate ? new Date(order.subscription.nextChargeDate).toLocaleDateString("en-GB") : "—"}</span>
+                    <span className={styles.totalLabel}>{order?.subscription?.isRecurring ? "Next billing date" : "Subscription type"}</span>
+                    <span className={styles.totalAmt}>{order?.subscription?.isRecurring ? (order?.subscription?.nextChargeDate ? new Date(order.subscription.nextChargeDate).toLocaleDateString("en-GB") : "—") : "One-time only"}</span>
                   </div>
                 </div>
               </>
