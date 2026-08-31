@@ -676,8 +676,8 @@ export default function MenuPage() {
                 kcal, protein, carbs, fat,
                 price:   basePrice,
                 portions,
-                img:   d.img || (Array.isArray(d.images) ? d.images[0] : null) || "",
-                imgs:  Array.isArray(d.images) ? d.images : (d.img ? [d.img] : []),
+                img:   d.img || (Array.isArray(d.images) ? d.images[0] : null) || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&q=80",
+                imgs:  (Array.isArray(d.images) && d.images.length > 0) ? d.images : [],
                 addons: (d.addons?.length
                   ? d.addons
                   : (d.ingredients || [])
@@ -1233,7 +1233,7 @@ export default function MenuPage() {
                 <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
                   {/* Image — click to open detail modal */}
                   <div className={styles.dishImgWrap} onClick={() => openDetail(selectedDay, di)}>
-                    {dish.imgs ? (
+                    {dish.imgs?.length > 1 ? (
                       <DishImgCarousel imgs={dish.imgs} />
                     ) : (
                       /* eslint-disable-next-line @next/next/no-img-element */
