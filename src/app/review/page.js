@@ -117,6 +117,7 @@ export default function ReviewPage() {
     return nextMonday.toISOString().split('T')[0];
   });
   const [selectedPattern, setSelectedPattern] = useState("");
+  const [isRecurring, setIsRecurring] = useState(true);
   const [allPlansData, setAllPlansData] = useState([]);
   const [deliveryDates, setDeliveryDates] = useState([]);
   const [calculatedCharge, setCalculatedCharge] = useState(0);
@@ -244,10 +245,7 @@ export default function ReviewPage() {
     setSelectPlanLoading(true);
     setSelectPlanError("");
 
-    // NOTE FOR BACKEND: For one-off plans, the patternId is sent to filter delivery dates
-    // by the selected pattern (e.g., Mon-Wed-Fri). Backend must filter deliveryDates
-    // array to only include dates matching the pattern's days. Currently returns
-    // consecutive dates instead of pattern-filtered dates.
+    // Send subscription details to backend
     api.post("/api/subscriptions/select-plan", {
       planId: planId,
       items: items.map(item => ({
@@ -256,6 +254,7 @@ export default function ReviewPage() {
         quantity: item.qty || 1,
       })),
       startDate: startDate,
+      isRecurring: isRecurring,  // NEW: User's recurring choice
       ...(selectedPlan === "one-off" && { patternId: selectedPattern }),
     })
       .then(data => {
@@ -283,7 +282,7 @@ export default function ReviewPage() {
         setCheckoutSessionId("");
       })
       .finally(() => setSelectPlanLoading(false));
-  }, [selectedPlan, startDate, selectedPattern, items, allPlansData]);
+  }, [selectedPlan, startDate, selectedPattern, items, allPlansData, isRecurring]);
 
   // ── Order submission ──
   const [submitting, setSubmitting] = useState(false);
@@ -739,6 +738,57 @@ export default function ReviewPage() {
                   <p className={styles.chargeSummary}>
                     Charge: £{calculatedCharge.toFixed(2)}
                   </p>
+                </div>
+              )}
+
+              {/* Recurring Payment Toggle */}
+              {selectedPlan !== "one-time" && (
+                <div style={{
+                  background: "#fafaf6",
+                  border: "1.5px solid rgba(0,0,0,0.08)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  marginTop: "16px"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                    <div>
+                      <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: "600", color: "#0a0a0a" }}>
+                        Auto-Renew Subscription
+                      </p>
+                      <p style={{ margin: "0", fontSize: "12px", color: "rgba(10,10,10,0.5)" }}>
+                        {isRecurring
+                          ? "Will auto-charge every 7 days"
+                          : "One-time payment only"}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setIsRecurring(!isRecurring)}
+                      style={{
+                        position: "relative",
+                        width: "42px",
+                        height: "24px",
+                        borderRadius: "100px",
+                        background: isRecurring ? "#0a0a0a" : "rgba(0,0,0,0.15)",
+                        border: "none",
+                        cursor: "pointer",
+                        transition: "background 0.22s",
+                        flexShrink: 0,
+                        padding: 0
+                      }}
+                    >
+                      <div style={{
+                        position: "absolute",
+                        top: "3px",
+                        left: isRecurring ? "21px" : "3px",
+                        width: "18px",
+                        height: "18px",
+                        borderRadius: "50%",
+                        background: "#fff",
+                        transition: "transform 0.22s",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.2)"
+                      }} />
+                    </button>
+                  </div>
                 </div>
               )}
 
