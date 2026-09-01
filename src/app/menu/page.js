@@ -1736,6 +1736,7 @@ export default function MenuPage() {
                       className={`${styles.dishDetailAddBtn} ${sel ? styles.dishDetailAddBtnActive : ""}`}
                       onClick={() => {
                         if (!user) {
+                          closeDetail();
                           setAuthOpen(true);
                           return;
                         }
