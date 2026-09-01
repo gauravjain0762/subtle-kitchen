@@ -168,7 +168,11 @@ function ConfirmationPageInner() {
   }, [total]);
 
   if (loading) {
-    return <div style={{ minHeight: "100vh" }} />;
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%)" }}>
+        <LogoLoader />
+      </div>
+    );
   }
 
   if (loadError) {
