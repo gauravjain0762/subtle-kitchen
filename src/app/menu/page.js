@@ -1736,7 +1736,7 @@ export default function MenuPage() {
                       className={`${styles.dishDetailAddBtn} ${sel ? styles.dishDetailAddBtnActive : ""}`}
                       onClick={() => {
                         if (!user) {
-                          setShowAuth(true);
+                          setAuthOpen(true);
                           return;
                         }
                         if (editingPlanDay) {
