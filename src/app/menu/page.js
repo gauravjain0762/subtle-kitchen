@@ -1113,6 +1113,7 @@ export default function MenuPage() {
                   const options = { day: 'numeric', month: 'short' };
                   const dateStr = dayDate.toLocaleDateString('en-GB', options);
 
+                  const hasMealSelected = weeklyMeals[day] !== null;
                   return (
                     <button
                       key={day}
@@ -1120,10 +1121,13 @@ export default function MenuPage() {
                       className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""} ${!isEnabled ? styles.weekDayChipDisabled : ""}`}
                       onClick={() => isEnabled && setSelectedPlanDay(day)}
                       disabled={!isEnabled}
-                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: isEnabled ? 'pointer' : 'not-allowed' }}
+                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: isEnabled ? 'pointer' : 'not-allowed', position: 'relative' }}
                     >
                       <div className={styles.weekDayName}>{day}</div>
                       <div className={styles.weekDayDate}>{dateStr}</div>
+                      {hasMealSelected && (
+                        <div style={{ position: 'absolute', top: 2, right: 2, width: 16, height: 16, background: '#22a06b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'white', fontWeight: 'bold' }}>✓</div>
+                      )}
                     </button>
                   );
                 });

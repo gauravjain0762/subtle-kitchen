@@ -126,14 +126,30 @@ export default function ReviewPage() {
   const [oneOffPatterns, setOneOffPatterns] = useState([]);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const [checkoutSessionId, setCheckoutSessionId] = useState("");
-  const [plans, setPlans] = useState({
-    weekly: { name: "Weekly Meal Plan", description: "Delivered Monday to Friday every week. Perfect for consistent nutrition." },
-    "one-off": { name: "One-Off Alternating Days", description: "Flexible delivery on select days. Choose your pattern!" },
-    "one-time": { name: "One-Time Order", description: "Single delivery only. No recurring charges." },
-  });
+  const [plans, setPlans] = useState({});
 
-  // Initialize plan selection from sessionStorage on mount
+  // Fetch available plans from API and initialize plan selection
   useEffect(() => {
+    api.get("/api/subscriptions/available-plans")
+      .then(data => {
+        const plansArray = data?.plans || data || [];
+        const plansObj = {};
+        if (Array.isArray(plansArray)) {
+          plansArray.forEach(plan => {
+            plansObj[plan.type] = { name: plan.name };
+          });
+        }
+        // Add one-time option
+        plansObj["one-time"] = { name: "One-Time Order" };
+        setPlans(plansObj);
+      })
+      .catch(err => {
+        console.error("Failed to fetch plans:", err);
+        // Fallback to one-time only
+        setPlans({ "one-time": { name: "One-Time Order" } });
+      });
+
+    // Load selected plan from sessionStorage
     try {
       const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
       if (stored?.selectedPlan) {
@@ -688,7 +704,6 @@ export default function ReviewPage() {
                     />
                     <div className={styles.planCardContent}>
                       <p className={styles.planCardName}>{plan.name}</p>
-                      <p className={styles.planCardDescription}>{plan.description}</p>
                     </div>
                   </label>
                 ))}
