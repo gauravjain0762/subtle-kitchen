@@ -150,17 +150,35 @@ export default function ReviewPage() {
         setPlans({ "one-time": { name: "One-Time Order" } });
       });
 
-    // Load selected plan from sessionStorage
+    // Load selected plan from sessionStorage (will be matched to plan ID after plans load)
     try {
       const stored = JSON.parse(sessionStorage.getItem("sk_order") || "null");
       if (stored?.selectedPlan) {
-        setSelectedPlan(stored.selectedPlan);
+        sessionStorage.setItem("_tempSelectedPlan", stored.selectedPlan);
       }
       if (stored?.selectedPattern) {
         setSelectedPattern(stored.selectedPattern);
       }
     } catch {}
   }, []);
+
+  // Auto-select plan based on sessionStorage after plans are loaded
+  useEffect(() => {
+    if (Object.keys(plans).length > 0) {
+      const tempPlan = sessionStorage.getItem("_tempSelectedPlan");
+      if (tempPlan) {
+        // tempPlan is the type (e.g., "weekly", "one-off")
+        // Find the plan with that type
+        const matchingPlan = Object.entries(plans).find(([_, plan]) => plan.type === tempPlan);
+        if (matchingPlan) {
+          const [planId, plan] = matchingPlan;
+          setSelectedPlan(planId);
+          setSelectedPlanType(plan.type);
+          sessionStorage.removeItem("_tempSelectedPlan");
+        }
+      }
+    }
+  }, [plans]);
 
   // Calculate first delivery date based on pattern for one-off plans
   const getFirstDeliveryDate = () => {
