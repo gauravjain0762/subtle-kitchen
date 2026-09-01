@@ -108,6 +108,7 @@ export default function ReviewPage() {
 
   // ── Plan selection ──
   const [selectedPlan, setSelectedPlan] = useState("one-time");
+  const [selectedPlanType, setSelectedPlanType] = useState("one-time");
   const [startDate, setStartDate] = useState(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -136,11 +137,11 @@ export default function ReviewPage() {
         const plansObj = {};
         if (Array.isArray(plansArray)) {
           plansArray.forEach(plan => {
-            plansObj[plan.type] = { name: plan.name };
+            plansObj[plan._id] = { name: plan.name, type: plan.type };
           });
         }
         // Add one-time option
-        plansObj["one-time"] = { name: "One-Time Order" };
+        plansObj["one-time"] = { name: "One-Time Order", type: "one-time" };
         setPlans(plansObj);
       })
       .catch(err => {
@@ -163,7 +164,7 @@ export default function ReviewPage() {
 
   // Calculate first delivery date based on pattern for one-off plans
   const getFirstDeliveryDate = () => {
-    if (selectedPlan === "one-off" && selectedPattern && allPlansData.length > 0) {
+    if (selectedPlanType === "one-off" && selectedPattern && allPlansData.length > 0) {
       // Find the pattern object
       const pattern = oneOffPatterns.find(p => p.id === selectedPattern);
       if (pattern && pattern.days && pattern.days.length > 0) {
@@ -225,14 +226,14 @@ export default function ReviewPage() {
 
   // Call select-plan endpoint when plan/date/pattern changes
   useEffect(() => {
-    if (selectedPlan === "one-time" || items.length === 0) {
+    if (selectedPlanType === "one-time" || items.length === 0) {
       setDeliveryDates([]);
       setCalculatedCharge(0);
       return;
     }
 
     // For one-off, must have pattern selected
-    if (selectedPlan === "one-off" && !selectedPattern) {
+    if (selectedPlanType === "one-off" && !selectedPattern) {
       setSelectPlanError("Please select a delivery pattern");
       setDeliveryDates([]);
       setCalculatedCharge(0);
@@ -241,10 +242,10 @@ export default function ReviewPage() {
 
     // Find the correct plan ID based on type and pattern
     let planId;
-    if (selectedPlan === "weekly") {
+    if (selectedPlanType === "weekly") {
       const weeklyPlan = allPlansData.find(p => p.type === "weekly");
       planId = weeklyPlan?._id;
-    } else if (selectedPlan === "one-off") {
+    } else if (selectedPlanType === "one-off") {
       // Find the plan that contains the selected pattern
       const oneOffPlan = allPlansData.find(p =>
         p.type === "one-off" &&
@@ -271,7 +272,7 @@ export default function ReviewPage() {
       })),
       startDate: startDate,
       isRecurring: isRecurring,  // NEW: User's recurring choice
-      ...(selectedPlan === "one-off" && { patternId: selectedPattern }),
+      ...(selectedPlanType === "one-off" && { patternId: selectedPattern }),
     })
       .then(data => {
         const charge = data.summary?.totalCharge || 0;
@@ -318,7 +319,7 @@ export default function ReviewPage() {
 
   // For one-time orders, use dish subtotal; for subscriptions, use backend-calculated charge
   const getOrderPrice = () => {
-    if (selectedPlan === "one-time") {
+    if (selectedPlanType === "one-time") {
       return dishSubtotal;
     }
     return calculatedCharge > 0 ? calculatedCharge : dishSubtotal;
@@ -340,11 +341,11 @@ export default function ReviewPage() {
     if (!order || items.length === 0) return;
 
     // For subscription orders, validate meal count
-    if (selectedPlan === "weekly" && items.length !== 5) {
+    if (selectedPlanType === "weekly" && items.length !== 5) {
       setSubmitError("Weekly plans require exactly 5 meals (one per weekday). Please select meals for all days.");
       return;
     }
-    if (selectedPlan === "one-off" && items.length < 1) {
+    if (selectedPlanType === "one-off" && items.length < 1) {
       setSubmitError("Please select at least one meal for your order.");
       return;
     }
@@ -368,7 +369,7 @@ export default function ReviewPage() {
     }
 
     // Validate subscription charge meets Stripe minimum (£0.30 for GBP)
-    if (selectedPlan !== "one-time" && calculatedCharge < 0.30) {
+    if (selectedPlanType !== "one-time" && calculatedCharge < 0.30) {
       setSubmitError("Subscription charge is below minimum (£0.30). Please increase quantity or select a later start date.");
       return;
     }
@@ -377,7 +378,7 @@ export default function ReviewPage() {
     setSubmitError("");
     try {
       // Different endpoints for subscriptions vs one-time orders
-      if (selectedPlan === "one-time") {
+      if (selectedPlanType === "one-time") {
         // One-time order via existing orders endpoint
         const data = await api.post("/api/orders", {
           workspaceCode:       order.workspaceCode || user.workspaceCode,
@@ -497,7 +498,7 @@ export default function ReviewPage() {
             <p className={styles.sectionTitle}>Delivery date</p>
             <div className={styles.deliveryInfoEtaBadge}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              {selectedPlan === "one-off" ? getFirstDeliveryDate() : (order?.deliveryDateDisplay || order?.deliveryDate || "—")}
+              {selectedPlanType === "one-off" ? getFirstDeliveryDate() : (order?.deliveryDateDisplay || order?.deliveryDate || "—")}
             </div>
 
             <p className={styles.sectionTitle}>Delivery time</p>
@@ -540,7 +541,7 @@ export default function ReviewPage() {
                       </div>
                       <div className={styles.orderItemRight}>
                         <span className={styles.itemPrice}>£{(((item.price || 0) * (item.qty || 1)) + getAddonTotal(item)).toFixed(2)}</span>
-                        {selectedPlan === "one-time" ? (
+                        {selectedPlanType === "one-time" ? (
                           <button className={styles.removeItemBtn} onClick={() => removeItem(i)} aria-label="Remove">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
@@ -698,7 +699,10 @@ export default function ReviewPage() {
                       name="plan"
                       value={key}
                       checked={selectedPlan === key}
-                      onChange={() => setSelectedPlan(key)}
+                      onChange={() => {
+                        setSelectedPlan(key);
+                        setSelectedPlanType(plans[key].type);
+                      }}
                       disabled={!!order}
                       className={styles.planRadio}
                     />
@@ -710,9 +714,9 @@ export default function ReviewPage() {
               </div>
 
               {/* Subscription Options */}
-              {selectedPlan !== "one-time" && (
+              {selectedPlanType !== "one-time" && (
                 <div className={styles.subscriptionOptions}>
-                  {selectedPlan === "one-off" && (
+                  {selectedPlanType === "one-off" && (
                     <div className={styles.optionGroup}>
                       <label className={styles.optionLabel}>Delivery Pattern</label>
                       <select
@@ -735,12 +739,12 @@ export default function ReviewPage() {
               )}
 
               {/* Hidden Start Date - sent to backend but not shown in UI */}
-              {selectedPlan !== "one-time" && !startDate && (
+              {selectedPlanType !== "one-time" && !startDate && (
                 <input type="hidden" value={startDate} readOnly />
               )}
 
               {/* Delivery Dates Summary */}
-              {selectedPlan !== "one-time" && deliveryDates.length > 0 && (
+              {selectedPlanType !== "one-time" && deliveryDates.length > 0 && (
                 <div className={styles.deliverySummary}>
                   <p className={styles.deliveryTitle}>📅 Deliveries this week:</p>
                   <div className={styles.deliveryDatesList}>
@@ -757,7 +761,7 @@ export default function ReviewPage() {
               )}
 
               {/* Recurring Payment Toggle */}
-              {selectedPlan !== "one-time" && (
+              {selectedPlanType !== "one-time" && (
                 <div style={{
                   background: "#fafaf6",
                   border: "1.5px solid rgba(0,0,0,0.08)",
@@ -811,7 +815,7 @@ export default function ReviewPage() {
                 <p className={styles.planError}>{selectPlanError}</p>
               )}
 
-              {selectPlanLoading && selectedPlan !== "one-time" && (
+              {selectPlanLoading && selectedPlanType !== "one-time" && (
                 <p className={styles.planLoading}>Calculating delivery dates...</p>
               )}
             </div>
