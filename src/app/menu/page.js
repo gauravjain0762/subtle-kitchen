@@ -1735,6 +1735,10 @@ export default function MenuPage() {
                     <button
                       className={`${styles.dishDetailAddBtn} ${sel ? styles.dishDetailAddBtnActive : ""}`}
                       onClick={() => {
+                        if (!user) {
+                          setShowAuth(true);
+                          return;
+                        }
                         if (editingPlanDay) {
                           if (sel) {
                             setWeeklyMeals({ ...weeklyMeals, [editingPlanDay]: null });
