@@ -111,7 +111,10 @@ function ConfirmationPageInner() {
           .catch(err => {
             setLoadError(err.error || "Could not load your subscription.");
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            // Ensure loader is visible for at least 1.5 seconds
+            setTimeout(() => setLoading(false), 1500);
+          });
       } else if (orderType === "one-time") {
         // One-time order via Stripe Checkout
         api.get(`/api/orders/by-session/${sessionId}`)
@@ -129,7 +132,10 @@ function ConfirmationPageInner() {
               setLoadError(err.error || "Could not load your order.");
             }
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            // Ensure loader is visible for at least 1.5 seconds
+            setTimeout(() => setLoading(false), 1500);
+          });
       } else {
         // No order type flag — shouldn't happen but handle gracefully
         setLoadError("Order type not found. Please try placing your order again.");

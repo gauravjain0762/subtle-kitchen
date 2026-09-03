@@ -165,16 +165,25 @@ export default function ReviewPage() {
   // Auto-select plan based on sessionStorage after plans are loaded
   useEffect(() => {
     if (Object.keys(plans).length > 0) {
-      const tempPlan = sessionStorage.getItem("_tempSelectedPlan");
-      if (tempPlan) {
-        // tempPlan is the type (e.g., "weekly", "one-off")
-        // Find the plan with that type
-        const matchingPlan = Object.entries(plans).find(([_, plan]) => plan.type === tempPlan);
-        if (matchingPlan) {
-          const [planId, plan] = matchingPlan;
-          setSelectedPlan(planId);
-          setSelectedPlanType(plan.type);
-          sessionStorage.removeItem("_tempSelectedPlan");
+      // First try to use the specific plan ID if it was saved
+      const tempPlanId = sessionStorage.getItem("_tempSelectedPlanId");
+      if (tempPlanId && plans[tempPlanId]) {
+        setSelectedPlan(tempPlanId);
+        setSelectedPlanType(plans[tempPlanId].type);
+        sessionStorage.removeItem("_tempSelectedPlanId");
+      } else {
+        // Fall back to type-based selection for backward compatibility
+        const tempPlan = sessionStorage.getItem("_tempSelectedPlan");
+        if (tempPlan) {
+          // tempPlan is the type (e.g., "weekly", "one-off")
+          // Find the plan with that type
+          const matchingPlan = Object.entries(plans).find(([_, plan]) => plan.type === tempPlan);
+          if (matchingPlan) {
+            const [planId, plan] = matchingPlan;
+            setSelectedPlan(planId);
+            setSelectedPlanType(plan.type);
+            sessionStorage.removeItem("_tempSelectedPlan");
+          }
         }
       }
     }
@@ -720,6 +729,8 @@ export default function ReviewPage() {
                       onChange={() => {
                         setSelectedPlan(key);
                         setSelectedPlanType(plans[key].type);
+                        // Save plan ID to sessionStorage for next visit
+                        sessionStorage.setItem("_tempSelectedPlanId", key);
                       }}
                       disabled={!!order}
                       className={styles.planRadio}
