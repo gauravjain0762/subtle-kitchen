@@ -511,6 +511,7 @@ export default function MenuPage() {
   const [lunchTime, setLunchTime] = useState("12:00 PM");
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [selectedPlan, setSelectedPlan] = useState("one-time");
+  const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [weeklyMeals, setWeeklyMeals] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
   const [weeklyQtys, setWeeklyQtys] = useState({ Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 });
   const [weeklyPortions, setWeeklyPortions] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
@@ -1163,18 +1164,27 @@ export default function MenuPage() {
               Choose meal plan
             </span>
             <select
-              value={selectedPlan}
+              value={selectedPlanId || "one-time"}
               onChange={(e) => {
-                const plan = e.target.value;
-                setSelectedPlan(plan);
+                const val = e.target.value;
+                if (val === "one-time") {
+                  setSelectedPlan("one-time");
+                  setSelectedPlanId(null);
+                } else {
+                  const plan = mealPlans.find(p => p._id === val);
+                  if (plan) {
+                    setSelectedPlan(plan.type);
+                    setSelectedPlanId(plan._id);
+                  }
+                }
                 setSelectedPlanDay("Mon");
                 setSelectedPattern(null);
               }}
               className={styles.planDropdown}
             >
               <option value="one-time">One-Time Order</option>
-              {mealPlans.map((plan, idx) => (
-                <option key={`${plan.type}-${idx}`} value={plan.type === "one-off" ? "one-off" : plan.type}>
+              {mealPlans.map((plan) => (
+                <option key={plan._id} value={plan._id}>
                   {plan.name}
                 </option>
               ))}
