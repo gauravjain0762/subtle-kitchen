@@ -171,6 +171,24 @@
   color: var(--text-muted);
 }
 
+.gymGuidelines {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.gymGuidelines li {
+  margin-bottom: 8px;
+}
+
+.gymGuidelines strong {
+  color: var(--black);
+  font-weight: 600;
+}
+
 /* ── Meal rows ── */
 .mealRows { display: flex; flex-direction: column; gap: 10px; }
 

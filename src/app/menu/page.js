@@ -469,6 +469,7 @@ function readReorderItems() {
 
 export default function MenuPage() {
   const { user, logout } = useAuth();
+  const isGymUser = user?.premiseType === "Gym";
   const [authOpen, setAuthOpen] = useState(false);
   const [selected, setSelected] = useState(() => {
     const sel = {};
@@ -1016,12 +1017,30 @@ export default function MenuPage() {
               </button>
             </div>
           )}
-          <div className={styles.orderDeadlineBanner}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Order before <strong>10:00 PM</strong> for next-day delivery
-          </div>
-          <h1 className={styles.heading}>This week&apos;s menu</h1>
-          <p className={styles.subtext}>Pick the days you want lunch. Each day features one main meal with a veggie alternative.</p>
+          {isGymUser ? (
+            <>
+              <div className={styles.orderDeadlineBanner}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Bulk Meal Ordering for Gyms
+              </div>
+              <h1 className={styles.heading}>Weekly Meal Bulk Orders</h1>
+              <ul className={styles.gymGuidelines}>
+                <li>• You must select a <strong>minimum of 5 meals</strong> per order.</li>
+                <li>• You can choose the meal quantity/type according to their preference.</li>
+                <li>• The meals will be delivered to the selected gym.</li>
+                <li>• Delivery will be scheduled based on the kitchen's meal preparation schedule.</li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <div className={styles.orderDeadlineBanner}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Order before <strong>10:00 PM</strong> for next-day delivery
+              </div>
+              <h1 className={styles.heading}>This week&apos;s menu</h1>
+              <p className={styles.subtext}>Pick the days you want lunch. Each day features one main meal with a veggie alternative.</p>
+            </>
+          )}
         </div>
 
         {/* Picker row — calendar + time chips */}
@@ -1066,7 +1085,7 @@ export default function MenuPage() {
           })()}
 
           {/* Calendar date picker or Day selector for plans */}
-          {selectedPlan === "one-time" ? (
+          {selectedPlan === "one-time" && !isGymUser ? (
             <div className={styles.pickerControlGroup}>
               <span className={styles.pickerControlLabel}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -1120,9 +1139,9 @@ export default function MenuPage() {
                       key={day}
                       type="button"
                       className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""} ${!isEnabled ? styles.weekDayChipDisabled : ""}`}
-                      onClick={() => isEnabled && setSelectedPlanDay(day)}
-                      disabled={!isEnabled}
-                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: isEnabled ? 'pointer' : 'not-allowed', position: 'relative' }}
+                      onClick={() => !isGymUser && isEnabled && setSelectedPlanDay(day)}
+                      disabled={!isEnabled || isGymUser}
+                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: (isEnabled && !isGymUser) ? 'pointer' : 'not-allowed', position: 'relative' }}
                     >
                       <div className={styles.weekDayName}>{day}</div>
                       <div className={styles.weekDayDate}>{dateStr}</div>
@@ -1194,7 +1213,7 @@ export default function MenuPage() {
         </div>
 
         {/* Day date label — full width above flex row */}
-        {hasDishesToday && (
+        {hasDishesToday && !isGymUser && (
           <div className={styles.dayTheme}>
             <span className={styles.dayThemeLabel}>
               {selectedPlan !== "one-time" ? (() => {
@@ -1217,19 +1236,30 @@ export default function MenuPage() {
         <div className={styles.menuList}>
           {/* Dish cards */}
           {(menuLoading || dateLoading) && <LogoLoader />}
-          {!menuLoading && !menuDays[selectedDay]?.dishes?.length && (
+          {!menuLoading && !isGymUser && !menuDays[selectedDay]?.dishes?.length && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "56px 0", gap: 12, opacity: 0.45 }}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
               <p style={{ fontSize: 14 }}>No dishes available for this day.</p>
             </div>
           )}
           <div className={styles.dishGrid}>
-            {(menuDays[selectedDay]?.dishes || []).map((dish, di) => {
-              const sel = isSelectedDish(selectedDay, di);
+            {(isGymUser
+              ? menuDays.flatMap((day, d) => (day?.dishes || []).map((dish, di) => ({ dish, d, di, day })))
+              : (menuDays[selectedDay]?.dishes || []).map((dish, di) => ({ dish, d: selectedDay, di, day: menuDays[selectedDay] }))
+            ).map(({ dish, d, di, day }) => {
+              const sel = isSelectedDish(d, di);
 
               // Determine the date to check for "Ordering Closed"
               let dateToCheck = selectedDate;
-              if (selectedPlan !== "one-time") {
+              if (isGymUser) {
+                const today = new Date();
+                const currentDay = today.getDay();
+                const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                const nextMonday = new Date(today);
+                nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                dateToCheck = new Date(nextMonday);
+                dateToCheck.setDate(nextMonday.getDate() + d);
+              } else if (selectedPlan !== "one-time") {
                 const today = new Date();
                 const currentDay = today.getDay();
                 const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
@@ -1242,11 +1272,12 @@ export default function MenuPage() {
 
               const closed = isDateClosed(dateToCheck);
               const isFav = !!dish._id && favorites.has(dish._id);
+              const uniqueKey = isGymUser ? `${d}_${di}` : di;
 
               return (
-                <div key={di} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
+                <div key={uniqueKey} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
                   {/* Image — click to open detail modal */}
-                  <div className={styles.dishImgWrap} onClick={() => openDetail(selectedDay, di)}>
+                  <div className={styles.dishImgWrap} onClick={() => openDetail(d, di)}>
                     {dish.imgs?.length > 1 ? (
                       <DishImgCarousel imgs={dish.imgs} />
                     ) : (
@@ -1298,7 +1329,7 @@ export default function MenuPage() {
                     {!closed && (
                       <button
                         className={`${styles.dishAddBtn} ${sel ? styles.dishAddBtnActive : ""}`}
-                        onClick={() => openDetail(selectedDay, di)}
+                        onClick={() => openDetail(d, di)}
                       >
                         {sel ? "✓ Added" : `Add £${dish.price.toFixed(2)}`}
                       </button>
@@ -1454,7 +1485,8 @@ export default function MenuPage() {
                   return "";
                 })()}`}
                 disabled={(() => {
-                  if (orderItems.length === 0) return true;
+                  if (isGymUser && orderItems.length < 5) return true;
+                  if (!isGymUser && orderItems.length === 0) return true;
                   if (selectedPlan === "one-time") return false;
                   if (selectedPlan === "one-off" && !selectedPattern) return true;
                   if (selectedPlan === "weekly" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day])) return true;
@@ -1468,6 +1500,12 @@ export default function MenuPage() {
                 })()}
                 onClick={() => {
                   if (!orderItems.length) return;
+
+                  // Validate minimum 5 meals for gym users
+                  if (isGymUser && orderItems.length < 5) {
+                    alert(`Please select at least 5 meals. You currently have ${orderItems.length} meal(s).`);
+                    return;
+                  }
 
                   // Validate pattern selection for one-off
                   if (selectedPlan === "one-off") {
@@ -1521,6 +1559,7 @@ export default function MenuPage() {
                     selectedPlan,
                     selectedPattern,
                     isWeeklySubscription: selectedPlan !== "one-time",
+                    type: isGymUser ? "gym-bulk" : "one-time",
                     items: orderItems.map(({ d, di, dish, portion, qty }) => ({
                       dishId:   dish?._id,
                       dishName: dish?.name,
@@ -1539,7 +1578,11 @@ export default function MenuPage() {
                   router.push("/review");
                 }}
               >
-                Review order
+                {isGymUser ? (
+                  orderItems.length < 5 ? `Add ${5 - orderItems.length} more meal${5 - orderItems.length !== 1 ? 's' : ''} (${orderItems.length}/5)` : "Review bulk order"
+                ) : (
+                  "Review order"
+                )}
               </button>
 
 
