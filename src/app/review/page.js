@@ -715,18 +715,56 @@ export default function ReviewPage() {
               </div>
             )}
 
-            {/* Gym Bulk Order Info — shown only for gym users */}
+            {/* Gym Bulk Order Info & Recurring Option — shown only for gym users */}
             {items.length > 0 && isGymUser && (
-              <div style={{ background: "#f0f9ff", border: "1px solid #bfdbfe", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
-                <h3 style={{ margin: "0 0 12px 0", fontSize: "16px", fontWeight: 600, color: "#1e40af" }}>
-                  Gym Bulk Order
-                </h3>
-                <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
-                  This is a bulk order for your gym. All meals will be delivered to your workspace.
-                </p>
-                <p style={{ margin: "0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
-                  Delivery will be scheduled based on the kitchen's meal preparation schedule.
-                </p>
+              <div style={{ marginBottom: "24px" }}>
+                <div style={{ background: "#f0f9ff", border: "1px solid #bfdbfe", borderRadius: "12px", padding: "20px", marginBottom: "16px" }}>
+                  <h3 style={{ margin: "0 0 12px 0", fontSize: "16px", fontWeight: 600, color: "#1e40af" }}>
+                    Gym Bulk Order
+                  </h3>
+                  <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
+                    This is a bulk order for your gym. All meals will be delivered to your workspace.
+                  </p>
+                  <p style={{ margin: "0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
+                    Delivery will be scheduled based on the kitchen's meal preparation schedule.
+                  </p>
+                </div>
+
+                <div style={{ background: "#fef3c7", border: "1px solid #fcd34d", borderRadius: "12px", padding: "20px" }}>
+                  <h3 style={{ margin: "0 0 16px 0", fontSize: "14px", fontWeight: 600, color: "#92400e" }}>
+                    Delivery frequency
+                  </h3>
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flex: 1 }}>
+                      <input
+                        type="radio"
+                        name="gym-frequency"
+                        value="one-time"
+                        checked={selectedPlan === "one-time"}
+                        onChange={() => {
+                          setSelectedPlan("one-time");
+                          setSelectedPlanType("one-time");
+                        }}
+                        style={{ cursor: "pointer" }}
+                      />
+                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#78350f" }}>One-Time Order</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flex: 1 }}>
+                      <input
+                        type="radio"
+                        name="gym-frequency"
+                        value="weekly"
+                        checked={selectedPlan === "weekly"}
+                        onChange={() => {
+                          setSelectedPlan("weekly");
+                          setSelectedPlanType("weekly");
+                        }}
+                        style={{ cursor: "pointer" }}
+                      />
+                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#78350f" }}>Weekly Recurring</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             )}
 
