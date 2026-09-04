@@ -19,6 +19,7 @@ export default function ReviewPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
+  const isGymUser = user?.premiseType === "Gym";
 
   // ── Order from sessionStorage ──
   // Read after mount (not in a useState initializer) so the server-rendered
@@ -714,8 +715,23 @@ export default function ReviewPage() {
               </div>
             )}
 
-            {/* Plan Selection */}
-            {items.length > 0 && (
+            {/* Gym Bulk Order Info — shown only for gym users */}
+            {items.length > 0 && isGymUser && (
+              <div style={{ background: "#f0f9ff", border: "1px solid #bfdbfe", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
+                <h3 style={{ margin: "0 0 12px 0", fontSize: "16px", fontWeight: 600, color: "#1e40af" }}>
+                  Gym Bulk Order
+                </h3>
+                <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
+                  This is a bulk order for your gym. All meals will be delivered to your workspace.
+                </p>
+                <p style={{ margin: "0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
+                  Delivery will be scheduled based on the kitchen's meal preparation schedule.
+                </p>
+              </div>
+            )}
+
+            {/* Plan Selection — hidden for gym users */}
+            {items.length > 0 && !isGymUser && (
             <div className={styles.planSection}>
               <h3 className={styles.planSectionTitle}>Deliver as recurring meal plan? (optional)</h3>
               <div className={styles.plansGrid}>
