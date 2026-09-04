@@ -876,6 +876,22 @@ export default function MenuPage() {
 
     // One-time mode: normal behavior
     const k = getKey(d, di);
+
+    // Gym validation: prevent duplicate dishes
+    if (isGymUser && !isCurrentlySelected) {
+      const dish = menuDays[d]?.dishes[di];
+      const dishId = dish?._id;
+      const dishAlreadyInCart = Object.keys(selected).some(key => {
+        const [dayIdx, dishIdx] = key.split("_").map(Number);
+        return menuDays[dayIdx]?.dishes[dishIdx]?._id === dishId;
+      });
+
+      if (dishAlreadyInCart) {
+        alert(`"${dish.name}" is already in your order. Adjust the quantity in your cart if needed.`);
+        return;
+      }
+    }
+
     setSelected(s => {
       const next = { ...s };
       next[k] ? delete next[k] : (next[k] = true);
@@ -1244,7 +1260,18 @@ export default function MenuPage() {
           )}
           <div className={styles.dishGrid}>
             {(isGymUser
-              ? menuDays.flatMap((day, d) => (day?.dishes || []).map((dish, di) => ({ dish, d, di, day })))
+              ? (() => {
+                  const uniqueDishes = new Map();
+                  menuDays.forEach((day, d) => {
+                    (day?.dishes || []).forEach((dish, di) => {
+                      const key = dish._id || dish.name;
+                      if (!uniqueDishes.has(key)) {
+                        uniqueDishes.set(key, { dish, d, di, day });
+                      }
+                    });
+                  });
+                  return Array.from(uniqueDishes.values());
+                })()
               : (menuDays[selectedDay]?.dishes || []).map((dish, di) => ({ dish, d: selectedDay, di, day: menuDays[selectedDay] }))
             ).map(({ dish, d, di, day }) => {
               const sel = isSelectedDish(d, di);
