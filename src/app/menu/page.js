@@ -1154,10 +1154,10 @@ export default function MenuPage() {
                     <button
                       key={day}
                       type="button"
-                      className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""} ${!isEnabled ? styles.weekDayChipDisabled : ""}`}
+                      className={`${styles.weekDayChip} ${!isGymUser && selectedPlanDay === day ? styles.weekDayChipActive : ""} ${!isEnabled ? styles.weekDayChipDisabled : ""}`}
                       onClick={() => !isGymUser && isEnabled && setSelectedPlanDay(day)}
                       disabled={!isEnabled || isGymUser}
-                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: (isEnabled && !isGymUser) ? 'pointer' : 'not-allowed', position: 'relative' }}
+                      style={{ opacity: 1, cursor: (isEnabled && !isGymUser) ? 'pointer' : 'not-allowed', position: 'relative' }}
                     >
                       <div className={styles.weekDayName}>{day}</div>
                       <div className={styles.weekDayDate}>{dateStr}</div>
