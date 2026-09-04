@@ -1172,59 +1172,63 @@ export default function MenuPage() {
             </div>
           )}
 
-          {/* Lunch time */}
-          <div className={styles.pickerControlGroup}>
-            <span className={styles.pickerControlLabel}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Choose lunch time
-            </span>
-            <div className={styles.timeChips}>
-              {availableLunchTimes.map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`${styles.timeChip} ${lunchTime === t ? styles.timeChipActive : ""}`}
-                  onClick={() => setLunchTime(t)}
-                >
-                  {t}
-                </button>
-              ))}
+          {/* Lunch time — hidden for gym users */}
+          {!isGymUser && (
+            <div className={styles.pickerControlGroup}>
+              <span className={styles.pickerControlLabel}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Choose lunch time
+              </span>
+              <div className={styles.timeChips}>
+                {availableLunchTimes.map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`${styles.timeChip} ${lunchTime === t ? styles.timeChipActive : ""}`}
+                    onClick={() => setLunchTime(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Plan selection */}
-          <div className={styles.pickerControlGroup}>
-            <span className={styles.pickerControlLabel}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
-              Choose meal plan
-            </span>
-            <select
-              value={selectedPlanId || "one-time"}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === "one-time") {
-                  setSelectedPlan("one-time");
-                  setSelectedPlanId(null);
-                } else {
-                  const plan = mealPlans.find(p => p._id === val);
-                  if (plan) {
-                    setSelectedPlan(plan.type);
-                    setSelectedPlanId(plan._id);
+          {/* Plan selection — hidden for gym users */}
+          {!isGymUser && (
+            <div className={styles.pickerControlGroup}>
+              <span className={styles.pickerControlLabel}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+                Choose meal plan
+              </span>
+              <select
+                value={selectedPlanId || "one-time"}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "one-time") {
+                    setSelectedPlan("one-time");
+                    setSelectedPlanId(null);
+                  } else {
+                    const plan = mealPlans.find(p => p._id === val);
+                    if (plan) {
+                      setSelectedPlan(plan.type);
+                      setSelectedPlanId(plan._id);
+                    }
                   }
-                }
-                setSelectedPlanDay("Mon");
-                setSelectedPattern(null);
-              }}
-              className={styles.planDropdown}
-            >
-              <option value="one-time">One-Time Order</option>
-              {mealPlans.map((plan) => (
-                <option key={plan._id} value={plan._id}>
-                  {plan.name}
-                </option>
-              ))}
-            </select>
-          </div>
+                  setSelectedPlanDay("Mon");
+                  setSelectedPattern(null);
+                }}
+                className={styles.planDropdown}
+              >
+                <option value="one-time">One-Time Order</option>
+                {mealPlans.map((plan) => (
+                  <option key={plan._id} value={plan._id}>
+                    {plan.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
         </div>
 
