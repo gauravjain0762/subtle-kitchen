@@ -368,12 +368,6 @@ export default function ReviewPage() {
     if (!user) { setAuthOpen(true); return; }
     if (!order || items.length === 0) return;
 
-    // Gym users can only place one-time orders
-    if (isGymUser && selectedPlanType !== "one-time") {
-      setSubmitError("Gym bulk orders must be one-time orders. Please select 'One-Time Order'.");
-      return;
-    }
-
     // For subscription orders, validate meal count (skip for gym users doing bulk orders)
     if (selectedPlanType === "weekly" && !isGymUser && items.length !== 5) {
       setSubmitError("Weekly plans require exactly 5 meals (one per weekday). Please select meals for all days.");
@@ -402,8 +396,8 @@ export default function ReviewPage() {
       }
     }
 
-    // Validate subscription charge meets Stripe minimum (£0.30 for GBP)
-    if (selectedPlanType !== "one-time" && calculatedCharge < 0.30) {
+    // Validate subscription charge meets Stripe minimum (£0.30 for GBP) — skip for gym users (bulk orders may have small recurring charges)
+    if (selectedPlanType !== "one-time" && calculatedCharge < 0.30 && !isGymUser) {
       setSubmitError("Subscription charge is below minimum (£0.30). Please increase quantity or select a later start date.");
       return;
     }
@@ -755,15 +749,19 @@ export default function ReviewPage() {
                       />
                       <span style={{ fontSize: "14px", fontWeight: 500, color: "#78350f" }}>One-Time Order</span>
                     </label>
-                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flex: 1, opacity: 0.5 }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flex: 1 }}>
                       <input
                         type="radio"
                         name="gym-frequency"
                         value="weekly"
-                        disabled
-                        style={{ cursor: "not-allowed" }}
+                        checked={selectedPlan === "weekly"}
+                        onChange={() => {
+                          setSelectedPlan("weekly");
+                          setSelectedPlanType("weekly");
+                        }}
+                        style={{ cursor: "pointer" }}
                       />
-                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#78350f" }}>Weekly Recurring (Not available)</span>
+                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#78350f" }}>Weekly Recurring</span>
                     </label>
                   </div>
                 </div>
