@@ -2364,7 +2364,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 12px;
   animation: overlayFade 0.22s ease;
 }
 @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
@@ -2375,7 +2375,7 @@
   border-radius: 20px;
   width: 100%;
   max-width: 1100px;
-  max-height: 90vh;
+  max-height: 85vh;
   display: flex;
   overflow: hidden;
   box-shadow: 0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.06);
@@ -2385,7 +2385,7 @@
 @media (max-width: 768px) {
   .dishDetailModal {
     flex-direction: column;
-    max-height: 85vh;
+    max-height: 80vh;
   }
 }
 @keyframes dishDetailIn {
@@ -2544,14 +2544,14 @@
   margin-bottom: 14px;
 }
 .dishDetailDescCollapsed {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  line-clamp: 3;
-  overflow: hidden;
+  display: block;
+  white-space: normal;
+  word-wrap: break-word;
 }
 .dishDetailDescExpanded {
   display: block;
+  white-space: normal;
+  word-wrap: break-word;
 }
 .dishDetailTagPills { display: flex; gap: 6px; flex-wrap: wrap; }
 .dishDetailTagPill {
@@ -2832,16 +2832,16 @@
 }
 .carouselDots {
   position: absolute;
-  bottom: 2px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 5px;
+  gap: 6px;
   z-index: 6;
 }
 .carouselDot {
-  width: 3px;
-  height: 3px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: rgba(255,255,255,0.5);
   cursor: pointer;
@@ -2849,7 +2849,7 @@
 }
 .carouselDotActive {
   background: #fff;
-  transform: scale(1.3);
+  transform: scale(1.4);
 }
 
 
@@ -3046,4 +3046,115 @@
   font-size: 13px;
   letter-spacing: 0.04em;
   margin-top: 8px;
+}
+
+/* ── Image Lightbox ── */
+.imgLightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.imgLightboxContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.imgLightboxContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imgLightboxImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.imgLightboxClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+.imgLightboxClose:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.5);
+}
+.imgLightboxNavPrev,
+.imgLightboxNavNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 9;
+}
+.imgLightboxNavPrev:hover,
+.imgLightboxNavNext:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.5);
+}
+.imgLightboxNavPrev {
+  left: 20px;
+}
+.imgLightboxNavNext {
+  right: 20px;
+}
+.imgLightboxDots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 9;
+}
+.imgLightboxDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.imgLightboxDot:hover {
+  background: rgba(255,255,255,0.6);
+}
+.imgLightboxDotActive {
+  background: #fff;
+  transform: scale(1.3);
 }

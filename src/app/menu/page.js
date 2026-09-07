@@ -510,6 +510,8 @@ export default function MenuPage() {
   const [detailDish, setDetailDish] = useState(null);
   const [detailTab, setDetailTab] = useState("overview");
   const [expandedDesc, setExpandedDesc] = useState(false);
+  const [imgLightboxOpen, setImgLightboxOpen] = useState(false);
+  const [imgLightboxIndex, setImgLightboxIndex] = useState(0);
   const [lunchTime, setLunchTime] = useState("12:00 PM");
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [selectedPlan, setSelectedPlan] = useState("one-time");
@@ -1659,7 +1661,7 @@ export default function MenuPage() {
               </button>
 
               {/* Left: image */}
-              <div className={styles.dishDetailLeft}>
+              <div className={styles.dishDetailLeft} onClick={() => { setImgLightboxOpen(true); setImgLightboxIndex(0); }} style={{ cursor: 'pointer' }}>
                 {dish.imgs ? (
                   <DishImgCarousel imgs={dish.imgs} />
                 ) : (
@@ -1710,9 +1712,51 @@ export default function MenuPage() {
                 <div className={styles.dishDetailContent}>
                   {detailTab === "overview" && (
                     <>
-                      <p className={styles.dishDetailDesc}>
-                        {dish.description || dish.desc}
-                      </p>
+                      <div style={{ position: 'relative' }}>
+                        <p className={`${styles.dishDetailDesc} ${expandedDesc ? styles.dishDetailDescExpanded : styles.dishDetailDescCollapsed}`}>
+                          {(dish.description || dish.desc) && (dish.description || dish.desc).length > 80 && !expandedDesc ?
+                            <>{(dish.description || dish.desc).substring(0, 100)}... <button
+                              onClick={() => setExpandedDesc(!expandedDesc)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#0a0a0a',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                padding: '0',
+                                textDecoration: 'underline',
+                                display: 'inline',
+                                marginLeft: '2px'
+                              }}
+                            >
+                              see more
+                            </button></>
+                            : <>
+                              {dish.description || dish.desc}
+                              {(dish.description || dish.desc) && (dish.description || dish.desc).length > 80 && expandedDesc && (
+                                <button
+                                  onClick={() => setExpandedDesc(!expandedDesc)}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#0a0a0a',
+                                    fontWeight: 600,
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    padding: '0',
+                                    textDecoration: 'underline',
+                                    display: 'inline',
+                                    marginLeft: '4px'
+                                  }}
+                                >
+                                  see less
+                                </button>
+                              )}
+                            </>
+                          }
+                        </p>
+                      </div>
                       <div className={styles.dishDetailTagPills}>
                         {dish.tags.map(t => <span key={t} className={styles.dishDetailTagPill}>{t}</span>)}
                       </div>
@@ -1738,7 +1782,18 @@ export default function MenuPage() {
                   {detailTab === "allergens" && (
                     <div className={styles.dishDetailAllergenBlock}>
                       <p className={styles.dishDetailAllergenTitle}>⚠ Contains allergens</p>
-                      <p className={styles.dishDetailAllergenText}>{dish.allergens}</p>
+                      <div className={styles.dishDetailTagPills}>
+                        {(() => {
+                          const allergenList = Array.isArray(dish.allergens)
+                            ? dish.allergens
+                            : typeof dish.allergens === 'string'
+                              ? dish.allergens.split(/[·,]/).map(a => a.trim())
+                              : [];
+                          return allergenList.map(allergen => (
+                            <span key={allergen} className={styles.dishDetailTagPill}>{allergen}</span>
+                          ));
+                        })()}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1888,6 +1943,61 @@ export default function MenuPage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Image Lightbox */}
+      {imgLightboxOpen && detailDish && (() => {
+        const { d, di } = detailDish;
+        const dish = menuDays[d]?.dishes[di];
+        const images = dish.imgs || (dish.img ? [dish.img] : []);
+        return (
+          <div className={styles.imgLightboxOverlay} onClick={() => setImgLightboxOpen(false)}>
+            <div className={styles.imgLightboxContainer} onClick={e => e.stopPropagation()}>
+              {/* Close button */}
+              <button
+                className={styles.imgLightboxClose}
+                onClick={() => setImgLightboxOpen(false)}
+              >
+                ✕
+              </button>
+
+              {/* Main image */}
+              <div className={styles.imgLightboxContent}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={images[imgLightboxIndex]} alt={dish.name} className={styles.imgLightboxImg} />
+              </div>
+
+              {/* Navigation buttons */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    className={styles.imgLightboxNavPrev}
+                    onClick={() => setImgLightboxIndex((imgLightboxIndex - 1 + images.length) % images.length)}
+                  >
+                    ‹
+                  </button>
+                  <button
+                    className={styles.imgLightboxNavNext}
+                    onClick={() => setImgLightboxIndex((imgLightboxIndex + 1) % images.length)}
+                  >
+                    ›
+                  </button>
+
+                  {/* Dots indicator */}
+                  <div className={styles.imgLightboxDots}>
+                    {images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        className={`${styles.imgLightboxDot} ${idx === imgLightboxIndex ? styles.imgLightboxDotActive : ""}`}
+                        onClick={() => setImgLightboxIndex(idx)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         );
