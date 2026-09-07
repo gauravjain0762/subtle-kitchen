@@ -1340,7 +1340,7 @@ export default function MenuPage() {
                       <h3 className={styles.dishName}>{dish.name}</h3>
                       <span className={styles.dishPrice}>£{dish.price.toFixed(2)}</span>
                     </div>
-                    <p className={styles.dishDesc}>{dish.desc}</p>
+                    <p className={styles.dishDesc}>{dish.description || dish.desc}</p>
 
                     {/* Macros */}
                     <div className={styles.dishMacros}>
@@ -1686,7 +1686,7 @@ export default function MenuPage() {
                 <div className={styles.dishDetailContent}>
                   {detailTab === "overview" && (
                     <>
-                      <p className={styles.dishDetailDesc}>{dish.desc}</p>
+                      <p className={styles.dishDetailDesc}>{dish.description || dish.desc}</p>
                       <div className={styles.dishDetailTagPills}>
                         {dish.tags.map(t => <span key={t} className={styles.dishDetailTagPill}>{t}</span>)}
                       </div>
