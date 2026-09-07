@@ -1618,7 +1618,7 @@ export default function MenuPage() {
                 }}
               >
                 {isGymUser ? (
-                  totalMealQty < 5 ? `Add ${5 - totalMealQty} more meal${5 - totalMealQty !== 1 ? 's' : ''} (${totalMealQty}/5)` : "Review bulk order"
+                  totalMealQty < 5 ? `Add ${5 - totalMealQty} more meal${5 - totalMealQty !== 1 ? 's' : ''} (${totalMealQty}/5)` : "Review order"
                 ) : (
                   "Review order"
                 )}

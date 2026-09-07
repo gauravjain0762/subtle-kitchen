@@ -73,10 +73,6 @@ function OrdersPanel() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleReorder = (order) => {
-    sessionStorage.setItem("reorder_items", JSON.stringify(order.items));
-    router.push("/menu");
-  };
 
   const formatDate = (iso) =>
     new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric" });
@@ -101,37 +97,20 @@ function OrdersPanel() {
           <div className={styles.orderList}>
             {orders.map((order, i) => (
               <div key={order._id} className={styles.orderCard}>
-                <div className={`${styles.orderCardTop} ${expanded === i ? styles.orderCardTopExpanded : ""}`}>
-                  <div className={styles.orderImgStack}>
-                    {order.items.slice(0, 2).map((item, j) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img key={j} src={item.img || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80"} alt={item.dishName} className={styles.orderThumb} style={{ zIndex: order.items.length - j, marginLeft: j > 0 ? -12 : 0 }} />
-                    ))}
-                  </div>
-                  <div className={styles.orderCardInfo}>
-                    <div className={styles.orderCardMeta}>
-                      <span className={styles.orderDate}>
-                        📅 {formatOrderDate(order.createdAt)}
-                      </span>
-                      <span className={styles.orderStatusBadge}>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        New
-                      </span>
+                <div className={`${styles.orderCardTop} ${expanded === i ? styles.orderCardTopExpanded : ""}`} onClick={() => setExpanded(expanded === i ? null : i)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.orderSummary}>
+                    <div>
+                      <p className={styles.orderId}>{order.orderNumber}</p>
+                      <p style={{ fontSize: 13, marginTop: 4, opacity: 0.7 }}>
+                        {formatOrderDate(order.createdAt)} • 🚚 {formatOrderDate(order.deliveryDate)}
+                      </p>
                     </div>
-                    <p className={styles.orderId}>ORDER #{order.orderRef}</p>
-                    <p style={{ fontSize: 12, marginTop: 4, opacity: 0.7 }}>
-                      🚚 Delivery: {formatOrderDate(order.deliveryDate)}
-                    </p>
-                    <p style={{ fontSize: 13, marginTop: 6, opacity: 0.8 }}>{order.items[0]?.dishName} x{order.items[0]?.qty || 1}</p>
-                    <button className={styles.viewDetailsBtn} onClick={() => setExpanded(expanded === i ? null : i)}>
-                      {expanded === i ? "Hide details" : "View details"}
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        {expanded === i ? <path d="M18 15l-6-6-6 6"/> : <path d="M6 9l6 6 6-6"/>}
-                      </svg>
-                    </button>
                   </div>
                   <div className={styles.orderCardRight}>
                     <span className={styles.orderTotal}>£{order.total.toFixed(2)}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 12, opacity: 0.6, transition: 'transform 0.2s' }}>
+                      {expanded === i ? <path d="M18 15l-6-6-6 6"/> : <path d="M6 9l6 6 6-6"/>}
+                    </svg>
                   </div>
                 </div>
 
@@ -140,19 +119,19 @@ function OrdersPanel() {
                     {order.items.map((item, j) => (
                       <div key={j} className={styles.orderDetailItem}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={item.img || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80"} alt={item.dishName} className={styles.orderDetailImg} />
-                        <span className={styles.orderDetailName}>
-                          {item.dishName} <span className={styles.orderDetailQty}>x{item.qty}</span>
-                        </span>
-                        {item.portion && <span className={styles.orderDetailPortion}>{item.portion}</span>}
+                        <img src={item.images?.[0] || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80"} alt={item.dishName} className={styles.orderDetailImg} />
+                        <div className={styles.orderDetailInfo}>
+                          <span className={styles.orderDetailName}>{item.dishName}</span>
+                          {item.portionSize && <span className={styles.orderDetailPortion}>{item.portionSize}</span>}
+                          <span className={styles.orderDetailPrice}>£{((item.unitPrice || 0) * (item.qty || 1)).toFixed(2)}</span>
+                        </div>
+                        <span className={styles.orderDetailQty}>x{item.qty}</span>
+                        <span className={styles.orderItemStatus}>Placed</span>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div className={styles.orderCardActions}>
-                  <button className={styles.reorderBtn} onClick={() => handleReorder(order)}>Reorder</button>
-                </div>
               </div>
             ))}
           </div>
@@ -409,31 +388,6 @@ function FavoritesPanel() {
   );
 }
 
-function SettingsPanel() {
-  const [marketing, setMarketing] = useState(true);
-  return (
-    <div className={styles.panel}>
-      <h2 className={styles.panelHeading}>Email Preferences</h2>
-      <div className={styles.prefGroup}>
-        <div className={styles.prefItem}>
-          <div className={styles.prefItemLeft}>
-            <span className={styles.prefTitle}>Recommendations &amp; offers</span>
-            <span className={styles.prefDesc}>New menu drops, personalised picks, and exclusive deals.</span>
-          </div>
-          <button
-            className={`${styles.toggle} ${marketing ? styles.toggleOn : ""}`}
-            onClick={() => setMarketing(v => !v)}
-            aria-checked={marketing}
-            role="switch"
-          >
-            <div className={styles.toggleKnob} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function ProfilePage() {
   const { user, ready } = useAuth();
   const [tab, setTab]           = useState("orders");
@@ -456,10 +410,6 @@ export default function ProfilePage() {
     {
       id: "subscriptions", label: "Plans & Subscriptions",
       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
-    },
-    {
-      id: "settings", label: "Settings",
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
     },
   ];
 
@@ -519,7 +469,6 @@ export default function ProfilePage() {
           {tab === "orders"        && <OrdersPanel />}
           {tab === "favorites"     && <FavoritesPanel />}
           {tab === "subscriptions" && <SubscriptionsPanel />}
-          {tab === "settings"      && <SettingsPanel />}
         </main>
 
       </div>

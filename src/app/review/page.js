@@ -368,8 +368,8 @@ export default function ReviewPage() {
     if (!user) { setAuthOpen(true); return; }
     if (!order || items.length === 0) return;
 
-    // For subscription orders, validate meal count
-    if (selectedPlanType === "weekly" && items.length !== 5) {
+    // For subscription orders, validate meal count (skip for gym users doing bulk orders)
+    if (selectedPlanType === "weekly" && !isGymUser && items.length !== 5) {
       setSubmitError("Weekly plans require exactly 5 meals (one per weekday). Please select meals for all days.");
       return;
     }
@@ -723,7 +723,7 @@ export default function ReviewPage() {
                     Gym Bulk Order
                   </h3>
                   <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
-                    This is a bulk order for your gym. All meals will be delivered to your workspace.
+                    All meals will be delivered to your workspace.
                   </p>
                   <p style={{ margin: "0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
                     Delivery will be scheduled based on the kitchen's meal preparation schedule.
