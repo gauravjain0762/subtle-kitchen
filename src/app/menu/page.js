@@ -549,8 +549,8 @@ export default function MenuPage() {
   const saveTimerRef = useRef(null);
 
   useEffect(() => {
-    sessionStorage.removeItem("reorder_items");
     // Clear cart on fresh page load (not from review/checkout)
+    // NOTE: Don't clear reorder_items here - it's needed when menuDays loads
     if (!sessionStorage.getItem("sk_returning_from_checkout")) {
       setSelected({});
       setPortions({});
@@ -696,6 +696,42 @@ export default function MenuPage() {
       .catch(() => {})
       .finally(() => setMenuLoading(false));
   }, []);
+
+  // Process reorder items when menuDays is loaded
+  useEffect(() => {
+    if (menuDays.length === 0) return;
+    const reorderItems = readReorderItems();
+    if (reorderItems.length === 0) return;
+
+    const newSelected = {};
+    const newPortions = {};
+    const newQuantities = {};
+
+    reorderItems.forEach(({ name, portion, qty }) => {
+      let found = false;
+      for (let d = 0; d < menuDays.length && !found; d++) {
+        const day = menuDays[d];
+        for (let di = 0; di < day.dishes?.length && !found; di++) {
+          const dish = day.dishes[di];
+          if (dish.name === name) {
+            const key = `${d}_${di}`;
+            newSelected[key] = true;
+            newPortions[key] = portion || "Regular";
+            newQuantities[key] = qty || 1;
+            found = true;
+          }
+        }
+      }
+    });
+
+    if (Object.keys(newSelected).length > 0) {
+      setSelected(newSelected);
+      setPortions(newPortions);
+      setQuantities(newQuantities);
+      sessionStorage.removeItem("reorder_items");
+      setCartLoaded(true);
+    }
+  }, [menuDays]);
 
   // Load cart from API once menu is ready and user is logged in
   // Skip if reorder items exist in sessionStorage (reorder takes priority)
@@ -1346,24 +1382,53 @@ export default function MenuPage() {
                       <span className={styles.dishPrice}>£{dish.price.toFixed(2)}</span>
                     </div>
 
-                    {/* Macros */}
-                    <div className={styles.dishMacros}>
-                      {[
+                    {/* Macros or Description */}
+                    {(() => {
+                      const macros = [
                         { label: "kcal",    val: dish.kcal,    unit: "" },
                         { label: "protein", val: dish.protein, unit: " g" },
                         { label: "carbs",   val: dish.carbs,   unit: " g" },
                         { label: "fat",     val: dish.fat,     unit: " g" },
-                      ]
-                        .map(m =>
-                          (m.val != null && m.val !== "" && m.val !== 0) ? (
-                            <div key={m.label} className={styles.dishMacro}>
-                              <span className={styles.dishMacroVal}>{m.val}{m.unit}</span>
-                              <span className={styles.dishMacroLabel}>{m.label}</span>
-                            </div>
-                          ) : null
-                        )
-                        .filter(Boolean)}
-                    </div>
+                      ].filter(m => m.val != null && m.val !== "" && m.val !== 0);
+
+                      if (macros.length > 0) {
+                        return (
+                          <div className={styles.dishMacros}>
+                            {macros.map(m => (
+                              <div key={m.label} className={styles.dishMacro}>
+                                <span className={styles.dishMacroVal}>{m.val}{m.unit}</span>
+                                <span className={styles.dishMacroLabel}>{m.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+
+                      const desc = dish.desc || dish.description || "";
+                      if (!desc) return null;
+
+                      const shortDesc = desc.split('\n').slice(0, 3).join('\n');
+
+                      return (
+                        <div className={styles.dishDescWrap}>
+                          <p className={styles.dishDescText}>
+                            {shortDesc}
+                          </p>
+                          {desc !== shortDesc && (
+                            <button
+                              type="button"
+                              className={styles.dishDescToggle}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDetail(d, di);
+                              }}
+                            >
+                              See more
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     {!closed && (
                       <button

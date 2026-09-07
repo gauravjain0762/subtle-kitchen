@@ -101,9 +101,10 @@ function OrdersPanel() {
                   <div className={styles.orderSummary}>
                     <div>
                       <p className={styles.orderId}>{order.orderNumber}</p>
-                      <p style={{ fontSize: 13, marginTop: 4, opacity: 0.7 }}>
-                        {formatOrderDate(order.createdAt)} • 🚚 {formatOrderDate(order.deliveryDate)}
-                      </p>
+                      <div style={{ fontSize: 13, marginTop: 4, opacity: 0.7 }}>
+                        <div>Order Placed - {formatOrderDate(order.createdAt)}</div>
+                        <div style={{ marginTop: "4px" }}>Order Delivery - {formatOrderDate(order.deliveryDate)}</div>
+                      </div>
                     </div>
                   </div>
                   <div className={styles.orderCardRight}>
@@ -126,7 +127,7 @@ function OrdersPanel() {
                           <span className={styles.orderDetailPrice}>£{((item.unitPrice || 0) * (item.qty || 1)).toFixed(2)}</span>
                         </div>
                         <span className={styles.orderDetailQty}>x{item.qty}</span>
-                        <span className={styles.orderItemStatus}>Placed</span>
+                        <span className={styles.orderItemStatus}>{order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Placed"}</span>
                       </div>
                     ))}
                   </div>
@@ -326,7 +327,29 @@ function FavoritesPanel() {
   };
 
   const handleOrder = (fav) => {
-    sessionStorage.setItem("reorder_items", JSON.stringify([{ name: fav.dishName || fav.name, qty: 1 }]));
+    try {
+      const reorderItems = JSON.parse(sessionStorage.getItem("reorder_items") || "[]");
+      const dishName = fav.dishName || fav.name;
+      const portionSize = fav.portionSize || "Regular";
+
+      const existingIndex = reorderItems.findIndex(
+        item => item.name === dishName && item.portion === portionSize
+      );
+
+      if (existingIndex !== -1) {
+        reorderItems[existingIndex].qty = (reorderItems[existingIndex].qty || 1) + 1;
+      } else {
+        reorderItems.push({
+          name: dishName,
+          portion: portionSize,
+          qty: 1
+        });
+      }
+
+      sessionStorage.setItem("reorder_items", JSON.stringify(reorderItems));
+    } catch (e) {
+      console.error("Error adding to order:", e);
+    }
     router.push("/menu");
   };
 
