@@ -723,7 +723,7 @@ export default function ReviewPage() {
                     Gym Bulk Order
                   </h3>
                   <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
-                    All meals will be delivered to your workspace.
+                    Will be delivered to {user?.workspaceName}{user?.workspaceAddress ? ` at ${user.workspaceAddress}${user?.workspacePostcode ? `, ${user.workspacePostcode}` : ""}` : " at your workspace"}. Your meals will be labelled in the reception fridge.
                   </p>
                   <p style={{ margin: "0", fontSize: "14px", color: "#1e3a8a", lineHeight: "1.5" }}>
                     Delivery will be scheduled based on the kitchen's meal preparation schedule.
