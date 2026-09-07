@@ -509,6 +509,7 @@ export default function MenuPage() {
   const [expandedDish, setExpandedDish] = useState(null);
   const [detailDish, setDetailDish] = useState(null);
   const [detailTab, setDetailTab] = useState("overview");
+  const [expandedDesc, setExpandedDesc] = useState(false);
   const [lunchTime, setLunchTime] = useState("12:00 PM");
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [selectedPlan, setSelectedPlan] = useState("one-time");
@@ -963,6 +964,7 @@ export default function MenuPage() {
   const openDetail = (d, di) => {
     setDetailDish({ d, di });
     setDetailTab("overview");
+    setExpandedDesc(false);
     if (selectedPlan !== "one-time") {
       setEditingPlanDay(selectedPlanDay);
     }
@@ -1014,6 +1016,7 @@ export default function MenuPage() {
         return { k, d, di, dish, portion: getPortion(d, di), qty: getQty(d, di), dishPrice: getDishPrice(d, di), addonPrice: getAddonTotal(d, di) };
       });
 
+  const totalMealQty = orderItems.reduce((sum, item) => sum + (item.qty || 1), 0);
   const subtotal = orderItems.reduce((s, x) => s + (x.dishPrice * x.qty) + x.addonPrice, 0);
   const hasDishesToday = (menuDays[selectedDay]?.dishes?.length ?? 0) > 0;
 
@@ -1340,21 +1343,24 @@ export default function MenuPage() {
                       <h3 className={styles.dishName}>{dish.name}</h3>
                       <span className={styles.dishPrice}>£{dish.price.toFixed(2)}</span>
                     </div>
-                    <p className={styles.dishDesc}>{dish.description || dish.desc}</p>
 
                     {/* Macros */}
                     <div className={styles.dishMacros}>
                       {[
-                        { label: "kcal",    val: dish.kcal    ?? "N/A" },
-                        { label: "protein", val: dish.protein != null ? `${dish.protein} g` : "N/A" },
-                        { label: "carbs",   val: dish.carbs   != null ? `${dish.carbs} g`   : "N/A" },
-                        { label: "fat",     val: dish.fat     != null ? `${dish.fat} g`     : "N/A" },
-                      ].map(m => (
-                        <div key={m.label} className={styles.dishMacro}>
-                          <span className={styles.dishMacroVal}>{m.val}</span>
-                          <span className={styles.dishMacroLabel}>{m.label}</span>
-                        </div>
-                      ))}
+                        { label: "kcal",    val: dish.kcal,    unit: "" },
+                        { label: "protein", val: dish.protein, unit: " g" },
+                        { label: "carbs",   val: dish.carbs,   unit: " g" },
+                        { label: "fat",     val: dish.fat,     unit: " g" },
+                      ]
+                        .map(m =>
+                          (m.val != null && m.val !== "" && m.val !== 0) ? (
+                            <div key={m.label} className={styles.dishMacro}>
+                              <span className={styles.dishMacroVal}>{m.val}{m.unit}</span>
+                              <span className={styles.dishMacroLabel}>{m.label}</span>
+                            </div>
+                          ) : null
+                        )
+                        .filter(Boolean)}
                     </div>
 
                     {!closed && (
@@ -1516,7 +1522,7 @@ export default function MenuPage() {
                   return "";
                 })()}`}
                 disabled={(() => {
-                  if (isGymUser && orderItems.length < 5) return true;
+                  if (isGymUser && totalMealQty < 5) return true;
                   if (!isGymUser && orderItems.length === 0) return true;
                   if (selectedPlan === "one-time") return false;
                   if (selectedPlan === "one-off" && !selectedPattern) return true;
@@ -1532,9 +1538,9 @@ export default function MenuPage() {
                 onClick={() => {
                   if (!orderItems.length) return;
 
-                  // Validate minimum 5 meals for gym users
-                  if (isGymUser && orderItems.length < 5) {
-                    alert(`Please select at least 5 meals. You currently have ${orderItems.length} meal(s).`);
+                  // Validate minimum 5 meals for gym users (based on total quantity)
+                  if (isGymUser && totalMealQty < 5) {
+                    alert(`Please select at least 5 meals. You currently have ${totalMealQty} meal(s).`);
                     return;
                   }
 
@@ -1610,7 +1616,7 @@ export default function MenuPage() {
                 }}
               >
                 {isGymUser ? (
-                  orderItems.length < 5 ? `Add ${5 - orderItems.length} more meal${5 - orderItems.length !== 1 ? 's' : ''} (${orderItems.length}/5)` : "Review bulk order"
+                  totalMealQty < 5 ? `Add ${5 - totalMealQty} more meal${5 - totalMealQty !== 1 ? 's' : ''} (${totalMealQty}/5)` : "Review bulk order"
                 ) : (
                   "Review order"
                 )}
@@ -1670,23 +1676,43 @@ export default function MenuPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className={styles.dishDetailTabs}>
-                  {["overview", "nutritional", "allergens"].map(tab => (
-                    <button
-                      key={tab}
-                      className={`${styles.dishDetailTab} ${detailTab === tab ? styles.dishDetailTabActive : ""}`}
-                      onClick={() => setDetailTab(tab)}
-                    >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                  ))}
-                </div>
+                {(() => {
+                  const hasNutritionData = [dish.kcal, dish.protein, dish.carbs, dish.fat].some(
+                    val => val != null && val !== "" && val !== 0
+                  );
+                  const hasAllergens = dish.allergens && (
+                    (Array.isArray(dish.allergens) && dish.allergens.length > 0) ||
+                    (typeof dish.allergens === 'string' && dish.allergens.trim() !== "")
+                  );
+                  const tabs = ["overview"];
+                  if (hasNutritionData) tabs.push("nutritional");
+                  if (hasAllergens) tabs.push("allergens");
+
+                  // Switch to overview if current tab doesn't exist
+                  if (!tabs.includes(detailTab)) setDetailTab("overview");
+
+                  return (
+                    <div className={styles.dishDetailTabs}>
+                      {tabs.map(tab => (
+                        <button
+                          key={tab}
+                          className={`${styles.dishDetailTab} ${detailTab === tab ? styles.dishDetailTabActive : ""}`}
+                          onClick={() => setDetailTab(tab)}
+                        >
+                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 {/* Tab content */}
                 <div className={styles.dishDetailContent}>
                   {detailTab === "overview" && (
                     <>
-                      <p className={styles.dishDetailDesc}>{dish.description || dish.desc}</p>
+                      <p className={styles.dishDetailDesc}>
+                        {dish.description || dish.desc}
+                      </p>
                       <div className={styles.dishDetailTagPills}>
                         {dish.tags.map(t => <span key={t} className={styles.dishDetailTagPill}>{t}</span>)}
                       </div>
@@ -1695,16 +1721,18 @@ export default function MenuPage() {
                   {detailTab === "nutritional" && (
                     <div className={styles.dishDetailNutrition}>
                       {[
-                        { label: "Calories",      val: dish.kcal    ?? "N/A", unit: dish.kcal    != null ? "kcal" : "" },
-                        { label: "Protein",       val: dish.protein ?? "N/A", unit: dish.protein != null ? "g"    : "" },
-                        { label: "Carbohydrates", val: dish.carbs   ?? "N/A", unit: dish.carbs   != null ? "g"    : "" },
-                        { label: "Fat",           val: dish.fat     ?? "N/A", unit: dish.fat     != null ? "g"    : "" },
-                      ].map(n => (
-                        <div key={n.label} className={styles.nutritionRow}>
-                          <span className={styles.nutritionRowLabel}>{n.label}</span>
-                          <span className={styles.nutritionRowVal}>{n.val}{n.unit && ` ${n.unit}`}</span>
-                        </div>
-                      ))}
+                        { label: "Calories",      val: dish.kcal,    unit: "kcal" },
+                        { label: "Protein",       val: dish.protein, unit: "g" },
+                        { label: "Carbohydrates", val: dish.carbs,   unit: "g" },
+                        { label: "Fat",           val: dish.fat,     unit: "g" },
+                      ]
+                        .filter(n => n.val != null && n.val !== "" && n.val !== 0)
+                        .map(n => (
+                          <div key={n.label} className={styles.nutritionRow}>
+                            <span className={styles.nutritionRowLabel}>{n.label}</span>
+                            <span className={styles.nutritionRowVal}>{n.val} {n.unit}</span>
+                          </div>
+                        ))}
                     </div>
                   )}
                   {detailTab === "allergens" && (
