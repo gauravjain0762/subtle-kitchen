@@ -301,6 +301,7 @@ export default function ReviewPage() {
       startDate: startDate,
       isRecurring: isRecurring,  // NEW: User's recurring choice
       ...(selectedPlanType === "one-off" && { patternId: selectedPattern }),
+      ...(promoApplied && promo ? { promoCode: promo } : {}),
     })
       .then(data => {
         const charge = data.summary?.totalCharge || 0;
@@ -327,7 +328,7 @@ export default function ReviewPage() {
         setCheckoutSessionId("");
       })
       .finally(() => setSelectPlanLoading(false));
-  }, [selectedPlan, startDate, selectedPattern, items, allPlansData, isRecurring]);
+  }, [selectedPlan, startDate, selectedPattern, items, allPlansData, isRecurring, promoApplied, promo]);
 
   // ── Order submission ──
   const [submitting, setSubmitting] = useState(false);
@@ -415,6 +416,7 @@ export default function ReviewPage() {
           planType:            "one-time",
           planPrice:           getOrderPrice(),
           ...(promoApplied && promo ? { promoCode: promo } : {}),
+          ...(discount > 0 ? { discount: discount } : {}),
           items: items.map(item => ({
             dishId:      item.dishId,
             portionSize: item.portionSize || (item.portion === "large" ? "Large" : "Regular"),
