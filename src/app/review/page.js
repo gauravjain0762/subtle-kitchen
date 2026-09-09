@@ -409,7 +409,7 @@ export default function ReviewPage() {
       // Different endpoints for subscriptions vs one-time orders
       if (selectedPlanType === "one-time") {
         // One-time order via existing orders endpoint
-        const data = await api.post("/api/orders", {
+        const orderPayload = {
           workspaceCode:       order.workspaceCode || user.workspaceCode,
           deliveryDate:        order.deliveryDate,
           lunchTime:           order.lunchTime,
@@ -424,7 +424,14 @@ export default function ReviewPage() {
             addons:  item.addons || [],
           })),
           useStripeCheckout: true,
-        });
+        };
+        console.log("📦 ORDER PAYLOAD BEING SENT:", orderPayload);
+        console.log("💰 Discount:", discount);
+        console.log("🎟️ PromoApplied:", promoApplied);
+        console.log("🏷️ PromoCode:", promo);
+        const data = await api.post("/api/orders", orderPayload);
+        console.log("📥 BACKEND RESPONSE:", data);
+        console.log("💳 Stripe will charge:", data.order?.total || "Unknown");
         handleOrderResponse(data);
       } else {
         // Subscription order - redirect to Stripe Checkout
