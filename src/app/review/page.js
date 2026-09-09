@@ -123,6 +123,7 @@ export default function ReviewPage() {
   const [allPlansData, setAllPlansData] = useState([]);
   const [deliveryDates, setDeliveryDates] = useState([]);
   const [calculatedCharge, setCalculatedCharge] = useState(0);
+  const [apiDiscount, setApiDiscount] = useState(0);
   const [selectPlanLoading, setSelectPlanLoading] = useState(false);
   const [selectPlanError, setSelectPlanError] = useState("");
   const [oneOffPatterns, setOneOffPatterns] = useState([]);
@@ -310,11 +311,13 @@ export default function ReviewPage() {
           setSelectPlanError(`Minimum charge is £0.30. Current charge is £${charge.toFixed(2)}. Try adding more servings or selecting a later start date.`);
           setDeliveryDates([]);
           setCalculatedCharge(0);
+          setApiDiscount(0);
           setCheckoutUrl("");
           setCheckoutSessionId("");
         } else {
           setDeliveryDates(data.deliveryDates || []);
           setCalculatedCharge(charge);
+          setApiDiscount(data.summary?.discount || 0);
           setCheckoutUrl(data.checkoutUrl || "");
           setCheckoutSessionId(data.checkoutSessionId || "");
           setSelectPlanError("");
@@ -324,6 +327,7 @@ export default function ReviewPage() {
         setSelectPlanError(err.error || "Failed to calculate subscription");
         setDeliveryDates([]);
         setCalculatedCharge(0);
+        setApiDiscount(0);
         setCheckoutUrl("");
         setCheckoutSessionId("");
       })
@@ -354,13 +358,20 @@ export default function ReviewPage() {
     return calculatedCharge > 0 ? calculatedCharge : dishSubtotal;
   };
 
-  const subtotal = getOrderPrice();
-  const discount = promoApplied && promoDiscount
-    ? promoDiscount.type === "percentage"
-      ? subtotal * (promoDiscount.value / 100)
-      : Math.min(promoDiscount.value, subtotal)
-    : 0;
-  const total = subtotal - discount;
+  // For subscriptions, show original price as subtotal and API discount
+  // For one-time, show dish subtotal and re-calculated discount
+  const isSubscription = selectedPlanType !== "one-time";
+  const displaySubtotal = isSubscription && calculatedCharge > 0 ? dishSubtotal : dishSubtotal;
+  const discount = isSubscription && apiDiscount > 0
+    ? apiDiscount
+    : (promoApplied && promoDiscount
+      ? promoDiscount.type === "percentage"
+        ? displaySubtotal * (promoDiscount.value / 100)
+        : Math.min(promoDiscount.value, displaySubtotal)
+      : 0);
+
+  const subtotal = displaySubtotal;
+  const total = isSubscription && calculatedCharge > 0 ? calculatedCharge : (subtotal - discount);
 
   const MIN_QUANTITY = 1;
   const MAX_QUANTITY = 100;
