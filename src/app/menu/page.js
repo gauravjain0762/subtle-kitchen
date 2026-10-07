@@ -1080,7 +1080,14 @@ export default function MenuPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 Bulk Meal Ordering for Gyms
               </div>
-              <h1 className={styles.heading}>Weekly Meal Bulk Orders</h1>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, marginBottom: 16 }}>
+                <h1 className={styles.heading} style={{ margin: 0 }}>Weekly Meal Bulk Orders</h1>
+                {user?.workspaceStatus === "suspended" && (
+                  <div style={{ textAlign: "center", fontSize: 15, color: "#dc2626", fontWeight: 600, whiteSpace: "nowrap" }}>
+                    🔒 Kitchen is not<br />accepting orders currently
+                  </div>
+                )}
+              </div>
               <ul className={styles.gymGuidelines}>
                 <li>• You must select a <strong>minimum of 5 meals</strong> per order.</li>
                 <li>• You can choose the meal quantity/type according to their preference.</li>
@@ -1210,11 +1217,6 @@ export default function MenuPage() {
                 });
                 })()}
               </div>
-              {user?.workspaceStatus === "suspended" && (
-                <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", fontSize: 13, color: "#dc2626", fontWeight: 500 }}>
-                  🔒 Kitchen is not accepting orders currently
-                </div>
-              )}
             </div>
           )}
 
