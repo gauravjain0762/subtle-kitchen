@@ -1080,11 +1080,11 @@ export default function MenuPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 Bulk Meal Ordering for Gyms
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, marginBottom: 16 }}>
+              <div style={{ marginBottom: 16 }}>
                 <h1 className={styles.heading} style={{ margin: 0 }}>Weekly Meal Bulk Orders</h1>
                 {user?.workspaceStatus === "suspended" && (
-                  <div style={{ textAlign: "center", fontSize: 15, color: "#dc2626", fontWeight: 600, whiteSpace: "nowrap" }}>
-                    🔒 Kitchen is not<br />accepting orders currently
+                  <div style={{ marginTop: 12, textAlign: "center", fontSize: 15, color: "#dc2626", fontWeight: 600 }}>
+                    🔒 Kitchen is not accepting orders currently
                   </div>
                 )}
               </div>
