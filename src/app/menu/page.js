@@ -1344,10 +1344,10 @@ export default function MenuPage() {
 
               const closed = isDateClosed(dateToCheck);
               const isFav = !!dish._id && favorites.has(dish._id);
-              const uniqueKey = isGymUser ? `${d}_${di}` : di;
+              const uniqueKey = `${d}_${di}`;
 
               return (
-                <div key={uniqueKey} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`}>
+                <div key={uniqueKey} className={`${styles.dishCard} ${sel ? styles.dishCardAdded : ""}`} style={user?.workspaceStatus === "suspended" ? { opacity: 0.5, pointerEvents: "none" } : {}}>
                   {/* Image — click to open detail modal */}
                   <div className={styles.dishImgWrap} onClick={() => openDetail(d, di)}>
                     {dish.imgs?.length > 1 ? (
@@ -1434,6 +1434,8 @@ export default function MenuPage() {
                       <button
                         className={`${styles.dishAddBtn} ${sel ? styles.dishAddBtnActive : ""}`}
                         onClick={() => openDetail(d, di)}
+                        disabled={user?.workspaceStatus === "suspended"}
+                        style={user?.workspaceStatus === "suspended" ? { pointerEvents: "none", opacity: 0.5, cursor: "not-allowed" } : {}}
                       >
                         {sel ? "✓ Added" : `Add £${dish.price.toFixed(2)}`}
                       </button>
