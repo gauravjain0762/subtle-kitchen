@@ -1210,6 +1210,11 @@ export default function MenuPage() {
                 });
                 })()}
               </div>
+              {user?.workspaceStatus === "suspended" && (
+                <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", fontSize: 13, color: "#dc2626", fontWeight: 500 }}>
+                  🔒 Kitchen is not accepting orders currently
+                </div>
+              )}
             </div>
           )}
 
