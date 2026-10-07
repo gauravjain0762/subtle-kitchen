@@ -1083,8 +1083,10 @@ export default function MenuPage() {
               <div style={{ marginBottom: 16 }}>
                 <h1 className={styles.heading} style={{ margin: 0 }}>Weekly Meal Bulk Orders</h1>
                 {user?.workspaceStatus === "suspended" && (
-                  <div className={styles.suspensionAlert}>
-                    🔒 Kitchen is not accepting orders currently
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div className={styles.suspensionAlert}>
+                      🔒 Kitchen is not accepting orders currently
+                    </div>
                   </div>
                 )}
               </div>
