@@ -1083,7 +1083,7 @@ export default function MenuPage() {
               <div style={{ marginBottom: 16 }}>
                 <h1 className={styles.heading} style={{ margin: 0 }}>Weekly Meal Bulk Orders</h1>
                 {user?.workspaceStatus === "suspended" && (
-                  <div style={{ marginTop: 12, textAlign: "center", fontSize: 15, color: "#dc2626", fontWeight: 600 }}>
+                  <div className={styles.suspensionAlert}>
                     🔒 Kitchen is not accepting orders currently
                   </div>
                 )}
