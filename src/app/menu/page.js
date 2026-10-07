@@ -1062,6 +1062,15 @@ export default function MenuPage() {
     <div className={styles.root}>
       <Navbar onSignIn={() => setAuthOpen(true)} />
 
+      {/* Suspension Notice */}
+      {user?.workspaceStatus === "suspended" && (
+        <div style={{ background: "#fef2f2", borderBottom: "1px solid #fecaca", padding: "16px 20px", textAlign: "center" }}>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: "#dc2626" }}>
+            🔒 Kitchen is not accepting orders currently
+          </p>
+        </div>
+      )}
+
       {/* ── Main ── */}
       <div className={styles.mainWrap}>
         <div className={styles.menuListHeader}>
